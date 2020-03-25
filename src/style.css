@@ -3,6 +3,12 @@ body {
     text-align: center;
 }
 
+ion-icon {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .panel {
     margin: 0;
     padding: 0;
