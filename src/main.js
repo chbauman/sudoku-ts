@@ -21,7 +21,9 @@ function init() {
         "buttons1",
         "lvl_list",
         "solve",
-        "check"
+        "check",
+        "fin-vid",
+        "solved-h"
     ];
     for (var _i = 0, but_ids_1 = but_ids; _i < but_ids_1.length; _i++) {
         var b_id = but_ids_1[_i];

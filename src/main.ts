@@ -36,7 +36,9 @@ function init() {
     "buttons1",
     "lvl_list",
     "solve",
-    "check"
+    "check",
+    "fin-vid",
+    "solved-h"
   ];
   for (let b_id of but_ids) {
     html_button_dict.set(b_id, document.getElementById(b_id));

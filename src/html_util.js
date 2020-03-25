@@ -77,6 +77,7 @@ function init_grid(tbl) {
             var y = document.createAttribute("y");
             var x = document.createAttribute("x");
             var click = document.createAttribute("clickable");
+            var subTab = document.createElement("table");
             click.value = "0";
             y.value = i.toString();
             x.value = j.toString();
@@ -84,7 +85,6 @@ function init_grid(tbl) {
             Tref[i][j].setAttributeNode(x);
             Tref[i][j].setAttributeNode(click);
             TminiCells[i][j] = new Array(9);
-            var subTab = document.createElement("table");
             subTab.className = "innerTable";
             var sub_row = void 0;
             var sub_cell = void 0;
@@ -197,18 +197,17 @@ function eliminateSmallDigs(y, x, n) {
         resetMiniCell(yFloor + (i % 3), xFloor + Math.floor(i / 3), n);
     }
 }
-function setCell(y, x, n, largeMode, highlightCells) {
+function setCell(y, x, n, largeMode, highlightCells, remove_red) {
     if (largeMode === void 0) { largeMode = true; }
     if (highlightCells === void 0) { highlightCells = false; }
+    if (remove_red === void 0) { remove_red = false; }
     if (n == 0) {
         Tref[y][x].innerHTML = "";
         Tref[y][x].appendChild(TsubHTMLTables[y][x]);
         for (var i = 0; i < 9; i++) {
             resetMiniCell(y, x, i + 1);
         }
-        if (Marked[y][x] > 0) {
-            Marked[y][x] = 0;
-        }
+        Marked[y][x] = 0;
     }
     else {
         if (largeMode) {
@@ -216,6 +215,10 @@ function setCell(y, x, n, largeMode, highlightCells) {
             eliminateSmallDigs(y, x, n);
             if (highlightCells)
                 highlight(y, x);
+            if (remove_red) {
+                Marked[y][x] = 0;
+                Tref[y][x].style.backgroundColor = normH;
+            }
         }
         else {
             toggleMiniCell(y, x, n);
@@ -250,6 +253,7 @@ function hypothesis3() {
         return;
     var lastHyp = hyps[nHyps - 1];
     log("N hyps: " + nHyps);
+    var mark_copy = deepCopy2D(Marked);
     if (nHyps < 2) {
         copy_to_2d(Tinit, T);
         updateGrid();
@@ -262,8 +266,6 @@ function hypothesis3() {
         var y = hyps[nHyps - 2][0][0];
         var x = hyps[nHyps - 2][0][1];
         Tref[y][x].style.color = hypCol;
-        Marked[y][x] = 3;
-        Marked[lastHyp[0][0]][lastHyp[0][1]] = 0;
         Tref[y][x].setAttribute("clickable", "0");
     }
     copy_to_2d(lastHyp[1], T);
@@ -271,9 +273,15 @@ function hypothesis3() {
     for (var i = 0; i < 9; i++) {
         for (var j = 0; j < 9; j++) {
             if (T[i][j] > 0) {
+                var m = mark_copy[i][j];
                 setCell(i, j, T[i][j], true, false);
                 if (Tref[i][j].getAttribute("clickable") == "1") {
                     Tref[i][j].style.color = col1;
+                    if (m > 0) {
+                        Tref[i][j].style.backgroundColor = wrongHypCol;
+                        Marked[i][j] = 1;
+                        log("m is " + m + ", setting (" + i + ", " + j + ")");
+                    }
                 }
             }
             else {
@@ -289,7 +297,13 @@ function hypothesis3() {
         elsewhere();
     }
     else {
-        clickCell(Tref[hyps[nHyps - 2][0][0]][hyps[nHyps - 2][0][1]]);
+        var y = hyps[nHyps - 2][0][0];
+        var x = hyps[nHyps - 2][0][1];
+        if (mark_copy[y][x]) {
+            Marked[y][x] = 1;
+            Tref[y][x].style.backgroundColor = wrongHypCol;
+        }
+        clickCell(Tref[y][x]);
     }
     hyps.pop();
     if (nHyps == 1) {
@@ -301,8 +315,7 @@ function finishedHypChoosing() {
         return;
     log("Stopping hypothesis choosing");
     enableSmallDigs();
-    var hyp_but = document.getElementById("but1");
-    hyp_but.style.color = "";
+    html_button_dict.get("but1").style.color = "";
     choosingHyp = false;
 }
 function enableHypRejection() {
@@ -323,18 +336,9 @@ function check() {
         for (var j = 0; j < 9; j++) {
             var tot_ind = i * 9 + j;
             if (T[i][j] != Tsol[i][j] && T[i][j] != 0) {
-                console.log(tot_ind.toString() + " is " + Tsol[i][j].toString());
-                var curr_mar = Marked[i][j];
-                console.log(curr_mar);
-                if (curr_mar == 2) {
-                    Tref[i][j].style.color = wrongHypCol;
-                    Marked[i][j] = 3;
-                    console.log("your fucking hypothesis is wrong");
-                }
-                else {
-                    Tref[i][j].style.color = wrongCol;
-                    Marked[i][j] = 1;
-                }
+                console.log("Cell (" + i + ", " + j + ") is incorrect!");
+                Tref[i][j].style.backgroundColor = wrongHypCol;
+                Marked[i][j] = 1;
             }
         }
     }
@@ -366,8 +370,8 @@ function checkSolvedSud() {
         vid_src = "./gifs/unlim_power.mp4";
         title = "Nothing you can't solve.";
     }
-    document.getElementById("fin-vid").src = vid_src;
-    document.getElementById("solved-h").src = title;
+    html_button_dict.get("fin-vid").src = vid_src;
+    html_button_dict.get("solved-h").src = title;
     $("#win").popup("open");
     console.log(sudLvl);
 }
@@ -379,14 +383,19 @@ function clickCell(cell) {
     if (T[y][x] > 0) {
         highlight(y, x);
     }
+    else {
+        if (Marked[y][x] == 0) {
+            Tref[y][x].style.backgroundColor = normH;
+        }
+    }
     curY = y;
     curX = x;
     prev_cell = [x, y];
-    log("Selected cell (" + curY + ", " + curX + ")");
-    if (c == 1) {
+    log("Selected " + c + " cell (" + curY + ", " + curX + ")");
+    var clickable = c == 1;
+    if (clickable) {
         $("#digits").off("click", "**");
-        cell.style.backgroundColor = "#BBB";
-        var a = allowed(T, y, x);
+        var a = allowed(T, y, x, clickable);
         var d = new Array(10).fill(false);
         for (var i = 0; i < a.length; i++)
             d[a[i]] = true;
@@ -408,7 +417,7 @@ function clickCell(cell) {
                                 Tref[y][x].style.color = col1;
                             }
                         }
-                        setCell(y, x, v_1, large, true);
+                        setCell(y, x, v_1, large, true, true);
                         if (v_1 == 0) {
                             clickCell(Tref[y][x]);
                         }
@@ -430,7 +439,6 @@ function clickCell(cell) {
                         setClickableTrefT();
                         T[y][x] = v_1;
                         Tref[y][x].style.color = hypCol;
-                        Marked[y][x] = 2;
                         Tref[y][x].setAttribute("clickable", "0");
                         setCell(y, x, v_1, large, true);
                         clickCell(Tref[y][x]);
@@ -482,40 +490,59 @@ function elsewhere() {
         }
     }
 }
+function set_if_not_marked(y, x) {
+    if (Marked[y][x] == 0) {
+        Tref[y][x].style.backgroundColor = rowColSquareForbidCol;
+    }
+}
 function highlight(y, x) {
     log("highlighting");
     var currDig = T[y][x];
     var xFloor = x - (x % 3);
     var yFloor = y - (y % 3);
     for (var i = 0; i < 9; i++) {
-        Tref[y][i].style.backgroundColor = rowColSquareForbidCol;
-        Tref[i][x].style.backgroundColor = rowColSquareForbidCol;
-        Tref[yFloor + (i % 3)][xFloor + Math.floor(i / 3)].style.backgroundColor = rowColSquareForbidCol;
+        set_if_not_marked(y, i);
+        set_if_not_marked(i, x);
+        set_if_not_marked(yFloor + (i % 3), xFloor + Math.floor(i / 3));
         for (var j = 0; j < 9; j++) {
             if (T[i][j] == currDig) {
-                Tref[i][j].style.backgroundColor = sameDigCol;
+                if (Marked[i][j] == 0) {
+                    Tref[i][j].style.backgroundColor = sameDigCol;
+                }
             }
             if (T[i][j] == 0 && TsubBinaryTables[i][j][currDig - 1]) {
                 Tref[i][j].style.backgroundColor = smallDigCol;
             }
         }
     }
-    Tref[y][x].style.backgroundColor = normH;
+    if (Marked[y][x] == 0) {
+        Tref[y][x].style.backgroundColor = normH;
+    }
 }
 function unhighlightAll() {
     for (var i = 0; i < 9; i++) {
         for (var j = 0; j < 9; j++) {
-            Tref[i][j].style.backgroundColor = "";
+            if (Marked[i][j] == 0) {
+                Tref[i][j].style.backgroundColor = "";
+            }
         }
     }
 }
-function updateGrid() {
+function updateGrid(remove_marks) {
+    if (remove_marks === void 0) { remove_marks = true; }
     log("Updating grid...");
     for (var i = 0; i < 9; i++) {
         for (var j = 0; j < 9; j++) {
-            setCell(i, j, T[i][j], true, false);
+            var curr_val = T[i][j];
+            var curr_mark = Marked[i][j];
+            setCell(i, j, curr_val, true, false);
+            if (!remove_marks || (curr_val > 0 && curr_mark != 0)) {
+                Marked[i][j] = 1;
+            }
             Tref[i][j].style.color = "";
-            Tref[i][j].style.backgroundColor = "";
+            if (Marked[i][j] == 0) {
+                Tref[i][j].style.backgroundColor = "";
+            }
         }
     }
 }

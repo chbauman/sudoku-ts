@@ -38,7 +38,7 @@ var hyp = false;
 var choosingHyp = false;
 var hyp_rejection_enabled = false;
 
-var hyps: Array<[[number, number], number[][], boolean[][][]]> = [];
+var hyps: any[][][] = [];
 
 // Array with html table cell elements
 var Tref: HTMLTableCellElement[][] = Array.from(
@@ -110,6 +110,7 @@ function init_grid(tbl: HTMLTableElement) {
       const y = document.createAttribute("y");
       const x = document.createAttribute("x");
       const click = document.createAttribute("clickable");
+      const subTab = document.createElement("table");
       click.value = "0";
       y.value = i.toString();
       x.value = j.toString();
@@ -118,7 +119,6 @@ function init_grid(tbl: HTMLTableElement) {
       Tref[i][j].setAttributeNode(click);
 
       TminiCells[i][j] = new Array(9);
-      const subTab = document.createElement("table");
       subTab.className = "innerTable";
       let sub_row: HTMLTableRowElement;
       let sub_cell: HTMLTableCellElement;
@@ -271,7 +271,8 @@ function setCell(
   x: number,
   n: number,
   largeMode = true,
-  highlightCells = false
+  highlightCells = false,
+  remove_red = false,
 ) {
   //log(`Setting cell (${x}, ${y})`);
   if (n == 0) {
@@ -281,14 +282,16 @@ function setCell(
     for (let i = 0; i < 9; i++) {
       resetMiniCell(y, x, i + 1);
     }
-    if (Marked[y][x] > 0) {
-      Marked[y][x] = 0;
-    }
+    Marked[y][x] = 0;
   } else {
     if (largeMode) {
       Tref[y][x].innerHTML = n.toString();
       eliminateSmallDigs(y, x, n);
       if (highlightCells) highlight(y, x);
+      if(remove_red){
+        Marked[y][x] = 0;
+        Tref[y][x].style.backgroundColor = normH;
+      }
     } else {
       toggleMiniCell(y, x, n);
     }
@@ -327,6 +330,7 @@ function hypothesis3() {
   if (nHyps < 1) return;
   var lastHyp = hyps[nHyps - 1];
   log(`N hyps: ${nHyps}`);
+  const mark_copy = deepCopy2D(Marked);
 
   // Set fixed digits
   if (nHyps < 2) {
@@ -341,8 +345,6 @@ function hypothesis3() {
     const y = hyps[nHyps - 2][0][0];
     const x = hyps[nHyps - 2][0][1];
     Tref[y][x].style.color = hypCol;
-    Marked[y][x] = 3;
-    Marked[lastHyp[0][0]][lastHyp[0][1]] = 0;
     Tref[y][x].setAttribute("clickable", "0");
   }
   // Current uncertain digits
@@ -351,9 +353,15 @@ function hypothesis3() {
   for (let i = 0; i < 9; i++) {
     for (let j = 0; j < 9; j++) {
       if (T[i][j] > 0) {
+        const m = mark_copy[i][j];
         setCell(i, j, T[i][j], true, false);
         if (Tref[i][j].getAttribute("clickable") == "1") {
           Tref[i][j].style.color = col1;
+          if(m > 0){
+            Tref[i][j].style.backgroundColor = wrongHypCol;
+            Marked[i][j] = 1;
+            log(`m is ${m}, setting (${i}, ${j})`);
+          }
         }
       } else {
         for (let k = 0; k < 9; k++) {
@@ -369,7 +377,13 @@ function hypothesis3() {
   if (nHyps < 2) {
     elsewhere();
   } else {
-    clickCell(Tref[hyps[nHyps - 2][0][0]][hyps[nHyps - 2][0][1]]);
+    const y = hyps[nHyps - 2][0][0];
+    const x = hyps[nHyps - 2][0][1];    
+    if(mark_copy[y][x]){
+      Marked[y][x] = 1;
+      Tref[y][x].style.backgroundColor = wrongHypCol;
+    }
+    clickCell(Tref[y][x]);
   }
 
   // Remove rejected hypothesis
@@ -384,8 +398,7 @@ function finishedHypChoosing() {
   if (choosingHyp == false) return;
   log("Stopping hypothesis choosing");
   enableSmallDigs();
-  var hyp_but = document.getElementById("but1");
-  hyp_but.style.color = "";
+  html_button_dict.get("but1").style.color = "";
   choosingHyp = false;
 }
 
@@ -410,17 +423,9 @@ function check() {
     for (let j = 0; j < 9; j++) {
       const tot_ind = i * 9 + j;
       if (T[i][j] != Tsol[i][j] && T[i][j] != 0) {
-        console.log(tot_ind.toString() + " is " + Tsol[i][j].toString());
-        const curr_mar = Marked[i][j];
-        console.log(curr_mar);
-        if (curr_mar == 2) {
-          Tref[i][j].style.color = wrongHypCol;
-          Marked[i][j] = 3;
-          console.log("your fucking hypothesis is wrong");
-        } else {
-          Tref[i][j].style.color = wrongCol;
-          Marked[i][j] = 1;
-        }
+        console.log(`Cell (${i}, ${j}) is incorrect!`);
+        Tref[i][j].style.backgroundColor = wrongHypCol;
+        Marked[i][j] = 1;
       }
     }
   }
@@ -450,8 +455,8 @@ function checkSolvedSud() {
     vid_src = "./gifs/unlim_power.mp4";
     title = "Nothing you can't solve.";
   }
-  (document.getElementById("fin-vid") as HTMLVideoElement).src = vid_src;
-  (document.getElementById("solved-h") as HTMLVideoElement).src = title;
+  (html_button_dict.get("fin-vid") as HTMLVideoElement).src = vid_src;
+  (html_button_dict.get("solved-h") as HTMLVideoElement).src = title;
   ($("#win") as any).popup("open");
   console.log(sudLvl);
 }
@@ -462,19 +467,22 @@ function clickCell(cell: HTMLTableCellElement) {
   const c = Number(cell.getAttribute("clickable"));
   const y = Number(cell.getAttribute("y"));
   const x = Number(cell.getAttribute("x"));
-  if (T[y][x] > 0) {
+  if (T[y][x] > 0) { // If number in cell is set
     highlight(y, x);
+  } else {
+    if (Marked[y][x] == 0) {
+      Tref[y][x].style.backgroundColor = normH;
+    }
   }
   curY = y;
   curX = x;
   prev_cell = [x, y];
-  log(`Selected cell (${curY}, ${curX})`);
-  if (c == 1) {
+  log(`Selected ${c} cell (${curY}, ${curX})`);
+  const clickable = c == 1;
+  if (clickable) { // If Cell is clickable
     $("#digits").off("click", "**");
-    cell.style.backgroundColor = "#BBB";
-
     // Enable all digits that are admissible
-    var a = allowed(T, y, x);
+    var a = allowed(T, y, x, clickable);
     var d = new Array(10).fill(false);
     for (let i = 0; i < a.length; i++) d[a[i]] = true;
     d[0] = true;
@@ -494,9 +502,9 @@ function clickCell(cell: HTMLTableCellElement) {
                 Tref[y][x].style.color = col1;
               }
             }
-            setCell(y, x, v, large, true);
-            if(v == 0){
-                clickCell(Tref[y][x]); // Depth one recursion
+            setCell(y, x, v, large, true, true);
+            if (v == 0) {
+              clickCell(Tref[y][x]); // Depth one recursion
             }
             checkSolvedSud();
             e.stopPropagation();
@@ -516,7 +524,6 @@ function clickCell(cell: HTMLTableCellElement) {
             setClickableTrefT();
             T[y][x] = v;
             Tref[y][x].style.color = hypCol;
-            Marked[y][x] = 2;
             Tref[y][x].setAttribute("clickable", "0");
             setCell(y, x, v, large, true);
             clickCell(Tref[y][x]); // Depth one recursion
@@ -567,6 +574,12 @@ function elsewhere() {
   }
 }
 
+function set_if_not_marked(y: number, x: number) {
+  if (Marked[y][x] == 0) {
+    Tref[y][x].style.backgroundColor = rowColSquareForbidCol;
+  }
+}
+
 // Highlight the current cell and all same numbers in grid
 function highlight(y: number, x: number) {
   log("highlighting");
@@ -574,40 +587,52 @@ function highlight(y: number, x: number) {
   var xFloor = x - (x % 3);
   var yFloor = y - (y % 3);
   for (let i = 0; i < 9; i++) {
-    Tref[y][i].style.backgroundColor = rowColSquareForbidCol;
-    Tref[i][x].style.backgroundColor = rowColSquareForbidCol;
-    Tref[yFloor + (i % 3)][
-      xFloor + Math.floor(i / 3)
-    ].style.backgroundColor = rowColSquareForbidCol;
+    set_if_not_marked(y, i);
+    set_if_not_marked(i, x);
+    set_if_not_marked(yFloor + (i % 3), xFloor + Math.floor(i / 3));
     for (let j = 0; j < 9; j++) {
       if (T[i][j] == currDig) {
-        Tref[i][j].style.backgroundColor = sameDigCol;
+        if (Marked[i][j] == 0) {
+          Tref[i][j].style.backgroundColor = sameDigCol;
+        }
       }
       if (T[i][j] == 0 && TsubBinaryTables[i][j][currDig - 1]) {
         Tref[i][j].style.backgroundColor = smallDigCol;
       }
     }
   }
-  Tref[y][x].style.backgroundColor = normH;
+  if (Marked[y][x] == 0) {
+    Tref[y][x].style.backgroundColor = normH;
+  }
 }
 
 // Unhighlights all cells
 function unhighlightAll() {
   for (let i = 0; i < 9; i++) {
     for (let j = 0; j < 9; j++) {
-      Tref[i][j].style.backgroundColor = "";
+      if (Marked[i][j] == 0) {
+        Tref[i][j].style.backgroundColor = "";
+      }
     }
   }
 }
 
 // Sets layout according to T
-function updateGrid() {
+// Removes marks where T is not set (= 0)
+function updateGrid(remove_marks = true) {
   log("Updating grid...");
   for (let i = 0; i < 9; i++) {
     for (let j = 0; j < 9; j++) {
-      setCell(i, j, T[i][j], true, false);
+      const curr_val =  T[i][j];
+      const curr_mark = Marked[i][j];
+      setCell(i, j, curr_val, true, false);
+      if(!remove_marks || (curr_val > 0 && curr_mark != 0)){
+        Marked[i][j] = 1;
+      }
       Tref[i][j].style.color = "";
-      Tref[i][j].style.backgroundColor = "";
+      if(Marked[i][j] == 0){
+        Tref[i][j].style.backgroundColor = "";
+      }
     }
   }
 }

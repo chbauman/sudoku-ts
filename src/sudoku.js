@@ -64,10 +64,11 @@ function read_sudoku_from_file(callback, lvl) {
         callback(sud_str);
     });
 }
-function allowed(A, y, x) {
+function allowed(A, y, x, ignore_set) {
+    if (ignore_set === void 0) { ignore_set = false; }
     var res = [];
     var arr = new Array(10).fill(true);
-    if (A[y][x] > 0)
+    if (A[y][x] > 0 && !ignore_set)
         return res;
     for (var i = 0; i < 9; i++)
         arr[A[y][i]] = false;

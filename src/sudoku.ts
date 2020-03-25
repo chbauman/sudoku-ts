@@ -84,10 +84,10 @@ function read_sudoku_from_file(callback: (s: string) => void, lvl = 7) {
 }
 
 // Finds all numbers that can be set in cell (x, y)
-function allowed(A: number[][], y: number, x: number) {
+function allowed(A: number[][], y: number, x: number, ignore_set = false) {
   let res: number[] = [];
   let arr = new Array(10).fill(true);
-  if (A[y][x] > 0) return res;
+  if (A[y][x] > 0 && !ignore_set) return res;
   for (let i = 0; i < 9; i++) arr[A[y][i]] = false;
   for (let i = 0; i < 9; i++) arr[A[i][x]] = false;
   for (let i = 0; i < 9; i++)
