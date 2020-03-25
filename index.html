@@ -16,7 +16,6 @@
     <script type="module" src="src/main.js"></script>
 
     <link rel="stylesheet" href="src/style.css" />
-    <link rel="stylesheet" href="ionic/ionicons.min.css" />
   </head>
 
   <body>
@@ -38,12 +37,16 @@
         <div class="table panel">
           <table id="digits">
             <tr>
-              <td id="digit-0" class="digit"><ion-icon name="backspace"></ion-icon></td>
+              <td id="digit-0" class="digit">
+                <ion-icon name="backspace"></ion-icon>
+              </td>
               <td id="digit-1" class="digit">1</td>
               <td id="digit-2" class="digit">2</td>
               <td id="digit-3" class="digit">3</td>
               <td id="digit-4" class="digit">4</td>
-              <td id="up-but" class="digit"><ion-icon name="arrow-up"></ion-icon></td>
+              <td id="up-but" class="digit">
+                <ion-icon name="arrow-up"></ion-icon>
+              </td>
             </tr>
 
             <tr>
@@ -52,7 +55,9 @@
               <td id="digit-7" class="digit">7</td>
               <td id="digit-8" class="digit">8</td>
               <td id="digit-9" class="digit">9</td>
-              <td id="down-but" class="digit"><ion-icon name="arrow-down"></ion-icon></td>
+              <td id="down-but" class="digit">
+                <ion-icon name="arrow-down"></ion-icon>
+              </td>
             </tr>
           </table>
         </div>
@@ -62,30 +67,21 @@
         </div>
         <div>
           <ul id="buttons2">
-            <li
-              class="ion-android-refresh"
-              data-pack="android"
-              onclick='$( "#restart" ).popup( "open" );'
-            ></li>
-            <li
-              class="ion-code-working"
-              data-pack="default"
-              onclick='$( "#newGrid" ).popup( "open" );'
-            ></li>
-            <li id="auto-fill-button"><ion-icon class="icon" name="help-circle"></ion-icon></li>
-            <li id="but1" class="ion-fork-repo" data-pack="default"></li>
-            <li
-              id="but3"
-              class="ion-android-close"
-              data-pack="android"
-              onclick="null;"
-            ></li>
-            <li id="own_sud" class="ion-document" data-pack="android"></li>
-            <li
-              class="ion-map"
-              data-pack="default"
-              onclick='$( "#help" ).popup( "open" );'
-            ></li>
+            <li onclick='$( "#restart" ).popup( "open" );'>
+              <ion-icon name="reload"></ion-icon>
+            </li>
+            <li onclick='$( "#newGrid" ).popup( "open" );'>
+              <ion-icon name="code-working"></ion-icon>
+            </li>
+            <li id="auto-fill-button">
+              <ion-icon class="icon" name="help-circle"></ion-icon>
+            </li>
+            <li id="but1"><ion-icon name="git-branch"></ion-icon></li>
+            <li id="but3"><ion-icon name="close"></ion-icon></li>
+            <li id="own_sud"><ion-icon name="document-outline"></ion-icon></li>
+            <li onclick='$( "#help" ).popup( "open" );'>
+              <ion-icon name="information-circle"></ion-icon>
+            </li>
           </ul>
         </div>
       </div>
