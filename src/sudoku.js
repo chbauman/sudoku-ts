@@ -53,7 +53,7 @@ function checkSolved(sud) {
 function read_sudoku_from_file(callback, lvl) {
     if (lvl === void 0) { lvl = 7; }
     console.log("Loading file");
-    var f_name = "../data/ext_lvl_" + lvl.toString() + ".txt";
+    var f_name = "./data/ext_lvl_" + lvl.toString() + ".txt";
     fetch(f_name)
         .then(function (response) { return response.text(); })
         .then(function (data) {
