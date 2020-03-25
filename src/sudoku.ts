@@ -71,7 +71,7 @@ function checkSolved(sud: number[][]) {
 // Reads a random sudoku from the file and loads it.
 function read_sudoku_from_file(callback: (s: string) => void, lvl = 7) {
   console.log("Loading file");
-  const f_name = "../data/ext_lvl_" + lvl.toString() + ".txt";
+  const f_name = "./data/ext_lvl_" + lvl.toString() + ".txt";
   fetch(f_name)
     .then(response => response.text())
     .then(data => {

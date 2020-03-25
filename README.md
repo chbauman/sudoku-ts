@@ -1,12 +1,11 @@
-# Sudoku-js
+# Sudoku-ts
 
-A game of sudoku written in Javascript as a mobile app.
-Let's you solve the hardest sudokus by hand!
-
+A game of sudoku written in TypeScript as a mobile app.
+Let's you solve the hardest sudokus by hand with backtracking.
 It allows you to guess a number and continue solving while being able to 
 return to the point of guessing. This process can be done in a nested way.
 
-Try it at: (https://chbauman.github.io/sudoku-js/).
+Try it at: (https://chbauman.github.io/sudoku-ts/).
 
 Can you solve this one? It was [devised by Arto Inkala, a Finnish mathematician, 
 and is specifically designed to be unsolvable to all but the sharpest minds.](https://www.telegraph.co.uk/news/science/science-news/9359579/Worlds-hardest-sudoku-can-you-crack-it.html)
@@ -14,6 +13,13 @@ and is specifically designed to be unsolvable to all but the sharpest minds.](ht
 
 
 Built upon simpler version found here: (https://github.com/baruchel/sudoku-js)
+
+## Installation
+
+For local development and testing, `Node.js` was used with `jest` as a
+testing framework. 
+
+TODO
 
 ## Development
 
