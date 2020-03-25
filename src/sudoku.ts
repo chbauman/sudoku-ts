@@ -1,4 +1,4 @@
-var DEBUG = true;
+const DEBUG = false;
 
 // Arrays to store the current sudoku
 // T stores the currently set numbers

@@ -1,14 +1,11 @@
 import { T, DEBUG, Marked, read_sudoku_from_file, Tsol, Tinit, permuteSuds, copy_to_2d, allowed, checkSolved, deepCopy2D, deepCopy3D } from "./sudoku.js";
 var col1 = "#0A85FF";
-var veryLightH = "#EEE";
 var smallDigCol = "#DFD";
 var rowColSquareForbidCol = "#FDD";
 var sameDigCol = "#FBB";
 var hypCol = "#0C5";
-var lightH = "#FDD";
 var normH = "#BBB";
-var wrongCol = "#F00";
-var wrongHypCol = "#B00";
+var wrongHypCol = "#F22";
 var large = true;
 var curX = -1;
 var curY = 0;
@@ -16,7 +13,6 @@ var prev_cell = [curX, curY];
 var sol_available = false;
 var inputtingOwnSud = false;
 var sudLvl;
-var hyp = false;
 var choosingHyp = false;
 var hyp_rejection_enabled = false;
 var hyps = [];
@@ -239,7 +235,6 @@ function hypothesis1() {
     else {
         finishedHypChoosing();
     }
-    log("chH after hypothesis1: " + choosingHyp.toString());
 }
 function end_hyp(e) {
     if (hyp_rejection_enabled) {

@@ -16,15 +16,12 @@ import {
 
 // Colors
 const col1 = "#0A85FF";
-const veryLightH = "#EEE";
 const smallDigCol = "#DFD";
 const rowColSquareForbidCol = "#FDD";
 const sameDigCol = "#FBB";
 const hypCol = "#0C5";
-const lightH = "#FDD";
 const normH = "#BBB";
-const wrongCol = "#F00";
-const wrongHypCol = "#B00";
+const wrongHypCol = "#F22";
 
 // State variables
 var large = true;
@@ -34,7 +31,6 @@ var prev_cell = [curX, curY]; // Stores the least recently clicked cell
 var sol_available = false;
 var inputtingOwnSud = false;
 var sudLvl: number;
-var hyp = false;
 var choosingHyp = false;
 var hyp_rejection_enabled = false;
 
@@ -272,7 +268,7 @@ function setCell(
   n: number,
   largeMode = true,
   highlightCells = false,
-  remove_red = false,
+  remove_red = false
 ) {
   //log(`Setting cell (${x}, ${y})`);
   if (n == 0) {
@@ -288,7 +284,7 @@ function setCell(
       Tref[y][x].innerHTML = n.toString();
       eliminateSmallDigs(y, x, n);
       if (highlightCells) highlight(y, x);
-      if(remove_red){
+      if (remove_red) {
         Marked[y][x] = 0;
         Tref[y][x].style.backgroundColor = normH;
       }
@@ -314,7 +310,6 @@ function hypothesis1() {
     // Cancel choosing a hypothesis digit
     finishedHypChoosing();
   }
-  log("chH after hypothesis1: " + choosingHyp.toString());
 }
 
 function end_hyp(e: Event) {
@@ -357,7 +352,7 @@ function hypothesis3() {
         setCell(i, j, T[i][j], true, false);
         if (Tref[i][j].getAttribute("clickable") == "1") {
           Tref[i][j].style.color = col1;
-          if(m > 0){
+          if (m > 0) {
             Tref[i][j].style.backgroundColor = wrongHypCol;
             Marked[i][j] = 1;
             log(`m is ${m}, setting (${i}, ${j})`);
@@ -378,8 +373,8 @@ function hypothesis3() {
     elsewhere();
   } else {
     const y = hyps[nHyps - 2][0][0];
-    const x = hyps[nHyps - 2][0][1];    
-    if(mark_copy[y][x]){
+    const x = hyps[nHyps - 2][0][1];
+    if (mark_copy[y][x]) {
       Marked[y][x] = 1;
       Tref[y][x].style.backgroundColor = wrongHypCol;
     }
@@ -467,7 +462,8 @@ function clickCell(cell: HTMLTableCellElement) {
   const c = Number(cell.getAttribute("clickable"));
   const y = Number(cell.getAttribute("y"));
   const x = Number(cell.getAttribute("x"));
-  if (T[y][x] > 0) { // If number in cell is set
+  if (T[y][x] > 0) {
+    // If number in cell is set
     highlight(y, x);
   } else {
     if (Marked[y][x] == 0) {
@@ -479,7 +475,8 @@ function clickCell(cell: HTMLTableCellElement) {
   prev_cell = [x, y];
   log(`Selected ${c} cell (${curY}, ${curX})`);
   const clickable = c == 1;
-  if (clickable) { // If Cell is clickable
+  if (clickable) {
+    // If Cell is clickable
     $("#digits").off("click", "**");
     // Enable all digits that are admissible
     var a = allowed(T, y, x, clickable);
@@ -623,14 +620,14 @@ function updateGrid(remove_marks = true) {
   log("Updating grid...");
   for (let i = 0; i < 9; i++) {
     for (let j = 0; j < 9; j++) {
-      const curr_val =  T[i][j];
+      const curr_val = T[i][j];
       const curr_mark = Marked[i][j];
       setCell(i, j, curr_val, true, false);
-      if(!remove_marks || (curr_val > 0 && curr_mark != 0)){
+      if (!remove_marks || (curr_val > 0 && curr_mark != 0)) {
         Marked[i][j] = 1;
       }
       Tref[i][j].style.color = "";
-      if(Marked[i][j] == 0){
+      if (Marked[i][j] == 0) {
         Tref[i][j].style.backgroundColor = "";
       }
     }
