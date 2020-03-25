@@ -1,0 +1,197 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <title>Sudoku Solving Assistant</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" />
+
+    <link rel="icon" type="image/jpg" href="src/Entwurf.jpg" />
+    <link rel="stylesheet" href="src/jquery.mobile-1.4.5.min.css" />
+    <script type="text/javascript" src="src/jquery-1.11.1.min.js"></script>
+    <script
+      type="text/javascript"
+      src="src/jquery.mobile-1.4.5.min.js"
+    ></script>
+
+    <script type="module" src="src/main.js"></script>
+
+    <link rel="stylesheet" href="src/style.css" />
+    <link rel="stylesheet" href="ionic/ionicons.min.css" />
+  </head>
+
+  <body>
+    <!-- Start of the page -->
+    <div data-role="page" id="home">
+      <!--
+      <div data-role="header">
+        <h1>Sudoku</h1>
+      </div>
+        -->
+
+      <div role="main" class="ui-content">
+        <h1>Sudoku Solving Assistant</h1>
+
+        <div class="table">
+          <table id="grid"></table>
+        </div>
+
+        <div class="table panel">
+          <table id="digits">
+            <tr>
+              <td id="digit-0" class="ion-backspace digit"></td>
+              <td id="digit-1" class="digit">1</td>
+              <td id="digit-2" class="digit">2</td>
+              <td id="digit-3" class="digit">3</td>
+              <td id="digit-4" class="digit">4</td>
+              <td id="up-but" class="ion-android-arrow-up digit"></td>
+            </tr>
+
+            <tr>
+              <td id="digit-5" class="digit">5</td>
+              <td id="digit-6" class="digit">6</td>
+              <td id="digit-7" class="digit">7</td>
+              <td id="digit-8" class="digit">8</td>
+              <td id="digit-9" class="digit">9</td>
+              <td id="down-but" class="ion-android-arrow-down digit"></td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="panel">
+          <ul id="buttons1"></ul>
+        </div>
+        <div>
+          <ul id="buttons2">
+            <li
+              class="ion-android-refresh"
+              data-pack="android"
+              onclick='$( "#restart" ).popup( "open" );'
+            ></li>
+            <li
+              class="ion-code-working"
+              data-pack="default"
+              onclick='$( "#newGrid" ).popup( "open" );'
+            ></li>
+            <li class="ion-ios-help-empty" id="auto-fill-button"></li>
+            <li id="but1" class="ion-fork-repo" data-pack="default"></li>
+            <li
+              id="but3"
+              class="ion-android-close"
+              data-pack="android"
+              onclick="null;"
+            ></li>
+            <li id="own_sud" class="ion-document" data-pack="android"></li>
+            <li
+              class="ion-map"
+              data-pack="default"
+              onclick='$( "#help" ).popup( "open" );'
+            ></li>
+          </ul>
+        </div>
+      </div>
+
+      <!--
+      <div data-role="footer">
+        <h4>@baruchel</h4>
+        <tt>written by th. baruchel</tt>
+      </div>
+      -->
+
+      <div
+        data-role="popup"
+        id="waiting"
+        class="ui-content"
+        data-theme="b"
+        data-overlay-theme="b"
+      >
+        <p>generating a new grid…</p>
+      </div>
+
+      <div
+        data-role="popup"
+        id="newGrid"
+        class="ui-content"
+        data-theme="b"
+        data-overlay-theme="b"
+      >
+        <h2>Select level:</h2>
+        <ul id="lvl_list">
+          <li>Lvl 0</li>
+          <li>Lvl 1</li>
+          <li>Lvl 2</li>
+          <li>Lvl 3</li>
+          <li>Lvl 4</li>
+          <li>Lvl 5</li>
+          <li>Lvl 6</li>
+          <li>Lvl 7</li>
+          <li>Lvl 8</li>
+        </ul>
+      </div>
+
+      <div
+        data-role="popup"
+        id="restart"
+        class="ui-content"
+        data-theme="b"
+        data-overlay-theme="b"
+      >
+        <h2>Restart game?</h2>
+        <ul>
+          <li id="restart_but">yes</li>
+          <li id="cancel" onclick='$( "#restart" ).popup( "close" );'>
+            cancel
+          </li>
+        </ul>
+      </div>
+
+      <div
+        data-role="popup"
+        id="win"
+        class="ui-content"
+        data-theme="b"
+        data-overlay-theme="b"
+      >
+        <h2 id="solved-h">You Solved it!!</h2>
+        <video autoplay loop id="fin-vid">
+          <source src="gifs/nice.mp4" type="video/mp4" />
+          Your browser does not support HTML5 video.
+        </video>
+        <p id="log-txt"></p>
+      </div>
+
+      <div
+        data-role="popup"
+        id="help"
+        class="ui-content"
+        data-theme="b"
+        data-overlay-theme="b"
+      >
+        <h2>Help</h2>
+        <p>Main symbols</p>
+        <ul>
+          <li class="ion-fork-repo" data-pack="default"></li>
+          <li class="help">Make a hypothesis</li>
+          <li class="ion-android-close" data-pack="default"></li>
+          <li class="help">Reject hypothesis</li>
+          <li class="ion-ios-help-empty" data-pack="default"></li>
+          <li class="help">Fill in pencil marks</li>
+          <li class="ion-android-refresh" data-pack="android"></li>
+          <li class="help">Restart same grid</li>
+          <li class="ion-document" data-pack="android"></li>
+          <li class="help">Input your own sudoku</li>
+          <li class="ion-code-working" data-pack="default"></li>
+          <li class="help">Generate a new grid</li>
+        </ul>
+        <p>Additional tools:</p>
+        <h3 id="check" class="helpButton">
+          Show wrong answers
+        </h3>
+        <h3 id="solve" class="helpButton">
+          Solve current grid
+        </h3>
+        <p>(Not available for custom sudokus.)</p>
+      </div>
+    </div>
+    <!-- End of the page -->
+  </body>
+</html>

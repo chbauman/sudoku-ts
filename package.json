@@ -1,0 +1,24 @@
+{
+  "name": "test_import",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "jest --coverage"
+  },
+  "type": "module",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/jquery": "^3.3.33",
+    "@types/node": "^13.9.3",
+    "esm": "^3.2.25",
+    "node-fetch": "^2.6.0",
+    "node-fetch-polyfill": "^2.0.6"
+  },
+  "devDependencies": {
+    "babel-jest": "^25.1.0",
+    "babel-preset-env": "^1.7.0",
+    "jest": "^25.1.0"
+  }
+}
