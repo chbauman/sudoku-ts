@@ -1,4 +1,4 @@
-var DEBUG = false;
+var DEBUG = true;
 var T = Array.from(new Array(9), function () { return new Array(9).fill(0); });
 var Tsol = Array.from(new Array(9), function () { return new Array(9).fill(0); });
 var Tinit = Array.from(new Array(9), function () { return new Array(9).fill(0); });

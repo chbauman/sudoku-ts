@@ -375,7 +375,8 @@ function clickCell(cell) {
     var c = Number(cell.getAttribute("clickable"));
     var y = Number(cell.getAttribute("y"));
     var x = Number(cell.getAttribute("x"));
-    if (T[y][x] > 0) {
+    var num_set = T[y][x] > 0;
+    if (num_set) {
         highlight(y, x);
     }
     else {
@@ -394,6 +395,9 @@ function clickCell(cell) {
         var d = new Array(10).fill(false);
         for (var i = 0; i < a.length; i++)
             d[a[i]] = true;
+        if (num_set) {
+            d[T[y][x]] = true;
+        }
         d[0] = true;
         var _loop_2 = function (i) {
             if (d[i]) {
@@ -415,6 +419,10 @@ function clickCell(cell) {
                         setCell(y, x, v_1, large, true, true);
                         if (v_1 == 0) {
                             clickCell(Tref[y][x]);
+                        }
+                        else {
+                            unhighlightAll();
+                            highlight(y, x);
                         }
                         checkSolvedSud();
                         e.stopPropagation();

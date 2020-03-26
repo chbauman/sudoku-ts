@@ -462,7 +462,8 @@ function clickCell(cell: HTMLTableCellElement) {
   const c = Number(cell.getAttribute("clickable"));
   const y = Number(cell.getAttribute("y"));
   const x = Number(cell.getAttribute("x"));
-  if (T[y][x] > 0) {
+  const num_set = T[y][x] > 0;
+  if (num_set) {
     // If number in cell is set
     highlight(y, x);
   } else {
@@ -482,6 +483,10 @@ function clickCell(cell: HTMLTableCellElement) {
     var a = allowed(T, y, x, clickable);
     var d = new Array(10).fill(false);
     for (let i = 0; i < a.length; i++) d[a[i]] = true;
+    if(num_set){
+      // Set the currently set number button to clickable
+      d[T[y][x]] = true;
+    }
     d[0] = true;
     for (let i = 0; i < 10; i++) {
       if (d[i]) {
@@ -502,8 +507,11 @@ function clickCell(cell: HTMLTableCellElement) {
             setCell(y, x, v, large, true, true);
             if (v == 0) {
               clickCell(Tref[y][x]); // Depth one recursion
+            } else {
+              unhighlightAll();
+              highlight(y, x);
             }
-            checkSolvedSud();
+            checkSolvedSud();            
             e.stopPropagation();
           });
         } else {
