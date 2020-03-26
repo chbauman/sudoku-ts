@@ -483,7 +483,7 @@ function clickCell(cell: HTMLTableCellElement) {
     var a = allowed(T, y, x, clickable);
     var d = new Array(10).fill(false);
     for (let i = 0; i < a.length; i++) d[a[i]] = true;
-    if(num_set){
+    if (num_set) {
       // Set the currently set number button to clickable
       d[T[y][x]] = true;
     }
@@ -511,7 +511,7 @@ function clickCell(cell: HTMLTableCellElement) {
               unhighlightAll();
               highlight(y, x);
             }
-            checkSolvedSud();            
+            checkSolvedSud();
             e.stopPropagation();
           });
         } else {

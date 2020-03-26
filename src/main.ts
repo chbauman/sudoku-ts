@@ -9,6 +9,13 @@ import {
   clickCell
 } from "./html_util.js";
 
+// TODO:
+// - Change Cursor when hovering over digit buttons to hand or something
+// - Reorder bottom buttons
+// - Unit-test html_utils.ts
+// - Unit-test main.ts
+// - Test and document installation for development
+
 // State Variables
 var initialized = false;
 
