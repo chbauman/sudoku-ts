@@ -5,8 +5,7 @@
 // - Change Cursor when hovering over digit buttons to hand or something
 // - Unit-test html_utils.ts
 // - Unit-test main.ts
-// - Test and document installation for development
-// - Add description on Github and update Readme.md
+// - Test installation from scratch (e.g. without node.js installed)
 
 // Import sudoku module
 import {
