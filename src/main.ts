@@ -15,7 +15,6 @@ import {
 // - Unit-test html_utils.ts
 // - Unit-test main.ts
 // - Test and document installation for development
-// - Update symbols in help
 
 // State Variables
 var initialized = false;
