@@ -6,6 +6,7 @@
 // - Unit-test html_utils.ts
 // - Unit-test main.ts
 // - Test installation from scratch (e.g. without node.js installed)
+// - Better sub-cell placement for pencil mark
 
 // Import sudoku module
 import {
