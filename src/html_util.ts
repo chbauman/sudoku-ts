@@ -507,7 +507,7 @@ function clickCell(cell: HTMLTableCellElement) {
             setCell(y, x, v, large, true, true);
             if (v == 0) {
               clickCell(Tref[y][x]); // Depth one recursion
-            } else {
+            } else if (large) {
               unhighlightAll();
               highlight(y, x);
             }

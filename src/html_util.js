@@ -420,7 +420,7 @@ function clickCell(cell) {
                         if (v_1 == 0) {
                             clickCell(Tref[y][x]);
                         }
-                        else {
+                        else if (large) {
                             unhighlightAll();
                             highlight(y, x);
                         }
