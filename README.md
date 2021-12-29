@@ -4,7 +4,7 @@ A game of sudoku written in TypeScript as a mobile app.
 Let's you solve the hardest sudokus by hand with depth-first search.
 It allows you to guess a number and continue solving while being able to
 return to the point of guessing. This process can be done in a nested way.
-Try it at http://sudoku.emeki.ch, a screenshot is shown below.
+Try it at [sudoku.emeki.ch](sudoku.emeki.ch), a screenshot is shown below.
 
 ![](https://chbauman.github.io/assets/img/posts/screen_sudoku_broad.png)
 
