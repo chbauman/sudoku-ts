@@ -1,4 +1,4 @@
-import { init_grid, set_buttons, html_button_dict, digits, log, elsewhere, clickCell, } from "./html_util.js";
+import { initGrid, setButtons, htmlButtonDict, digits, log, elsewhere, clickCell, } from "./html_util.js";
 var initialized = false;
 function init() {
     if (initialized) {
@@ -9,7 +9,7 @@ function init() {
     }
     window.addEventListener("load", init);
     document.querySelector("body").addEventListener("click", elsewhere);
-    var but_ids = [
+    var butIds = [
         "down-but",
         "up-but",
         "restart_but",
@@ -25,15 +25,15 @@ function init() {
         "fin-vid",
         "solved-h",
     ];
-    for (var _i = 0, but_ids_1 = but_ids; _i < but_ids_1.length; _i++) {
-        var b_id = but_ids_1[_i];
-        html_button_dict.set(b_id, document.getElementById(b_id));
+    for (var _i = 0, butIds_1 = butIds; _i < butIds_1.length; _i++) {
+        var bId = butIds_1[_i];
+        htmlButtonDict.set(bId, document.getElementById(bId));
     }
-    set_buttons();
+    setButtons();
     for (var i_1 = 0; i_1 < 10; i_1++)
         digits[i_1] = document.getElementById("digit-" + String(i_1));
     var tbl = document.getElementById("grid");
-    init_grid(tbl);
+    initGrid(tbl);
     log("Initialized grid!");
     $("#grid").on("click", ".gridCell", function (e) {
         clickCell(this);

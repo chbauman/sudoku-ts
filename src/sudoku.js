@@ -26,10 +26,10 @@ function range(n) {
     }
     return arr;
 }
-function copy_to_2d(src_arr, dest_arr) {
-    var len = src_arr.length;
+function copyTo2d(srcArr, destArr) {
+    var len = srcArr.length;
     for (var i = 0; i < len; i++) {
-        dest_arr[i] = src_arr[i].slice();
+        destArr[i] = srcArr[i].slice();
     }
 }
 function shuffle(array) {
@@ -50,25 +50,24 @@ function checkSolved(sud) {
     }
     return true;
 }
-function read_sudoku_from_file(callback, lvl) {
+function readSudokuFromFile(callback, lvl) {
     if (lvl === void 0) { lvl = 7; }
     console.log("Loading file");
-    var f_name = "./data/ext_lvl_" + lvl.toString() + ".txt";
-    fetch(f_name)
+    var fileName = "./data/ext_lvl_" + lvl.toString() + ".txt";
+    fetch(fileName)
         .then(function (response) { return response.text(); })
         .then(function (data) {
         var items = data.split("\n");
-        var n_s = items.length - 1;
-        var s_ind = Math.floor(Math.random() * n_s);
-        var sud_str = items[s_ind];
-        callback(sud_str);
+        var nItems = items.length - 1;
+        var sInd = Math.floor(Math.random() * nItems);
+        callback(items[sInd]);
     });
 }
-function allowed(A, y, x, ignore_set) {
-    if (ignore_set === void 0) { ignore_set = false; }
+function allowed(A, y, x, ignoreSet) {
+    if (ignoreSet === void 0) { ignoreSet = false; }
     var res = [];
     var arr = new Array(10).fill(true);
-    if (A[y][x] > 0 && !ignore_set)
+    if (A[y][x] > 0 && !ignoreSet)
         return res;
     for (var i = 0; i < 9; i++)
         arr[A[y][i]] = false;
@@ -81,71 +80,71 @@ function allowed(A, y, x, ignore_set) {
             res.push(i);
     return res;
 }
-function permuteSuds(s, s_sol, n) {
+function permuteSuds(s, sudokuSol, n) {
     if (n === void 0) { n = 5; }
     var numPer = range(9);
     shuffle(numPer);
     for (var i = 0; i < 9; ++i) {
         for (var k = 0; k < 9; ++k) {
-            var val = s_sol[i][k];
-            var val_new = numPer[val - 1] + 1;
-            s_sol[i][k] = val_new;
+            var val = sudokuSol[i][k];
+            var valNew = numPer[val - 1] + 1;
+            sudokuSol[i][k] = valNew;
             if (s[i][k] != 0) {
-                s[i][k] = val_new;
+                s[i][k] = valNew;
             }
         }
     }
     var solutionCopy;
-    var s_copy;
+    var sudokuCopy;
     var per3 = range(3);
-    for (var n_shuff = 0; n_shuff < n; ++n_shuff) {
-        solutionCopy = deepCopy2D(s_sol);
-        s_copy = deepCopy2D(s);
+    for (var nShuff = 0; nShuff < n; ++nShuff) {
+        solutionCopy = deepCopy2D(sudokuSol);
+        sudokuCopy = deepCopy2D(s);
         for (var k = 0; k < 3; ++k) {
             shuffle(per3);
             var offs = k * 3;
             for (var i = 0; i < 3; ++i) {
-                s_sol[offs + i] = solutionCopy[offs + per3[i]].slice();
-                s[offs + i] = s_copy[offs + per3[i]].slice();
+                sudokuSol[offs + i] = solutionCopy[offs + per3[i]].slice();
+                s[offs + i] = sudokuCopy[offs + per3[i]].slice();
             }
         }
-        solutionCopy = deepCopy2D(s_sol);
-        s_copy = deepCopy2D(s);
+        solutionCopy = deepCopy2D(sudokuSol);
+        sudokuCopy = deepCopy2D(s);
         for (var k = 0; k < 3; ++k) {
             shuffle(per3);
             var offs = k * 3;
             for (var i = 0; i < 3; ++i) {
                 for (var j = 0; j < 9; ++j) {
-                    s_sol[j][offs + i] = solutionCopy[j][offs + per3[i]];
-                    s[j][offs + i] = s_copy[j][offs + per3[i]];
+                    sudokuSol[j][offs + i] = solutionCopy[j][offs + per3[i]];
+                    s[j][offs + i] = sudokuCopy[j][offs + per3[i]];
                 }
             }
         }
-        solutionCopy = deepCopy2D(s_sol);
-        s_copy = deepCopy2D(s);
+        solutionCopy = deepCopy2D(sudokuSol);
+        sudokuCopy = deepCopy2D(s);
         shuffle(per3);
         for (var k = 0; k < 3; ++k) {
             var offs = per3[k] * 3;
-            var offs_k = k * 3;
+            var offsK = k * 3;
             for (var i = 0; i < 3; ++i) {
-                s_sol[offs_k + i] = solutionCopy[offs + i].slice();
-                s[offs_k + i] = s_copy[offs + i].slice();
+                sudokuSol[offsK + i] = solutionCopy[offs + i].slice();
+                s[offsK + i] = sudokuCopy[offs + i].slice();
             }
         }
-        solutionCopy = deepCopy2D(s_sol);
-        s_copy = deepCopy2D(s);
+        solutionCopy = deepCopy2D(sudokuSol);
+        sudokuCopy = deepCopy2D(s);
         shuffle(per3);
         for (var k = 0; k < 3; ++k) {
             var offs = per3[k] * 3;
-            var offs_k = k * 3;
+            var offsK = k * 3;
             for (var i = 0; i < 3; ++i) {
                 for (var j = 0; j < 9; ++j) {
-                    s_sol[j][offs_k + i] = solutionCopy[j][offs + i];
-                    s[j][offs_k + i] = s_copy[j][offs + i];
+                    sudokuSol[j][offsK + i] = solutionCopy[j][offs + i];
+                    s[j][offsK + i] = sudokuCopy[j][offs + i];
                 }
             }
         }
     }
 }
-export { T, Tsol, Tinit, DEBUG, Marked, range, shuffle, deepCopy2D, read_sudoku_from_file, permuteSuds, copy_to_2d, allowed, checkSolved, deepCopy3D, };
+export { T, Tsol, Tinit, DEBUG, Marked, range, shuffle, deepCopy2D, readSudokuFromFile, permuteSuds, copyTo2d, allowed, checkSolved, deepCopy3D, };
 //# sourceMappingURL=sudoku.js.map

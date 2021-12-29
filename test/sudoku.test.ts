@@ -1,19 +1,14 @@
 // This also runs the module
 import {
   T,
-  Tsol,
-  Tinit,
-  DEBUG,
-  Marked,
   range,
   shuffle,
   deepCopy2D,
-  read_sudoku_from_file,
   permuteSuds,
-  copy_to_2d,
+  copyTo2d,
   allowed,
   checkSolved,
-  deepCopy3D
+  deepCopy3D,
 } from "../src/sudoku.js";
 
 // Checks if sudoku contains valid values
@@ -47,12 +42,12 @@ test("test 3d deep copy", () => {
   let arr1 = [
     [
       [1, 2],
-      [4, 5]
+      [4, 5],
     ],
     [
       [3, 3],
-      [6, 6]
-    ]
+      [6, 6],
+    ],
   ];
   let arr2 = deepCopy3D(arr1);
   arr1[0][0][0] = 5;
@@ -62,7 +57,7 @@ test("test 3d deep copy", () => {
 test("test 2d deep copy", () => {
   let arr1 = [
     [1, 2, 3],
-    [4, 5, 6]
+    [4, 5, 6],
   ];
   let arr2 = deepCopy2D(arr1);
   arr1[0][0] = 5;
@@ -72,13 +67,13 @@ test("test 2d deep copy", () => {
 test("test 2d deep copy 2", () => {
   let arr1 = [
     [1, 2, 3],
-    [4, 5, 6]
+    [4, 5, 6],
   ];
   let arr2 = [
     [0, 0, 0],
-    [0, 0, 0]
+    [0, 0, 0],
   ];
-  copy_to_2d(arr1, arr2);
+  copyTo2d(arr1, arr2);
   arr1[0][0] = 5;
   expect(arr2[0][0]).toBe(1);
 });
@@ -86,7 +81,7 @@ test("test 2d deep copy 2", () => {
 test("test shuffle", () => {
   let arr1 = [1, 2, 3, 4, 5];
   let arr2 = shuffle(arr1);
-  const arrSum = arr2 => arr2.reduce((a, b) => a + b, 0);
+  const arrSum = (arr2) => arr2.reduce((a, b) => a + b, 0);
   expect(arr2.length).toBe(5);
   expect(arrSum(arr2)).toBe(15);
 });
@@ -117,9 +112,3 @@ test("test allowed", () => {
   let all_nums = allowed(sud, 2, 0);
   expect(all_nums.length).toBe(3);
 });
-
-// global.fetch = require('node-fetch-polyfill');
-// test("test read_from_file", () => {
-//   const callback = s => {};
-//   read_sudoku_from_file(callback, 7);
-// });

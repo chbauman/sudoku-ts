@@ -1,4 +1,4 @@
-import { T, DEBUG, Marked, read_sudoku_from_file, Tsol, Tinit, permuteSuds, copy_to_2d, allowed, checkSolved, deepCopy2D, deepCopy3D, } from "./sudoku.js";
+import { T, DEBUG, Marked, readSudokuFromFile, Tsol, Tinit, permuteSuds, copyTo2d, allowed, checkSolved, deepCopy2D, deepCopy3D, } from "./sudoku.js";
 var col1 = "#0A85FF";
 var smallDigCol = "#DFD";
 var rowColSquareForbidCol = "#FDD";
@@ -54,7 +54,7 @@ function shrink(e) {
     }
     e.stopPropagation();
 }
-function init_grid(tbl) {
+function initGrid(tbl) {
     for (var i = 0; i < 9; i++) {
         var row = tbl.insertRow(-1);
         row.className = "gridRow";
@@ -81,17 +81,17 @@ function init_grid(tbl) {
             Tref[i][j].setAttributeNode(click);
             TminiCells[i][j] = new Array(9);
             subTab.className = "innerTable";
-            var sub_row = void 0;
-            var sub_cell = void 0;
+            var subRow = void 0;
+            var subCell = void 0;
             for (var k = 0; k < 9; k++) {
                 if (k % 3 == 0) {
-                    sub_row = subTab.insertRow(-1);
-                    sub_row.className = "gridRow";
+                    subRow = subTab.insertRow(-1);
+                    subRow.className = "gridRow";
                 }
-                sub_cell = sub_row.insertCell(-1);
-                sub_cell.innerHTML = "";
-                sub_cell.className = "subGridCell";
-                TminiCells[i][j][k] = sub_cell;
+                subCell = subRow.insertCell(-1);
+                subCell.innerHTML = "";
+                subCell.className = "subGridCell";
+                TminiCells[i][j][k] = subCell;
             }
             Tref[i][j].appendChild(subTab);
             TsubHTMLTables[i][j] = subTab;
@@ -118,11 +118,11 @@ function setLevelFun() {
         _loop_1(k);
     }
 }
-function start_hyp(e) {
+function startHyp(e) {
     hypothesis1();
     e.stopPropagation();
 }
-function set_buttons() {
+function setButtons() {
     var upBut = htmlButtonDict.get("up-but");
     upBut.style.color = col1;
     upBut.style.borderColor = col1;
@@ -145,23 +145,23 @@ function set_buttons() {
     htmlButtonDict.get("digits").style.display = "inline-block";
     htmlButtonDict.get("buttons1").style.display = "none";
     setLevelFun();
-    function solve_and_close() {
+    function solveAndClose() {
         solve();
         $("#help").popup("close");
     }
-    htmlButtonDict.get("solve").addEventListener("click", solve_and_close);
-    function check_and_close() {
+    htmlButtonDict.get("solve").addEventListener("click", solveAndClose);
+    function checkAndClose() {
         check();
         $("#help").popup("close");
     }
-    htmlButtonDict.get("check").addEventListener("click", check_and_close);
+    htmlButtonDict.get("check").addEventListener("click", checkAndClose);
 }
 function disableHyp() {
     htmlButtonDict.get("but1").onclick = null;
     htmlButtonDict.get("but1").style.color = "#B8B8B8";
 }
 function enableHyp() {
-    htmlButtonDict.get("but1").onclick = start_hyp;
+    htmlButtonDict.get("but1").onclick = startHyp;
     htmlButtonDict.get("but1").style.color = "#000";
 }
 function resetMiniCell(y, x, n) {
@@ -246,14 +246,14 @@ function hypothesis3() {
         return;
     var lastHyp = hyps[nHyps - 1];
     log("N hyps: " + nHyps);
-    var mark_copy = deepCopy2D(Marked);
+    var markCopy = deepCopy2D(Marked);
     if (nHyps < 2) {
-        copy_to_2d(Tinit, T);
+        copyTo2d(Tinit, T);
         updateGrid();
         setClickableTrefT();
     }
     else {
-        copy_to_2d(hyps[nHyps - 2][1], T);
+        copyTo2d(hyps[nHyps - 2][1], T);
         updateGrid();
         setClickableTrefT();
         var y = hyps[nHyps - 2][0][0];
@@ -261,12 +261,12 @@ function hypothesis3() {
         Tref[y][x].style.color = hypCol;
         Tref[y][x].setAttribute("clickable", "0");
     }
-    copy_to_2d(lastHyp[1], T);
+    copyTo2d(lastHyp[1], T);
     TsubBinaryTables = lastHyp[2];
     for (var i = 0; i < 9; i++) {
         for (var j = 0; j < 9; j++) {
             if (T[i][j] > 0) {
-                var m = mark_copy[i][j];
+                var m = markCopy[i][j];
                 setCell(i, j, T[i][j], true, false);
                 if (Tref[i][j].getAttribute("clickable") == "1") {
                     Tref[i][j].style.color = col1;
@@ -292,7 +292,7 @@ function hypothesis3() {
     else {
         var y = hyps[nHyps - 2][0][0];
         var x = hyps[nHyps - 2][0][1];
-        if (mark_copy[y][x]) {
+        if (markCopy[y][x]) {
             Marked[y][x] = 1;
             Tref[y][x].style.backgroundColor = wrongHypCol;
         }
@@ -340,29 +340,29 @@ function checkSolvedSud() {
     if (!slvd) {
         return;
     }
-    var vid_src = "./gifs/gj.mp4";
+    var vidSrc = "./gifs/gj.mp4";
     var title = "You solved it!! :)";
     if (sudLvl == -2) {
-        vid_src = "./gifs/uncivilized.mp4";
+        vidSrc = "./gifs/uncivilized.mp4";
         title = "You used the solver :(";
     }
     else if (sudLvl == -1) {
-        vid_src = "./gifs/thumbs_up.mp4";
+        vidSrc = "./gifs/thumbs_up.mp4";
         title = "You solved your own sudoku.";
     }
     else if (sudLvl == 0) {
-        vid_src = "./gifs/yoda_fear.mp4";
+        vidSrc = "./gifs/yoda_fear.mp4";
         title = "Do not fear the harder ones.";
     }
     else if (sudLvl < 5) {
-        vid_src = "./gifs/good.mp4";
+        vidSrc = "./gifs/good.mp4";
         title = "Now try another one.";
     }
     else if (sudLvl == 8) {
-        vid_src = "./gifs/unlim_power.mp4";
+        vidSrc = "./gifs/unlim_power.mp4";
         title = "Nothing you can't solve.";
     }
-    htmlButtonDict.get("fin-vid").src = vid_src;
+    htmlButtonDict.get("fin-vid").src = vidSrc;
     htmlButtonDict.get("solved-h").src = title;
     $("#win").popup("open");
     console.log(sudLvl);
@@ -430,9 +430,9 @@ function clickCell(cell) {
                             return;
                         }
                         log("Saving current state");
-                        var T_copy = deepCopy2D(T);
-                        var TsubBinaryTables_copy = deepCopy3D(TsubBinaryTables);
-                        var hypTuple = [[y, x], T_copy, TsubBinaryTables_copy];
+                        var tCopy = deepCopy2D(T);
+                        var tSubBinaryTablesCopy = deepCopy3D(TsubBinaryTables);
+                        var hypTuple = [[y, x], tCopy, tSubBinaryTablesCopy];
                         hyps.push(hypTuple);
                         setClickableTrefT();
                         T[y][x] = v_1;
@@ -526,15 +526,15 @@ function unhighlightAll() {
         }
     }
 }
-function updateGrid(remove_marks) {
-    if (remove_marks === void 0) { remove_marks = true; }
+function updateGrid(removeMarks) {
+    if (removeMarks === void 0) { removeMarks = true; }
     log("Updating grid...");
     for (var i = 0; i < 9; i++) {
         for (var j = 0; j < 9; j++) {
             var currVal = T[i][j];
             var currMark = Marked[i][j];
             setCell(i, j, currVal, true, false);
-            if (!remove_marks || (currVal > 0 && currMark != 0)) {
+            if (!removeMarks || (currVal > 0 && currMark != 0)) {
                 Marked[i][j] = 1;
             }
             Tref[i][j].style.color = "";
@@ -556,23 +556,21 @@ function setClickableTrefT() {
         }
     }
 }
-function setSudFromStr(ret_sud) {
+function setSudFromStr(retSud) {
     $("#newGrid").popup("close");
     $("#waiting").popup("open");
-    var s_and_sol_str = ret_sud.substr(13, 324);
-    var s_str = s_and_sol_str.substr(0, 162);
-    var s_sol_str = s_and_sol_str.substr(162, 162);
+    var sudAndSolStr = retSud.substr(13, 324);
+    var sStr = sudAndSolStr.substr(0, 162);
+    var sSolStr = sudAndSolStr.substr(162, 162);
     for (var i = 0; i < 9; i++) {
         for (var j = 0; j < 9; j++) {
-            var tot_ind_t2 = 2 * (i * 9 + j);
-            var e_s = parseInt(s_str.substr(tot_ind_t2, 2));
-            var e_sol = parseInt(s_sol_str.substr(tot_ind_t2, 2));
-            T[i][j] = e_s;
-            Tsol[i][j] = e_sol;
+            var totIndT2 = 2 * (i * 9 + j);
+            T[i][j] = parseInt(sStr.substr(totIndT2, 2));
+            Tsol[i][j] = parseInt(sSolStr.substr(totIndT2, 2));
         }
     }
     permuteSuds(T, Tsol);
-    copy_to_2d(T, Tinit);
+    copyTo2d(T, Tinit);
     if (!solAvailable)
         solAvailable = true;
     updateGrid();
@@ -583,17 +581,17 @@ function setSudFromStr(ret_sud) {
 function disableSmallDigs() {
     log("Disabled down button");
     enlarge();
-    var down_but = htmlButtonDict.get("down-but");
-    down_but.onclick = null;
-    down_but.style.color = "#B8B8B8";
-    down_but.style.borderColor = "#B8B8B8";
-    down_but.style.cursor = "pointer";
+    var downBut = htmlButtonDict.get("down-but");
+    downBut.onclick = null;
+    downBut.style.color = "#B8B8B8";
+    downBut.style.borderColor = "#B8B8B8";
+    downBut.style.cursor = "pointer";
 }
 function enableSmallDigs() {
-    var down_but = htmlButtonDict.get("down-but");
-    down_but.onclick = shrink;
-    down_but.style.color = "";
-    down_but.style.borderColor = "";
+    var downBut = htmlButtonDict.get("down-but");
+    downBut.onclick = shrink;
+    downBut.style.color = "";
+    downBut.style.borderColor = "";
 }
 function inputCustomSudoku() {
     if (!inputtingOwnSud) {
@@ -602,8 +600,8 @@ function inputCustomSudoku() {
         disableHyp();
         inputtingOwnSud = true;
         solAvailable = false;
-        var own_but = htmlButtonDict.get("own_sud");
-        own_but.style.color = "#F00";
+        var ownBut = htmlButtonDict.get("own_sud");
+        ownBut.style.color = "#F00";
         for (var i = 0; i < 9; i++) {
             for (var j = 0; j < 9; j++) {
                 T[i][j] = 0;
@@ -620,9 +618,9 @@ function inputCustomSudoku() {
         enableHyp();
         sudLvl = -1;
         inputtingOwnSud = false;
-        var own_but = htmlButtonDict.get("own_sud");
-        own_but.style.color = "";
-        copy_to_2d(T, Tinit);
+        var ownBut = htmlButtonDict.get("own_sud");
+        ownBut.style.color = "";
+        copyTo2d(T, Tinit);
         setClickableTrefT();
         enableSmallDigs();
     }
@@ -632,7 +630,7 @@ function loadRandomSud(lvl) {
     if (inputtingOwnSud) {
         inputCustomSudoku();
     }
-    read_sudoku_from_file(setSudFromStr, lvl);
+    readSudokuFromFile(setSudFromStr, lvl);
     log("Loaded sudoku with level " + lvl);
 }
 function setHypButtons() {
@@ -701,5 +699,5 @@ function fillSmallDigits() {
     }
     unhighlightAll();
 }
-export { enlarge, shrink, init_grid, htmlButtonDict as html_button_dict, col1, digits, loadRandomSud, set_buttons, log, elsewhere, clickCell, };
+export { enlarge, shrink, initGrid, htmlButtonDict, col1, digits, loadRandomSud, setButtons, log, elsewhere, clickCell, };
 //# sourceMappingURL=html_util.js.map

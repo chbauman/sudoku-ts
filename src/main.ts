@@ -10,9 +10,9 @@
 
 // Import sudoku module
 import {
-  init_grid,
-  set_buttons,
-  html_button_dict,
+  initGrid,
+  setButtons,
+  htmlButtonDict,
   digits,
   log,
   elsewhere,
@@ -34,7 +34,7 @@ function init() {
   document.querySelector("body").addEventListener("click", elsewhere);
 
   // Set button map
-  const but_ids = [
+  const butIds = [
     "down-but",
     "up-but",
     "restart_but",
@@ -50,10 +50,10 @@ function init() {
     "fin-vid",
     "solved-h",
   ];
-  for (let b_id of but_ids) {
-    html_button_dict.set(b_id, document.getElementById(b_id));
+  for (const bId of butIds) {
+    htmlButtonDict.set(bId, document.getElementById(bId));
   }
-  set_buttons();
+  setButtons();
 
   // Set digits
   for (let i = 0; i < 10; i++)
@@ -61,7 +61,7 @@ function init() {
 
   // Initialize grid
   const tbl = document.getElementById("grid") as HTMLTableElement;
-  init_grid(tbl);
+  initGrid(tbl);
   log("Initialized grid!");
 
   // click on cells
