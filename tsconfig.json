@@ -6,7 +6,9 @@
     "removeComments": true,
     "preserveConstEnums": true,
     "sourceMap": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "outDir": "dist",
+    "strict": true
   },
   "files": ["src/main.ts", "src/sudoku.ts", "src/html_util.ts"],
   "exclude": ["./node_modules/*"]

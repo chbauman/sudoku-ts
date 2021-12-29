@@ -12,7 +12,7 @@ import {
   checkSolved,
   deepCopy2D,
   deepCopy3D,
-} from "./sudoku.js";
+} from "./sudoku";
 
 // Colors
 const col1 = "#0A85FF";
@@ -54,6 +54,13 @@ var TminiCells = Array.from(new Array(9), () => new Array(9));
 
 // Map containing html elements
 var htmlButtonDict: Map<string, HTMLElement> = new Map();
+const getAssertedButton = (name: string) => {
+  const res = htmlButtonDict.get(name);
+  if (res === undefined) {
+    throw new Error("Undefined button!");
+  }
+  return res;
+};
 
 // Logging
 function log(msg: string) {
@@ -64,8 +71,8 @@ function log(msg: string) {
 
 // Change digit input mode
 function toggleLargeSmall() {
-  const upBut = htmlButtonDict.get("up-but");
-  const downBut = htmlButtonDict.get("down-but");
+  const upBut = getAssertedButton("up-but");
+  const downBut = getAssertedButton("down-but");
   const but2 = large ? upBut : downBut;
   const but1 = !large ? upBut : downBut;
   but1.style.color = col1;
@@ -74,19 +81,19 @@ function toggleLargeSmall() {
   but2.style.borderColor = "black";
   large = !large;
 }
-function enlarge(e: Event = undefined) {
+function enlarge(e: Event | undefined = undefined) {
   if (!large) {
     toggleLargeSmall();
     log("enlarged");
   }
   if (e) e.stopPropagation();
 }
-function shrink(e: Event = undefined) {
+function shrink(e: Event | undefined = undefined) {
   if (large) {
     toggleLargeSmall();
     log("shrunken");
   }
-  e.stopPropagation();
+  if (e) e.stopPropagation();
 }
 
 // Initialize grid
@@ -115,14 +122,14 @@ function initGrid(tbl: HTMLTableElement) {
 
       TminiCells[i][j] = new Array(9);
       subTab.className = "innerTable";
-      let subRow: HTMLTableRowElement;
+      let subRow: HTMLTableRowElement | null = null;
       let subCell: HTMLTableCellElement;
       for (let k = 0; k < 9; k++) {
         if (k % 3 == 0) {
           subRow = subTab.insertRow(-1);
           subRow.className = "gridRow";
         }
-        subCell = subRow.insertCell(-1);
+        subCell = subRow!.insertCell(-1);
         subCell.innerHTML = "";
         subCell.className = "subGridCell";
         TminiCells[i][j][k] = subCell;
@@ -142,7 +149,7 @@ function initGrid(tbl: HTMLTableElement) {
 
 // Set the onclick method for choosing new level
 function setLevelFun() {
-  const ulEl = htmlButtonDict.get("lvl_list");
+  const ulEl = getAssertedButton("lvl_list");
   const kids = ulEl.childNodes;
   let ct = 0;
   for (let k = 0; k < kids.length; ++k) {
@@ -163,7 +170,7 @@ function startHyp(e: Event) {
 // Sets functionality to the buttons
 function setButtons() {
   // Up button
-  const upBut = htmlButtonDict.get("up-but");
+  const upBut = getAssertedButton("up-but");
   upBut.style.color = col1;
   upBut.style.borderColor = col1;
   upBut.addEventListener("click", enlarge);
@@ -177,24 +184,25 @@ function setButtons() {
     ($("#restart") as any).popup("close");
     e.stopPropagation();
   }
-  htmlButtonDict.get("restart_but").addEventListener("click", restAndClose);
+  getAssertedButton("restart_but").addEventListener("click", restAndClose);
 
   // Autofill button
-  htmlButtonDict
-    .get("auto-fill-button")
-    .addEventListener("click", fillSmallDigits);
+  getAssertedButton("auto-fill-button").addEventListener(
+    "click",
+    fillSmallDigits
+  );
 
   // Custom sudoku import
-  htmlButtonDict.get("own_sud").addEventListener("click", inputCustomSudoku);
+  getAssertedButton("own_sud").addEventListener("click", inputCustomSudoku);
 
   // Hypothesis
   enableHyp();
   disableHypRejection();
-  htmlButtonDict.get("but3").addEventListener("click", endHyp);
+  getAssertedButton("but3").addEventListener("click", endHyp);
 
-  htmlButtonDict.get("digits").style.display = "none";
-  htmlButtonDict.get("digits").style.display = "inline-block";
-  htmlButtonDict.get("buttons1").style.display = "none";
+  getAssertedButton("digits").style.display = "none";
+  getAssertedButton("digits").style.display = "inline-block";
+  getAssertedButton("buttons1").style.display = "none";
 
   // Select levels
   setLevelFun();
@@ -204,23 +212,25 @@ function setButtons() {
     solve();
     ($("#help") as any).popup("close");
   }
-  htmlButtonDict.get("solve").addEventListener("click", solveAndClose);
+  getAssertedButton("solve").addEventListener("click", solveAndClose);
 
   // Check
   function checkAndClose() {
     check();
     ($("#help") as any).popup("close");
   }
-  htmlButtonDict.get("check").addEventListener("click", checkAndClose);
+  getAssertedButton("check").addEventListener("click", checkAndClose);
 }
 
 function disableHyp() {
-  htmlButtonDict.get("but1").onclick = null;
-  htmlButtonDict.get("but1").style.color = "#B8B8B8";
+  const butt1 = getAssertedButton("but1");
+  butt1.onclick = null;
+  butt1.style.color = "#B8B8B8";
 }
 function enableHyp() {
-  htmlButtonDict.get("but1").onclick = startHyp;
-  htmlButtonDict.get("but1").style.color = "#000";
+  const butt1 = getAssertedButton("but1");
+  butt1.onclick = startHyp;
+  butt1.style.color = "#000";
 }
 
 // Removes digit in mini cell
@@ -296,7 +306,7 @@ function hypothesis1() {
     // Choose hypothesis digit
     log(`Choosing ${hyps.length + 1}-th hypothesis.`);
     disableSmallDigs();
-    htmlButtonDict.get("but1").style.color = "#F00";
+    getAssertedButton("but1").style.color = "#F00";
     choosingHyp = true;
     log(`Started choosing, curX = ${curX}`);
     if (curX >= 0) {
@@ -389,18 +399,18 @@ function finishedHypChoosing() {
   if (choosingHyp == false) return;
   log("Stopping hypothesis choosing");
   enableSmallDigs();
-  htmlButtonDict.get("but1").style.color = "";
+  getAssertedButton("but1").style.color = "";
   choosingHyp = false;
 }
 
 // Enable / disable the hypothesis rejection button
 function enableHypRejection() {
-  const rejBut = htmlButtonDict.get("but3");
+  const rejBut = getAssertedButton("but3");
   rejBut.style.color = "#000";
   hypRejectionEnabled = true;
 }
 function disableHypRejection() {
-  const rejBut = htmlButtonDict.get("but3");
+  const rejBut = getAssertedButton("but3");
   rejBut.style.color = "#B8B8B8";
   hypRejectionEnabled = false;
 }
@@ -678,7 +688,7 @@ function setSudFromStr(retSud: string) {
 function disableSmallDigs() {
   log("Disabled down button");
   enlarge();
-  const downBut = htmlButtonDict.get("down-but");
+  const downBut = getAssertedButton("down-but");
   downBut.onclick = null;
   downBut.style.color = "#B8B8B8";
   downBut.style.borderColor = "#B8B8B8";
@@ -686,7 +696,7 @@ function disableSmallDigs() {
 }
 // Enables down button
 function enableSmallDigs() {
-  const downBut = htmlButtonDict.get("down-but");
+  const downBut = getAssertedButton("down-but");
   downBut.onclick = shrink;
   downBut.style.color = "";
   downBut.style.borderColor = "";
@@ -702,7 +712,7 @@ function inputCustomSudoku() {
     // Toggle State and Button color
     inputtingOwnSud = true;
     solAvailable = false;
-    const ownBut = htmlButtonDict.get("own_sud");
+    const ownBut = getAssertedButton("own_sud");
     ownBut.style.color = "#F00";
 
     // Remove current sudoku
@@ -723,7 +733,7 @@ function inputCustomSudoku() {
 
     // Toggle State
     inputtingOwnSud = false;
-    const ownBut = htmlButtonDict.get("own_sud");
+    const ownBut = getAssertedButton("own_sud");
     ownBut.style.color = "";
 
     // Activate small numbers and set set numbers to unclickable
@@ -744,8 +754,8 @@ function loadRandomSud(lvl = 7) {
 
 // Setup hypothesis buttons
 function setHypButtons() {
-  htmlButtonDict.get("but1").style.color = "#000";
-  htmlButtonDict.get("but3").style.color = "#B8B8B8";
+  getAssertedButton("but1").style.color = "#000";
+  getAssertedButton("but3").style.color = "#B8B8B8";
 }
 
 // Sets the current sudoku to the solution.

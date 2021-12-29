@@ -17,13 +17,21 @@ import {
   log,
   elsewhere,
   clickCell,
-} from "./html_util.js";
+} from "./html_util";
 
 // State Variables
 var initialized = false;
 
+const getDocEl = (id: string) => {
+  const res = document.getElementById(id);
+  if (res === undefined || res === null) {
+    throw new Error("Undefined!");
+  }
+  return res;
+};
+
 // Initializing function
-function init() {
+export function init() {
   // Abort if already called
   if (initialized) {
     return;
@@ -31,7 +39,7 @@ function init() {
     initialized = true;
   }
   window.addEventListener("load", init); // This is useless?
-  document.querySelector("body").addEventListener("click", elsewhere);
+  document.querySelector("body")!.addEventListener("click", elsewhere);
 
   // Set button map
   const butIds = [
@@ -51,16 +59,15 @@ function init() {
     "solved-h",
   ];
   for (const bId of butIds) {
-    htmlButtonDict.set(bId, document.getElementById(bId));
+    htmlButtonDict.set(bId, getDocEl(bId));
   }
   setButtons();
 
   // Set digits
-  for (let i = 0; i < 10; i++)
-    digits[i] = document.getElementById("digit-" + String(i));
+  for (let i = 0; i < 10; i++) digits[i] = getDocEl("digit-" + String(i));
 
   // Initialize grid
-  const tbl = document.getElementById("grid") as HTMLTableElement;
+  const tbl = getDocEl("grid") as HTMLTableElement;
   initGrid(tbl);
   log("Initialized grid!");
 
@@ -71,18 +78,15 @@ function init() {
   });
 
   // Buttons
-  const i = $("#digits").height();
-  const j = $("#buttons1").height();
+  const i = $("#digits").height()!;
+  const j = $("#buttons1").height()!;
   const diff = Math.floor((i - j) / 2) + 4;
   $("#buttons1").height(i - j);
   $("#buttons1").css("margin-top", String(diff) + "px");
-  const j_html = document.getElementById("buttons1").style.height;
+  const j_html = getDocEl("buttons1").style.height;
   log(j_html);
   log("Setup buttons!");
 }
 
 // Initialize
 init();
-
-// Export for testing
-export { init };

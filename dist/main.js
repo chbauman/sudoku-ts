@@ -1,6 +1,13 @@
-import { initGrid, setButtons, htmlButtonDict, digits, log, elsewhere, clickCell, } from "./html_util.js";
+import { initGrid, setButtons, htmlButtonDict, digits, log, elsewhere, clickCell, } from "./html_util";
 var initialized = false;
-function init() {
+var getDocEl = function (id) {
+    var res = document.getElementById(id);
+    if (res === undefined || res === null) {
+        throw new Error("Undefined!");
+    }
+    return res;
+};
+export function init() {
     if (initialized) {
         return;
     }
@@ -27,12 +34,12 @@ function init() {
     ];
     for (var _i = 0, butIds_1 = butIds; _i < butIds_1.length; _i++) {
         var bId = butIds_1[_i];
-        htmlButtonDict.set(bId, document.getElementById(bId));
+        htmlButtonDict.set(bId, getDocEl(bId));
     }
     setButtons();
     for (var i_1 = 0; i_1 < 10; i_1++)
-        digits[i_1] = document.getElementById("digit-" + String(i_1));
-    var tbl = document.getElementById("grid");
+        digits[i_1] = getDocEl("digit-" + String(i_1));
+    var tbl = getDocEl("grid");
     initGrid(tbl);
     log("Initialized grid!");
     $("#grid").on("click", ".gridCell", function (e) {
@@ -44,10 +51,9 @@ function init() {
     var diff = Math.floor((i - j) / 2) + 4;
     $("#buttons1").height(i - j);
     $("#buttons1").css("margin-top", String(diff) + "px");
-    var j_html = document.getElementById("buttons1").style.height;
+    var j_html = getDocEl("buttons1").style.height;
     log(j_html);
     log("Setup buttons!");
 }
 init();
-export { init };
 //# sourceMappingURL=main.js.map

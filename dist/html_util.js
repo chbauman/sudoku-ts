@@ -1,4 +1,4 @@
-import { T, DEBUG, Marked, readSudokuFromFile, Tsol, Tinit, permuteSuds, copyTo2d, allowed, checkSolved, deepCopy2D, deepCopy3D, } from "./sudoku.js";
+import { T, DEBUG, Marked, readSudokuFromFile, Tsol, Tinit, permuteSuds, copyTo2d, allowed, checkSolved, deepCopy2D, deepCopy3D, } from "./sudoku";
 var col1 = "#0A85FF";
 var smallDigCol = "#DFD";
 var rowColSquareForbidCol = "#FDD";
@@ -21,14 +21,21 @@ var TsubHTMLTables = Array.from(new Array(9), function () { return new Array(9);
 var TsubBinaryTables = Array.from(new Array(9), function () { return new Array(9); });
 var TminiCells = Array.from(new Array(9), function () { return new Array(9); });
 var htmlButtonDict = new Map();
+var getAssertedButton = function (name) {
+    var res = htmlButtonDict.get(name);
+    if (res === undefined) {
+        throw new Error("Undefined button!");
+    }
+    return res;
+};
 function log(msg) {
     if (DEBUG) {
         console.log(msg);
     }
 }
 function toggleLargeSmall() {
-    var upBut = htmlButtonDict.get("up-but");
-    var downBut = htmlButtonDict.get("down-but");
+    var upBut = getAssertedButton("up-but");
+    var downBut = getAssertedButton("down-but");
     var but2 = large ? upBut : downBut;
     var but1 = !large ? upBut : downBut;
     but1.style.color = col1;
@@ -52,7 +59,8 @@ function shrink(e) {
         toggleLargeSmall();
         log("shrunken");
     }
-    e.stopPropagation();
+    if (e)
+        e.stopPropagation();
 }
 function initGrid(tbl) {
     for (var i = 0; i < 9; i++) {
@@ -81,7 +89,7 @@ function initGrid(tbl) {
             Tref[i][j].setAttributeNode(click);
             TminiCells[i][j] = new Array(9);
             subTab.className = "innerTable";
-            var subRow = void 0;
+            var subRow = null;
             var subCell = void 0;
             for (var k = 0; k < 9; k++) {
                 if (k % 3 == 0) {
@@ -103,7 +111,7 @@ function initGrid(tbl) {
     }, 250);
 }
 function setLevelFun() {
-    var ulEl = htmlButtonDict.get("lvl_list");
+    var ulEl = getAssertedButton("lvl_list");
     var kids = ulEl.childNodes;
     var ct = 0;
     var _loop_1 = function (k) {
@@ -123,7 +131,7 @@ function startHyp(e) {
     e.stopPropagation();
 }
 function setButtons() {
-    var upBut = htmlButtonDict.get("up-but");
+    var upBut = getAssertedButton("up-but");
     upBut.style.color = col1;
     upBut.style.borderColor = col1;
     upBut.addEventListener("click", enlarge);
@@ -133,36 +141,36 @@ function setButtons() {
         $("#restart").popup("close");
         e.stopPropagation();
     }
-    htmlButtonDict.get("restart_but").addEventListener("click", restAndClose);
-    htmlButtonDict
-        .get("auto-fill-button")
-        .addEventListener("click", fillSmallDigits);
-    htmlButtonDict.get("own_sud").addEventListener("click", inputCustomSudoku);
+    getAssertedButton("restart_but").addEventListener("click", restAndClose);
+    getAssertedButton("auto-fill-button").addEventListener("click", fillSmallDigits);
+    getAssertedButton("own_sud").addEventListener("click", inputCustomSudoku);
     enableHyp();
     disableHypRejection();
-    htmlButtonDict.get("but3").addEventListener("click", endHyp);
-    htmlButtonDict.get("digits").style.display = "none";
-    htmlButtonDict.get("digits").style.display = "inline-block";
-    htmlButtonDict.get("buttons1").style.display = "none";
+    getAssertedButton("but3").addEventListener("click", endHyp);
+    getAssertedButton("digits").style.display = "none";
+    getAssertedButton("digits").style.display = "inline-block";
+    getAssertedButton("buttons1").style.display = "none";
     setLevelFun();
     function solveAndClose() {
         solve();
         $("#help").popup("close");
     }
-    htmlButtonDict.get("solve").addEventListener("click", solveAndClose);
+    getAssertedButton("solve").addEventListener("click", solveAndClose);
     function checkAndClose() {
         check();
         $("#help").popup("close");
     }
-    htmlButtonDict.get("check").addEventListener("click", checkAndClose);
+    getAssertedButton("check").addEventListener("click", checkAndClose);
 }
 function disableHyp() {
-    htmlButtonDict.get("but1").onclick = null;
-    htmlButtonDict.get("but1").style.color = "#B8B8B8";
+    var butt1 = getAssertedButton("but1");
+    butt1.onclick = null;
+    butt1.style.color = "#B8B8B8";
 }
 function enableHyp() {
-    htmlButtonDict.get("but1").onclick = startHyp;
-    htmlButtonDict.get("but1").style.color = "#000";
+    var butt1 = getAssertedButton("but1");
+    butt1.onclick = startHyp;
+    butt1.style.color = "#000";
 }
 function resetMiniCell(y, x, n) {
     TminiCells[y][x][n - 1].innerHTML = "";
@@ -223,7 +231,7 @@ function hypothesis1() {
     if (!choosingHyp) {
         log("Choosing " + (hyps.length + 1) + "-th hypothesis.");
         disableSmallDigs();
-        htmlButtonDict.get("but1").style.color = "#F00";
+        getAssertedButton("but1").style.color = "#F00";
         choosingHyp = true;
         log("Started choosing, curX = " + curX);
         if (curX >= 0) {
@@ -308,16 +316,16 @@ function finishedHypChoosing() {
         return;
     log("Stopping hypothesis choosing");
     enableSmallDigs();
-    htmlButtonDict.get("but1").style.color = "";
+    getAssertedButton("but1").style.color = "";
     choosingHyp = false;
 }
 function enableHypRejection() {
-    var rejBut = htmlButtonDict.get("but3");
+    var rejBut = getAssertedButton("but3");
     rejBut.style.color = "#000";
     hypRejectionEnabled = true;
 }
 function disableHypRejection() {
-    var rejBut = htmlButtonDict.get("but3");
+    var rejBut = getAssertedButton("but3");
     rejBut.style.color = "#B8B8B8";
     hypRejectionEnabled = false;
 }
@@ -581,14 +589,14 @@ function setSudFromStr(retSud) {
 function disableSmallDigs() {
     log("Disabled down button");
     enlarge();
-    var downBut = htmlButtonDict.get("down-but");
+    var downBut = getAssertedButton("down-but");
     downBut.onclick = null;
     downBut.style.color = "#B8B8B8";
     downBut.style.borderColor = "#B8B8B8";
     downBut.style.cursor = "pointer";
 }
 function enableSmallDigs() {
-    var downBut = htmlButtonDict.get("down-but");
+    var downBut = getAssertedButton("down-but");
     downBut.onclick = shrink;
     downBut.style.color = "";
     downBut.style.borderColor = "";
@@ -600,7 +608,7 @@ function inputCustomSudoku() {
         disableHyp();
         inputtingOwnSud = true;
         solAvailable = false;
-        var ownBut = htmlButtonDict.get("own_sud");
+        var ownBut = getAssertedButton("own_sud");
         ownBut.style.color = "#F00";
         for (var i = 0; i < 9; i++) {
             for (var j = 0; j < 9; j++) {
@@ -618,7 +626,7 @@ function inputCustomSudoku() {
         enableHyp();
         sudLvl = -1;
         inputtingOwnSud = false;
-        var ownBut = htmlButtonDict.get("own_sud");
+        var ownBut = getAssertedButton("own_sud");
         ownBut.style.color = "";
         copyTo2d(T, Tinit);
         setClickableTrefT();
@@ -634,8 +642,8 @@ function loadRandomSud(lvl) {
     log("Loaded sudoku with level " + lvl);
 }
 function setHypButtons() {
-    htmlButtonDict.get("but1").style.color = "#000";
-    htmlButtonDict.get("but3").style.color = "#B8B8B8";
+    getAssertedButton("but1").style.color = "#000";
+    getAssertedButton("but3").style.color = "#B8B8B8";
 }
 function solve() {
     if (solAvailable == false)

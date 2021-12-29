@@ -13,15 +13,23 @@
     />
     <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
 
-    <script type="module" src="src/main.js"></script>
-    <script type="module" src="src/sudoku.js"></script>
-    <script type="module" src="src/html_util.js"></script>
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@5.0.0/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+      nomodule=""
+      src="https://unpkg.com/ionicons@5.0.0/dist/ionicons/ionicons.js"
+    ></script>
+
+    <script type="module" src="./dist/main.js"></script>
+    <script type="module" src="./dist/sudoku.js"></script>
+    <script type="module" src="./dist/html_util.js"></script>
 
     <link rel="stylesheet" href="src/style.css" />
   </head>
 
   <body>
-    <!-- Start of the page -->
     <div data-role="page" id="home">
       <div role="main" class="ui-content">
         <h1>Sudoku</h1>
@@ -179,7 +187,5 @@
         <p>(Not available for custom sudokus.)</p>
       </div>
     </div>
-    <!-- End of the page -->
-    <script src="https://unpkg.com/ionicons@5.0.0/dist/ionicons.js"></script>
   </body>
 </html>
