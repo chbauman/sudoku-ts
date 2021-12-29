@@ -1,4 +1,4 @@
-import { T, DEBUG, Marked, read_sudoku_from_file, Tsol, Tinit, permuteSuds, copy_to_2d, allowed, checkSolved, deepCopy2D, deepCopy3D } from "./sudoku.js";
+import { T, DEBUG, Marked, read_sudoku_from_file, Tsol, Tinit, permuteSuds, copy_to_2d, allowed, checkSolved, deepCopy2D, deepCopy3D, } from "./sudoku.js";
 var col1 = "#0A85FF";
 var smallDigCol = "#DFD";
 var rowColSquareForbidCol = "#FDD";
@@ -9,27 +9,26 @@ var wrongHypCol = "#F22";
 var large = true;
 var curX = -1;
 var curY = 0;
-var prev_cell = [curX, curY];
-var sol_available = false;
+var solAvailable = false;
 var inputtingOwnSud = false;
 var sudLvl;
 var choosingHyp = false;
-var hyp_rejection_enabled = false;
+var hypRejectionEnabled = false;
 var hyps = [];
 var Tref = Array.from(new Array(9), function () { return new Array(9); });
 var digits = new Array(10);
 var TsubHTMLTables = Array.from(new Array(9), function () { return new Array(9); });
 var TsubBinaryTables = Array.from(new Array(9), function () { return new Array(9); });
 var TminiCells = Array.from(new Array(9), function () { return new Array(9); });
-var html_button_dict = new Map();
+var htmlButtonDict = new Map();
 function log(msg) {
     if (DEBUG) {
         console.log(msg);
     }
 }
 function toggleLargeSmall() {
-    var upBut = html_button_dict.get("up-but");
-    var downBut = html_button_dict.get("down-but");
+    var upBut = htmlButtonDict.get("up-but");
+    var downBut = htmlButtonDict.get("down-but");
     var but2 = large ? upBut : downBut;
     var but1 = !large ? upBut : downBut;
     but1.style.color = col1;
@@ -103,20 +102,19 @@ function init_grid(tbl) {
         loadRandomSud(4);
     }, 250);
 }
-function set_level_fun() {
-    var ul_el = html_button_dict.get("lvl_list");
-    var kids = ul_el.childNodes;
-    var n_kids = kids.length;
+function setLevelFun() {
+    var ulEl = htmlButtonDict.get("lvl_list");
+    var kids = ulEl.childNodes;
     var ct = 0;
     var _loop_1 = function (k) {
-        var inn_html = kids[k].innerHTML;
-        if (inn_html) {
-            var n_1 = parseInt(inn_html.split(" ")[1]);
+        var innHtml = kids[k].innerHTML;
+        if (innHtml) {
+            var n_1 = parseInt(innHtml.split(" ")[1]);
             kids[k].addEventListener("click", function () { return loadRandomSud(n_1); });
             ++ct;
         }
     };
-    for (var k = 0; k < n_kids; ++k) {
+    for (var k = 0; k < kids.length; ++k) {
         _loop_1(k);
     }
 }
@@ -125,46 +123,46 @@ function start_hyp(e) {
     e.stopPropagation();
 }
 function set_buttons() {
-    var up_but = html_button_dict.get("up-but");
-    up_but.style.color = col1;
-    up_but.style.borderColor = col1;
-    up_but.addEventListener("click", enlarge);
+    var upBut = htmlButtonDict.get("up-but");
+    upBut.style.color = col1;
+    upBut.style.borderColor = col1;
+    upBut.addEventListener("click", enlarge);
     enableSmallDigs();
-    function rest_and_close(e) {
+    function restAndClose(e) {
         restart();
         $("#restart").popup("close");
         e.stopPropagation();
     }
-    html_button_dict.get("restart_but").addEventListener("click", rest_and_close);
-    html_button_dict
+    htmlButtonDict.get("restart_but").addEventListener("click", restAndClose);
+    htmlButtonDict
         .get("auto-fill-button")
         .addEventListener("click", fillSmallDigits);
-    html_button_dict.get("own_sud").addEventListener("click", input_own_sudoku);
-    enable_hyp();
+    htmlButtonDict.get("own_sud").addEventListener("click", inputCustomSudoku);
+    enableHyp();
     disableHypRejection();
-    html_button_dict.get("but3").addEventListener("click", end_hyp);
-    html_button_dict.get("digits").style.display = "none";
-    html_button_dict.get("digits").style.display = "inline-block";
-    html_button_dict.get("buttons1").style.display = "none";
-    set_level_fun();
+    htmlButtonDict.get("but3").addEventListener("click", endHyp);
+    htmlButtonDict.get("digits").style.display = "none";
+    htmlButtonDict.get("digits").style.display = "inline-block";
+    htmlButtonDict.get("buttons1").style.display = "none";
+    setLevelFun();
     function solve_and_close() {
         solve();
         $("#help").popup("close");
     }
-    html_button_dict.get("solve").addEventListener("click", solve_and_close);
+    htmlButtonDict.get("solve").addEventListener("click", solve_and_close);
     function check_and_close() {
         check();
         $("#help").popup("close");
     }
-    html_button_dict.get("check").addEventListener("click", check_and_close);
+    htmlButtonDict.get("check").addEventListener("click", check_and_close);
 }
-function disable_hyp() {
-    html_button_dict.get("but1").onclick = null;
-    html_button_dict.get("but1").style.color = "#B8B8B8";
+function disableHyp() {
+    htmlButtonDict.get("but1").onclick = null;
+    htmlButtonDict.get("but1").style.color = "#B8B8B8";
 }
-function enable_hyp() {
-    html_button_dict.get("but1").onclick = start_hyp;
-    html_button_dict.get("but1").style.color = "#000";
+function enableHyp() {
+    htmlButtonDict.get("but1").onclick = start_hyp;
+    htmlButtonDict.get("but1").style.color = "#000";
 }
 function resetMiniCell(y, x, n) {
     TminiCells[y][x][n - 1].innerHTML = "";
@@ -193,10 +191,10 @@ function eliminateSmallDigs(y, x, n) {
         resetMiniCell(yFloor + (i % 3), xFloor + Math.floor(i / 3), n);
     }
 }
-function setCell(y, x, n, largeMode, highlightCells, remove_red) {
+function setCell(y, x, n, largeMode, highlightCells, removeRed) {
     if (largeMode === void 0) { largeMode = true; }
     if (highlightCells === void 0) { highlightCells = false; }
-    if (remove_red === void 0) { remove_red = false; }
+    if (removeRed === void 0) { removeRed = false; }
     if (n == 0) {
         Tref[y][x].innerHTML = "";
         Tref[y][x].appendChild(TsubHTMLTables[y][x]);
@@ -211,7 +209,7 @@ function setCell(y, x, n, largeMode, highlightCells, remove_red) {
             eliminateSmallDigs(y, x, n);
             if (highlightCells)
                 highlight(y, x);
-            if (remove_red) {
+            if (removeRed) {
                 Marked[y][x] = 0;
                 Tref[y][x].style.backgroundColor = normH;
             }
@@ -225,7 +223,7 @@ function hypothesis1() {
     if (!choosingHyp) {
         log("Choosing " + (hyps.length + 1) + "-th hypothesis.");
         disableSmallDigs();
-        html_button_dict.get("but1").style.color = "#F00";
+        htmlButtonDict.get("but1").style.color = "#F00";
         choosingHyp = true;
         log("Started choosing, curX = " + curX);
         if (curX >= 0) {
@@ -236,8 +234,8 @@ function hypothesis1() {
         finishedHypChoosing();
     }
 }
-function end_hyp(e) {
-    if (hyp_rejection_enabled) {
+function endHyp(e) {
+    if (hypRejectionEnabled) {
         hypothesis3();
     }
     e.stopPropagation();
@@ -310,26 +308,25 @@ function finishedHypChoosing() {
         return;
     log("Stopping hypothesis choosing");
     enableSmallDigs();
-    html_button_dict.get("but1").style.color = "";
+    htmlButtonDict.get("but1").style.color = "";
     choosingHyp = false;
 }
 function enableHypRejection() {
-    var rejBut = html_button_dict.get("but3");
+    var rejBut = htmlButtonDict.get("but3");
     rejBut.style.color = "#000";
-    hyp_rejection_enabled = true;
+    hypRejectionEnabled = true;
 }
 function disableHypRejection() {
-    var rejBut = html_button_dict.get("but3");
+    var rejBut = htmlButtonDict.get("but3");
     rejBut.style.color = "#B8B8B8";
-    hyp_rejection_enabled = false;
+    hypRejectionEnabled = false;
 }
 function check() {
-    if (sol_available == false)
+    if (solAvailable == false)
         return;
     console.log("Checking Sudoku: ");
     for (var i = 0; i < 9; i++) {
         for (var j = 0; j < 9; j++) {
-            var tot_ind = i * 9 + j;
             if (T[i][j] != Tsol[i][j] && T[i][j] != 0) {
                 console.log("Cell (" + i + ", " + j + ") is incorrect!");
                 Tref[i][j].style.backgroundColor = wrongHypCol;
@@ -365,8 +362,8 @@ function checkSolvedSud() {
         vid_src = "./gifs/unlim_power.mp4";
         title = "Nothing you can't solve.";
     }
-    html_button_dict.get("fin-vid").src = vid_src;
-    html_button_dict.get("solved-h").src = title;
+    htmlButtonDict.get("fin-vid").src = vid_src;
+    htmlButtonDict.get("solved-h").src = title;
     $("#win").popup("open");
     console.log(sudLvl);
 }
@@ -375,8 +372,8 @@ function clickCell(cell) {
     var c = Number(cell.getAttribute("clickable"));
     var y = Number(cell.getAttribute("y"));
     var x = Number(cell.getAttribute("x"));
-    var num_set = T[y][x] > 0;
-    if (num_set) {
+    var numSet = T[y][x] > 0;
+    if (numSet) {
         highlight(y, x);
     }
     else {
@@ -386,16 +383,14 @@ function clickCell(cell) {
     }
     curY = y;
     curX = x;
-    prev_cell = [x, y];
-    log("Selected " + c + " cell (" + curY + ", " + curX + ")");
     var clickable = c == 1;
     if (clickable) {
         $("#digits").off("click", "**");
-        var a = allowed(T, y, x, clickable);
+        var allowedArray = allowed(T, y, x, clickable);
         var d = new Array(10).fill(false);
-        for (var i = 0; i < a.length; i++)
-            d[a[i]] = true;
-        if (num_set) {
+        for (var i = 0; i < allowedArray.length; i++)
+            d[allowedArray[i]] = true;
+        if (numSet) {
             d[T[y][x]] = true;
         }
         d[0] = true;
@@ -493,7 +488,7 @@ function elsewhere() {
         }
     }
 }
-function set_if_not_marked(y, x) {
+function setIfNotMarked(y, x) {
     if (Marked[y][x] == 0) {
         Tref[y][x].style.backgroundColor = rowColSquareForbidCol;
     }
@@ -504,9 +499,9 @@ function highlight(y, x) {
     var xFloor = x - (x % 3);
     var yFloor = y - (y % 3);
     for (var i = 0; i < 9; i++) {
-        set_if_not_marked(y, i);
-        set_if_not_marked(i, x);
-        set_if_not_marked(yFloor + (i % 3), xFloor + Math.floor(i / 3));
+        setIfNotMarked(y, i);
+        setIfNotMarked(i, x);
+        setIfNotMarked(yFloor + (i % 3), xFloor + Math.floor(i / 3));
         for (var j = 0; j < 9; j++) {
             if (T[i][j] == currDig) {
                 if (Marked[i][j] == 0) {
@@ -536,10 +531,10 @@ function updateGrid(remove_marks) {
     log("Updating grid...");
     for (var i = 0; i < 9; i++) {
         for (var j = 0; j < 9; j++) {
-            var curr_val = T[i][j];
-            var curr_mark = Marked[i][j];
-            setCell(i, j, curr_val, true, false);
-            if (!remove_marks || (curr_val > 0 && curr_mark != 0)) {
+            var currVal = T[i][j];
+            var currMark = Marked[i][j];
+            setCell(i, j, currVal, true, false);
+            if (!remove_marks || (currVal > 0 && currMark != 0)) {
                 Marked[i][j] = 1;
             }
             Tref[i][j].style.color = "";
@@ -561,7 +556,7 @@ function setClickableTrefT() {
         }
     }
 }
-function set_sud_from_str(ret_sud) {
+function setSudFromStr(ret_sud) {
     $("#newGrid").popup("close");
     $("#waiting").popup("open");
     var s_and_sol_str = ret_sud.substr(13, 324);
@@ -578,36 +573,36 @@ function set_sud_from_str(ret_sud) {
     }
     permuteSuds(T, Tsol);
     copy_to_2d(T, Tinit);
-    if (!sol_available)
-        sol_available = true;
+    if (!solAvailable)
+        solAvailable = true;
     updateGrid();
     setClickableTrefT();
-    clear_hyps();
+    clearHyps();
     $("#waiting").popup("close");
 }
 function disableSmallDigs() {
     log("Disabled down button");
     enlarge();
-    var down_but = html_button_dict.get("down-but");
+    var down_but = htmlButtonDict.get("down-but");
     down_but.onclick = null;
     down_but.style.color = "#B8B8B8";
     down_but.style.borderColor = "#B8B8B8";
     down_but.style.cursor = "pointer";
 }
 function enableSmallDigs() {
-    var down_but = html_button_dict.get("down-but");
+    var down_but = htmlButtonDict.get("down-but");
     down_but.onclick = shrink;
     down_but.style.color = "";
     down_but.style.borderColor = "";
 }
-function input_own_sudoku() {
+function inputCustomSudoku() {
     if (!inputtingOwnSud) {
         log("Own Input");
-        clear_hyps();
-        disable_hyp();
+        clearHyps();
+        disableHyp();
         inputtingOwnSud = true;
-        sol_available = false;
-        var own_but = html_button_dict.get("own_sud");
+        solAvailable = false;
+        var own_but = htmlButtonDict.get("own_sud");
         own_but.style.color = "#F00";
         for (var i = 0; i < 9; i++) {
             for (var j = 0; j < 9; j++) {
@@ -622,10 +617,10 @@ function input_own_sudoku() {
     }
     else {
         log("Done inputting own sudoku!");
-        enable_hyp();
+        enableHyp();
         sudLvl = -1;
         inputtingOwnSud = false;
-        var own_but = html_button_dict.get("own_sud");
+        var own_but = htmlButtonDict.get("own_sud");
         own_but.style.color = "";
         copy_to_2d(T, Tinit);
         setClickableTrefT();
@@ -635,17 +630,17 @@ function input_own_sudoku() {
 function loadRandomSud(lvl) {
     if (lvl === void 0) { lvl = 7; }
     if (inputtingOwnSud) {
-        input_own_sudoku();
+        inputCustomSudoku();
     }
-    read_sudoku_from_file(set_sud_from_str, lvl);
+    read_sudoku_from_file(setSudFromStr, lvl);
     log("Loaded sudoku with level " + lvl);
 }
-function set_hyp_buttons() {
-    html_button_dict.get("but1").style.color = "#000";
-    html_button_dict.get("but3").style.color = "#B8B8B8";
+function setHypButtons() {
+    htmlButtonDict.get("but1").style.color = "#000";
+    htmlButtonDict.get("but3").style.color = "#B8B8B8";
 }
 function solve() {
-    if (sol_available == false)
+    if (solAvailable == false)
         return;
     sudLvl = -2;
     for (var i = 0; i < 9; i++) {
@@ -663,10 +658,10 @@ function solve() {
             }
         }
     }
-    clear_hyps();
-    set_hyp_buttons();
+    clearHyps();
+    setHypButtons();
 }
-function clear_hyps() {
+function clearHyps() {
     log("Clearing hypotheses");
     hyps = [];
     choosingHyp = false;
@@ -674,7 +669,7 @@ function clear_hyps() {
 }
 function restart() {
     if (inputtingOwnSud) {
-        input_own_sudoku();
+        inputCustomSudoku();
     }
     log("Restarting");
     unhighlightAll();
@@ -689,8 +684,8 @@ function restart() {
             }
         }
     }
-    clear_hyps();
-    set_hyp_buttons();
+    clearHyps();
+    setHypButtons();
 }
 function fillSmallDigits() {
     log("Autofilling...");
@@ -706,5 +701,5 @@ function fillSmallDigits() {
     }
     unhighlightAll();
 }
-export { enlarge, shrink, init_grid, html_button_dict, col1, digits, loadRandomSud, set_buttons, log, elsewhere, clickCell };
+export { enlarge, shrink, init_grid, htmlButtonDict as html_button_dict, col1, digits, loadRandomSud, set_buttons, log, elsewhere, clickCell, };
 //# sourceMappingURL=html_util.js.map

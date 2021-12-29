@@ -1,4 +1,4 @@
-import { init_grid, set_buttons, html_button_dict, digits, log, elsewhere, clickCell } from "./html_util.js";
+import { init_grid, set_buttons, html_button_dict, digits, log, elsewhere, clickCell, } from "./html_util.js";
 var initialized = false;
 function init() {
     if (initialized) {
@@ -23,7 +23,7 @@ function init() {
         "solve",
         "check",
         "fin-vid",
-        "solved-h"
+        "solved-h",
     ];
     for (var _i = 0, but_ids_1 = but_ids; _i < but_ids_1.length; _i++) {
         var b_id = but_ids_1[_i];

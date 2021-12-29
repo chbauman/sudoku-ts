@@ -11,7 +11,7 @@ import {
   allowed,
   checkSolved,
   deepCopy2D,
-  deepCopy3D
+  deepCopy3D,
 } from "./sudoku.js";
 
 // Colors
@@ -27,12 +27,11 @@ const wrongHypCol = "#F22";
 var large = true;
 var curX = -1;
 var curY = 0;
-var prev_cell = [curX, curY]; // Stores the least recently clicked cell
-var sol_available = false;
+var solAvailable = false;
 var inputtingOwnSud = false;
 var sudLvl: number;
 var choosingHyp = false;
-var hyp_rejection_enabled = false;
+var hypRejectionEnabled = false;
 
 var hyps: any[][][] = [];
 
@@ -54,7 +53,7 @@ var TsubBinaryTables: boolean[][][] = Array.from(
 var TminiCells = Array.from(new Array(9), () => new Array(9));
 
 // Map containing html elements
-var html_button_dict: Map<string, HTMLElement> = new Map();
+var htmlButtonDict: Map<string, HTMLElement> = new Map();
 
 // Logging
 function log(msg: string) {
@@ -65,8 +64,8 @@ function log(msg: string) {
 
 // Change digit input mode
 function toggleLargeSmall() {
-  let upBut = html_button_dict.get("up-but");
-  let downBut = html_button_dict.get("down-but");
+  const upBut = htmlButtonDict.get("up-but");
+  const downBut = htmlButtonDict.get("down-but");
   const but2 = large ? upBut : downBut;
   const but1 = !large ? upBut : downBut;
   but1.style.color = col1;
@@ -136,21 +135,20 @@ function init_grid(tbl: HTMLTableElement) {
   }
 
   // Load sudoku
-  setTimeout(function() {
+  setTimeout(function () {
     loadRandomSud(4);
   }, 250);
 }
 
 // Set the onclick method for choosing new level
-function set_level_fun() {
-  const ul_el = html_button_dict.get("lvl_list");
-  const kids = ul_el.childNodes;
-  const n_kids = kids.length;
+function setLevelFun() {
+  const ulEl = htmlButtonDict.get("lvl_list");
+  const kids = ulEl.childNodes;
   let ct = 0;
-  for (let k = 0; k < n_kids; ++k) {
-    let inn_html = (kids[k] as HTMLElement).innerHTML;
-    if (inn_html) {
-      let n = parseInt(inn_html.split(" ")[1]);
+  for (let k = 0; k < kids.length; ++k) {
+    const innHtml = (kids[k] as HTMLElement).innerHTML;
+    if (innHtml) {
+      const n = parseInt(innHtml.split(" ")[1]);
       kids[k].addEventListener("click", () => loadRandomSud(n));
       ++ct;
     }
@@ -165,65 +163,64 @@ function start_hyp(e: Event) {
 // Sets functionality to the buttons
 function set_buttons() {
   // Up button
-  let up_but = html_button_dict.get("up-but");
-  up_but.style.color = col1;
-  up_but.style.borderColor = col1;
-  up_but.addEventListener("click", enlarge);
+  const upBut = htmlButtonDict.get("up-but");
+  upBut.style.color = col1;
+  upBut.style.borderColor = col1;
+  upBut.addEventListener("click", enlarge);
 
   // Down button
   enableSmallDigs();
 
   // Restart button
-  function rest_and_close(e: Event) {
+  function restAndClose(e: Event) {
     restart();
     ($("#restart") as any).popup("close");
     e.stopPropagation();
   }
-  html_button_dict.get("restart_but").addEventListener("click", rest_and_close);
+  htmlButtonDict.get("restart_but").addEventListener("click", restAndClose);
 
   // Autofill button
-  html_button_dict
+  htmlButtonDict
     .get("auto-fill-button")
     .addEventListener("click", fillSmallDigits);
 
   // Custom sudoku import
-  html_button_dict.get("own_sud").addEventListener("click", input_own_sudoku);
+  htmlButtonDict.get("own_sud").addEventListener("click", inputCustomSudoku);
 
   // Hypothesis
-  //set_hyp_buttons();
-  enable_hyp();
+  enableHyp();
   disableHypRejection();
-  html_button_dict.get("but3").addEventListener("click", end_hyp);
+  htmlButtonDict.get("but3").addEventListener("click", endHyp);
 
-  html_button_dict.get("digits").style.display = "none";
-  html_button_dict.get("digits").style.display = "inline-block";
-  html_button_dict.get("buttons1").style.display = "none";
+  htmlButtonDict.get("digits").style.display = "none";
+  htmlButtonDict.get("digits").style.display = "inline-block";
+  htmlButtonDict.get("buttons1").style.display = "none";
 
   // Select levels
-  set_level_fun();
+  setLevelFun();
 
   // Solver
   function solve_and_close() {
     solve();
     ($("#help") as any).popup("close");
   }
-  html_button_dict.get("solve").addEventListener("click", solve_and_close);
+  htmlButtonDict.get("solve").addEventListener("click", solve_and_close);
 
   // Check
   function check_and_close() {
     check();
     ($("#help") as any).popup("close");
   }
-  html_button_dict.get("check").addEventListener("click", check_and_close);
+  htmlButtonDict.get("check").addEventListener("click", check_and_close);
 }
 
-function disable_hyp() {
-  html_button_dict.get("but1").onclick = null;
-  html_button_dict.get("but1").style.color = "#B8B8B8";
+function disableHyp() {
+  htmlButtonDict.get("but1").onclick = null;
+  htmlButtonDict.get("but1").style.color = "#B8B8B8";
 }
-function enable_hyp() {
-  html_button_dict.get("but1").onclick = start_hyp;
-  html_button_dict.get("but1").style.color = "#000";
+function enableHyp() {
+  htmlButtonDict.get("but1").onclick = start_hyp;
+  htmlButtonDict.get("but1").style.color = "#000";
 }
 
 // Removes digit in mini cell
@@ -268,9 +265,8 @@ function setCell(
   n: number,
   largeMode = true,
   highlightCells = false,
-  remove_red = false
+  removeRed = false
 ) {
-  //log(`Setting cell (${x}, ${y})`);
   if (n == 0) {
     // Remove all if only small digits present
     Tref[y][x].innerHTML = "";
@@ -284,7 +280,7 @@ function setCell(
       Tref[y][x].innerHTML = n.toString();
       eliminateSmallDigs(y, x, n);
       if (highlightCells) highlight(y, x);
-      if (remove_red) {
+      if (removeRed) {
         Marked[y][x] = 0;
         Tref[y][x].style.backgroundColor = normH;
       }
@@ -300,7 +296,7 @@ function hypothesis1() {
     // Choose hypothesis digit
     log(`Choosing ${hyps.length + 1}-th hypothesis.`);
     disableSmallDigs();
-    html_button_dict.get("but1").style.color = "#F00";
+    htmlButtonDict.get("but1").style.color = "#F00";
     choosingHyp = true;
     log(`Started choosing, curX = ${curX}`);
     if (curX >= 0) {
@@ -312,8 +308,8 @@ function hypothesis1() {
   }
 }
 
-function end_hyp(e: Event) {
-  if (hyp_rejection_enabled) {
+function endHyp(e: Event) {
+  if (hypRejectionEnabled) {
     hypothesis3();
   }
   e.stopPropagation();
@@ -323,7 +319,7 @@ function end_hyp(e: Event) {
 function hypothesis3() {
   const nHyps = hyps.length;
   if (nHyps < 1) return;
-  var lastHyp = hyps[nHyps - 1];
+  const lastHyp = hyps[nHyps - 1];
   log(`N hyps: ${nHyps}`);
   const mark_copy = deepCopy2D(Marked);
 
@@ -393,30 +389,29 @@ function finishedHypChoosing() {
   if (choosingHyp == false) return;
   log("Stopping hypothesis choosing");
   enableSmallDigs();
-  html_button_dict.get("but1").style.color = "";
+  htmlButtonDict.get("but1").style.color = "";
   choosingHyp = false;
 }
 
 // Enable / disable the hypothesis rejection button
 function enableHypRejection() {
-  const rejBut = html_button_dict.get("but3");
+  const rejBut = htmlButtonDict.get("but3");
   rejBut.style.color = "#000";
-  hyp_rejection_enabled = true;
+  hypRejectionEnabled = true;
 }
 function disableHypRejection() {
-  const rejBut = html_button_dict.get("but3");
+  const rejBut = htmlButtonDict.get("but3");
   rejBut.style.color = "#B8B8B8";
-  hyp_rejection_enabled = false;
+  hypRejectionEnabled = false;
 }
 
 // Checks if any input digits are wrong and sets their background to
 // red.
 function check() {
-  if (sol_available == false) return;
+  if (solAvailable == false) return;
   console.log("Checking Sudoku: ");
   for (let i = 0; i < 9; i++) {
     for (let j = 0; j < 9; j++) {
-      const tot_ind = i * 9 + j;
       if (T[i][j] != Tsol[i][j] && T[i][j] != 0) {
         console.log(`Cell (${i}, ${j}) is incorrect!`);
         Tref[i][j].style.backgroundColor = wrongHypCol;
@@ -450,8 +445,8 @@ function checkSolvedSud() {
     vid_src = "./gifs/unlim_power.mp4";
     title = "Nothing you can't solve.";
   }
-  (html_button_dict.get("fin-vid") as HTMLVideoElement).src = vid_src;
-  (html_button_dict.get("solved-h") as HTMLVideoElement).src = title;
+  (htmlButtonDict.get("fin-vid") as HTMLVideoElement).src = vid_src;
+  (htmlButtonDict.get("solved-h") as HTMLVideoElement).src = title;
   ($("#win") as any).popup("open");
   console.log(sudLvl);
 }
@@ -462,8 +457,8 @@ function clickCell(cell: HTMLTableCellElement) {
   const c = Number(cell.getAttribute("clickable"));
   const y = Number(cell.getAttribute("y"));
   const x = Number(cell.getAttribute("x"));
-  const num_set = T[y][x] > 0;
-  if (num_set) {
+  const numSet = T[y][x] > 0;
+  if (numSet) {
     // If number in cell is set
     highlight(y, x);
   } else {
@@ -473,17 +468,15 @@ function clickCell(cell: HTMLTableCellElement) {
   }
   curY = y;
   curX = x;
-  prev_cell = [x, y];
-  log(`Selected ${c} cell (${curY}, ${curX})`);
   const clickable = c == 1;
   if (clickable) {
     // If Cell is clickable
     $("#digits").off("click", "**");
     // Enable all digits that are admissible
-    var a = allowed(T, y, x, clickable);
-    var d = new Array(10).fill(false);
-    for (let i = 0; i < a.length; i++) d[a[i]] = true;
-    if (num_set) {
+    const allowedArray = allowed(T, y, x, clickable);
+    const d = new Array(10).fill(false);
+    for (let i = 0; i < allowedArray.length; i++) d[allowedArray[i]] = true;
+    if (numSet) {
       // Set the currently set number button to clickable
       d[T[y][x]] = true;
     }
@@ -494,7 +487,7 @@ function clickCell(cell: HTMLTableCellElement) {
         digits[i].style.color = col1;
         digits[i].style.borderColor = col1;
         if (!choosingHyp || v == 0) {
-          $("#digits").on("click", "#digit-" + String(i), function(e) {
+          $("#digits").on("click", "#digit-" + String(i), function (e) {
             log("Setting digit");
             if (large || v == 0) {
               T[y][x] = v;
@@ -515,7 +508,7 @@ function clickCell(cell: HTMLTableCellElement) {
             e.stopPropagation();
           });
         } else {
-          $("#digits").on("click", "#digit-" + String(i), function(e) {
+          $("#digits").on("click", "#digit-" + String(i), function (e) {
             // Save current version
             if (!choosingHyp) {
               e.stopPropagation();
@@ -543,7 +536,7 @@ function clickCell(cell: HTMLTableCellElement) {
         digits[i].style.color = "#B8B8B8";
         digits[i].style.borderColor = "#B8B8B8";
         digits[i].style.cursor = "pointer";
-        $("#digits").on("click", "#digit-" + String(i), function(e) {
+        $("#digits").on("click", "#digit-" + String(i), function (e) {
           log("Cannot set this number!");
           e.stopPropagation();
         });
@@ -571,7 +564,7 @@ function elsewhere() {
       digits[i].style.color = "#B8B8B8";
       digits[i].style.borderColor = "#B8B8B8";
       digits[i].style.cursor = "pointer";
-      $("#digits").on("click", "#digit-" + String(i), function(e) {
+      $("#digits").on("click", "#digit-" + String(i), function (e) {
         log("Neet to select a cell first.");
         e.stopPropagation();
       });
@@ -579,7 +572,7 @@ function elsewhere() {
   }
 }
 
-function set_if_not_marked(y: number, x: number) {
+function setIfNotMarked(y: number, x: number) {
   if (Marked[y][x] == 0) {
     Tref[y][x].style.backgroundColor = rowColSquareForbidCol;
   }
@@ -592,9 +585,9 @@ function highlight(y: number, x: number) {
   var xFloor = x - (x % 3);
   var yFloor = y - (y % 3);
   for (let i = 0; i < 9; i++) {
-    set_if_not_marked(y, i);
-    set_if_not_marked(i, x);
-    set_if_not_marked(yFloor + (i % 3), xFloor + Math.floor(i / 3));
+    setIfNotMarked(y, i);
+    setIfNotMarked(i, x);
+    setIfNotMarked(yFloor + (i % 3), xFloor + Math.floor(i / 3));
     for (let j = 0; j < 9; j++) {
       if (T[i][j] == currDig) {
         if (Marked[i][j] == 0) {
@@ -628,10 +621,10 @@ function updateGrid(remove_marks = true) {
   log("Updating grid...");
   for (let i = 0; i < 9; i++) {
     for (let j = 0; j < 9; j++) {
-      const curr_val = T[i][j];
-      const curr_mark = Marked[i][j];
-      setCell(i, j, curr_val, true, false);
-      if (!remove_marks || (curr_val > 0 && curr_mark != 0)) {
+      const currVal = T[i][j];
+      const currMark = Marked[i][j];
+      setCell(i, j, currVal, true, false);
+      if (!remove_marks || (currVal > 0 && currMark != 0)) {
         Marked[i][j] = 1;
       }
       Tref[i][j].style.color = "";
@@ -656,7 +649,7 @@ function setClickableTrefT() {
 }
 
 // Sets the sudoku to the one specified with the string 'ret_sud'.
-function set_sud_from_str(ret_sud: string) {
+function setSudFromStr(ret_sud: string) {
   ($("#newGrid") as any).popup("close");
   ($("#waiting") as any).popup("open");
 
@@ -676,10 +669,10 @@ function set_sud_from_str(ret_sud: string) {
   // Shuffle
   permuteSuds(T, Tsol);
   copy_to_2d(T, Tinit);
-  if (!sol_available) sol_available = true;
+  if (!solAvailable) solAvailable = true;
   updateGrid();
   setClickableTrefT();
-  clear_hyps();
+  clearHyps();
   ($("#waiting") as any).popup("close");
 }
 
@@ -687,7 +680,7 @@ function set_sud_from_str(ret_sud: string) {
 function disableSmallDigs() {
   log("Disabled down button");
   enlarge();
-  var down_but = html_button_dict.get("down-but");
+  var down_but = htmlButtonDict.get("down-but");
   down_but.onclick = null;
   down_but.style.color = "#B8B8B8";
   down_but.style.borderColor = "#B8B8B8";
@@ -695,23 +688,23 @@ function disableSmallDigs() {
 }
 // Enables down button
 function enableSmallDigs() {
-  var down_but = html_button_dict.get("down-but");
+  var down_but = htmlButtonDict.get("down-but");
   down_but.onclick = shrink;
   down_but.style.color = "";
   down_but.style.borderColor = "";
 }
 
 // Lets the user input a custom sudoku
-function input_own_sudoku() {
+function inputCustomSudoku() {
   if (!inputtingOwnSud) {
     log("Own Input");
-    clear_hyps();
-    disable_hyp();
+    clearHyps();
+    disableHyp();
 
     // Toggle State and Button color
     inputtingOwnSud = true;
-    sol_available = false;
-    var own_but = html_button_dict.get("own_sud");
+    solAvailable = false;
+    var own_but = htmlButtonDict.get("own_sud");
     own_but.style.color = "#F00";
 
     // Remove current sudoku
@@ -727,12 +720,12 @@ function input_own_sudoku() {
     disableSmallDigs();
   } else {
     log("Done inputting own sudoku!");
-    enable_hyp();
+    enableHyp();
     sudLvl = -1;
 
     // Toggle State
     inputtingOwnSud = false;
-    var own_but = html_button_dict.get("own_sud");
+    var own_but = htmlButtonDict.get("own_sud");
     own_but.style.color = "";
 
     // Activate small numbers and set set numbers to unclickable
@@ -745,21 +738,21 @@ function input_own_sudoku() {
 // Reads a random sudoku from the file and loads it.
 function loadRandomSud(lvl = 7) {
   if (inputtingOwnSud) {
-    input_own_sudoku();
+    inputCustomSudoku();
   }
-  read_sudoku_from_file(set_sud_from_str, lvl);
+  read_sudoku_from_file(setSudFromStr, lvl);
   log(`Loaded sudoku with level ${lvl}`);
 }
 
 // Setup hypothesis buttons
-function set_hyp_buttons() {
-  html_button_dict.get("but1").style.color = "#000";
-  html_button_dict.get("but3").style.color = "#B8B8B8";
+function setHypButtons() {
+  htmlButtonDict.get("but1").style.color = "#000";
+  htmlButtonDict.get("but3").style.color = "#B8B8B8";
 }
 
 // Sets the current sudoku to the solution.
 function solve() {
-  if (sol_available == false) return;
+  if (solAvailable == false) return;
   sudLvl = -2;
   for (let i = 0; i < 9; i++) {
     for (let j = 0; j < 9; j++) {
@@ -775,11 +768,11 @@ function solve() {
       }
     }
   }
-  clear_hyps();
-  set_hyp_buttons();
+  clearHyps();
+  setHypButtons();
 }
 
-function clear_hyps() {
+function clearHyps() {
   log("Clearing hypotheses");
   hyps = [];
   choosingHyp = false;
@@ -789,7 +782,7 @@ function clear_hyps() {
 // Restart
 function restart() {
   if (inputtingOwnSud) {
-    input_own_sudoku();
+    inputCustomSudoku();
   }
   log("Restarting");
   unhighlightAll();
@@ -804,8 +797,8 @@ function restart() {
       }
     }
   }
-  clear_hyps();
-  set_hyp_buttons();
+  clearHyps();
+  setHypButtons();
 }
 
 // Autofill
@@ -830,12 +823,12 @@ export {
   enlarge,
   shrink,
   init_grid,
-  html_button_dict,
+  htmlButtonDict as html_button_dict,
   col1,
   digits,
   loadRandomSud,
   set_buttons,
   log,
   elsewhere,
-  clickCell
+  clickCell,
 };

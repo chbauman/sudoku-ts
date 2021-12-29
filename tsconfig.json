@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "module": "ES6",
+    "lib": ["es2015", "dom"],
     "noImplicitAny": true,
     "removeComments": true,
     "preserveConstEnums": true,

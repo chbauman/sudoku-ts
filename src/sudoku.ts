@@ -14,8 +14,6 @@ var Tinit: number[][] = Array.from(new Array(9), () => new Array(9).fill(0));
 // 3: Current Hypothesis Wrong (checked)
 var Marked: number[][] = Array.from(new Array(9), () => new Array(9).fill(0));
 
-// Hypotheses
-
 // 2D and 3D array deep copy functions
 function deepCopy2D(arr: any[][]): any[][] {
   const arrLen = arr.length;
@@ -33,6 +31,8 @@ function deepCopy3D(arr: any[][][]): any[][][] {
   }
   return newArr;
 }
+
+/** Create an array with numbers from 0 to n-1 */
 function range(n: number): number[] {
   let arr = new Array(n);
   for (let i = 0; i < n; ++i) {
@@ -73,20 +73,20 @@ function read_sudoku_from_file(callback: (s: string) => void, lvl = 7) {
   console.log("Loading file");
   const f_name = "./data/ext_lvl_" + lvl.toString() + ".txt";
   fetch(f_name)
-    .then(response => response.text())
-    .then(data => {
+    .then((response) => response.text())
+    .then((data) => {
       const items = data.split("\n");
       const n_s = items.length - 1;
-      let s_ind = Math.floor(Math.random() * n_s);
-      let sud_str = items[s_ind];
+      const s_ind = Math.floor(Math.random() * n_s);
+      const sud_str = items[s_ind];
       callback(sud_str);
     });
 }
 
 // Finds all numbers that can be set in cell (x, y)
 function allowed(A: number[][], y: number, x: number, ignore_set = false) {
-  let res: number[] = [];
-  let arr = new Array(10).fill(true);
+  const res: number[] = [];
+  const arr: boolean[] = new Array(10).fill(true);
   if (A[y][x] > 0 && !ignore_set) return res;
   for (let i = 0; i < 9; i++) arr[A[y][i]] = false;
   for (let i = 0; i < 9; i++) arr[A[i][x]] = false;
@@ -98,12 +98,12 @@ function allowed(A: number[][], y: number, x: number, ignore_set = false) {
 
 // Permute sudoku
 function permuteSuds(s: number[][], s_sol: number[][], n = 5) {
-  let num_per = range(9);
-  shuffle(num_per);
+  const numPer = range(9);
+  shuffle(numPer);
   for (let i = 0; i < 9; ++i) {
     for (let k = 0; k < 9; ++k) {
       let val = s_sol[i][k];
-      let val_new = num_per[val - 1] + 1;
+      let val_new = numPer[val - 1] + 1;
       s_sol[i][k] = val_new;
       if (s[i][k] != 0) {
         s[i][k] = val_new;
@@ -112,15 +112,15 @@ function permuteSuds(s: number[][], s_sol: number[][], n = 5) {
   }
 
   // Make copy
-  let sol_copy: any[][];
+  let solutionCopy: any[][];
   let s_copy: any[][];
 
   // New Permutation
-  let per3 = range(3);
+  const per3 = range(3);
 
   for (let n_shuff = 0; n_shuff < n; ++n_shuff) {
     // Copy again
-    sol_copy = deepCopy2D(s_sol);
+    solutionCopy = deepCopy2D(s_sol);
     s_copy = deepCopy2D(s);
 
     // Permute rows
@@ -128,12 +128,12 @@ function permuteSuds(s: number[][], s_sol: number[][], n = 5) {
       shuffle(per3);
       let offs = k * 3;
       for (let i = 0; i < 3; ++i) {
-        s_sol[offs + i] = sol_copy[offs + per3[i]].slice();
+        s_sol[offs + i] = solutionCopy[offs + per3[i]].slice();
         s[offs + i] = s_copy[offs + per3[i]].slice();
       }
     }
     // Copy again
-    sol_copy = deepCopy2D(s_sol);
+    solutionCopy = deepCopy2D(s_sol);
     s_copy = deepCopy2D(s);
 
     // Permute cols
@@ -142,39 +142,39 @@ function permuteSuds(s: number[][], s_sol: number[][], n = 5) {
       let offs = k * 3;
       for (let i = 0; i < 3; ++i) {
         for (let j = 0; j < 9; ++j) {
-          s_sol[j][offs + i] = sol_copy[j][offs + per3[i]];
+          s_sol[j][offs + i] = solutionCopy[j][offs + per3[i]];
           s[j][offs + i] = s_copy[j][offs + per3[i]];
         }
       }
     }
 
     // Copy again
-    sol_copy = deepCopy2D(s_sol);
+    solutionCopy = deepCopy2D(s_sol);
     s_copy = deepCopy2D(s);
 
     // Permute rows of squares
     shuffle(per3);
     for (let k = 0; k < 3; ++k) {
-      let offs = per3[k] * 3;
-      let offs_k = k * 3;
+      const offs = per3[k] * 3;
+      const offs_k = k * 3;
       for (let i = 0; i < 3; ++i) {
-        s_sol[offs_k + i] = sol_copy[offs + i].slice();
+        s_sol[offs_k + i] = solutionCopy[offs + i].slice();
         s[offs_k + i] = s_copy[offs + i].slice();
       }
     }
 
     // Copy again
-    sol_copy = deepCopy2D(s_sol);
+    solutionCopy = deepCopy2D(s_sol);
     s_copy = deepCopy2D(s);
 
     // Permute cols of squares
     shuffle(per3);
     for (let k = 0; k < 3; ++k) {
-      let offs = per3[k] * 3;
-      let offs_k = k * 3;
+      const offs = per3[k] * 3;
+      const offs_k = k * 3;
       for (let i = 0; i < 3; ++i) {
         for (let j = 0; j < 9; ++j) {
-          s_sol[j][offs_k + i] = sol_copy[j][offs + i];
+          s_sol[j][offs_k + i] = solutionCopy[j][offs + i];
           s[j][offs_k + i] = s_copy[j][offs + i];
         }
       }
@@ -197,5 +197,5 @@ export {
   copy_to_2d,
   allowed,
   checkSolved,
-  deepCopy3D
+  deepCopy3D,
 };

@@ -7,8 +7,10 @@
 
     <link rel="icon" type="image/jpg" href="src/Entwurf.jpg" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <link rel="stylesheet"
-      href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"
+    />
     <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
 
     <script type="module" src="src/main.js"></script>
@@ -21,14 +23,8 @@
   <body>
     <!-- Start of the page -->
     <div data-role="page" id="home">
-      <!--
-      <div data-role="header">
-        <h1>Sudoku</h1>
-      </div>
-        -->
-
       <div role="main" class="ui-content">
-        <h1>Sudoku Solving Assistant</h1>
+        <h1>Sudoku</h1>
 
         <div class="table">
           <table id="grid"></table>
@@ -150,7 +146,7 @@
         <h2 id="solved-h">You Solved it!!</h2>
         <video autoplay loop id="fin-vid">
           <source src="gifs/nice.mp4" type="video/mp4" />
-          Your browser does not support HTML5 video.
+          Your browser does not support HTML5 videos.
         </video>
         <p id="log-txt"></p>
       </div>
@@ -185,12 +181,8 @@
           >.
         </p>
         <p>Additional tools:</p>
-        <h3 id="check" class="helpButton">
-          Show wrong answers
-        </h3>
-        <h3 id="solve" class="helpButton">
-          Solve current grid
-        </h3>
+        <h3 id="check" class="helpButton">Show wrong answers</h3>
+        <h3 id="solve" class="helpButton">Solve current grid</h3>
         <p>(Not available for custom sudokus.)</p>
       </div>
     </div>

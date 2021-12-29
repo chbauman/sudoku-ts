@@ -35,7 +35,7 @@ to compile the TypeScript code:
 
 ```
 $ tsc
-$ http-server
+$ npx http-server
 ```
 
 And then go to `http://localhost:8080/index.html`.

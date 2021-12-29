@@ -83,56 +83,56 @@ function allowed(A, y, x, ignore_set) {
 }
 function permuteSuds(s, s_sol, n) {
     if (n === void 0) { n = 5; }
-    var num_per = range(9);
-    shuffle(num_per);
+    var numPer = range(9);
+    shuffle(numPer);
     for (var i = 0; i < 9; ++i) {
         for (var k = 0; k < 9; ++k) {
             var val = s_sol[i][k];
-            var val_new = num_per[val - 1] + 1;
+            var val_new = numPer[val - 1] + 1;
             s_sol[i][k] = val_new;
             if (s[i][k] != 0) {
                 s[i][k] = val_new;
             }
         }
     }
-    var sol_copy;
+    var solutionCopy;
     var s_copy;
     var per3 = range(3);
     for (var n_shuff = 0; n_shuff < n; ++n_shuff) {
-        sol_copy = deepCopy2D(s_sol);
+        solutionCopy = deepCopy2D(s_sol);
         s_copy = deepCopy2D(s);
         for (var k = 0; k < 3; ++k) {
             shuffle(per3);
             var offs = k * 3;
             for (var i = 0; i < 3; ++i) {
-                s_sol[offs + i] = sol_copy[offs + per3[i]].slice();
+                s_sol[offs + i] = solutionCopy[offs + per3[i]].slice();
                 s[offs + i] = s_copy[offs + per3[i]].slice();
             }
         }
-        sol_copy = deepCopy2D(s_sol);
+        solutionCopy = deepCopy2D(s_sol);
         s_copy = deepCopy2D(s);
         for (var k = 0; k < 3; ++k) {
             shuffle(per3);
             var offs = k * 3;
             for (var i = 0; i < 3; ++i) {
                 for (var j = 0; j < 9; ++j) {
-                    s_sol[j][offs + i] = sol_copy[j][offs + per3[i]];
+                    s_sol[j][offs + i] = solutionCopy[j][offs + per3[i]];
                     s[j][offs + i] = s_copy[j][offs + per3[i]];
                 }
             }
         }
-        sol_copy = deepCopy2D(s_sol);
+        solutionCopy = deepCopy2D(s_sol);
         s_copy = deepCopy2D(s);
         shuffle(per3);
         for (var k = 0; k < 3; ++k) {
             var offs = per3[k] * 3;
             var offs_k = k * 3;
             for (var i = 0; i < 3; ++i) {
-                s_sol[offs_k + i] = sol_copy[offs + i].slice();
+                s_sol[offs_k + i] = solutionCopy[offs + i].slice();
                 s[offs_k + i] = s_copy[offs + i].slice();
             }
         }
-        sol_copy = deepCopy2D(s_sol);
+        solutionCopy = deepCopy2D(s_sol);
         s_copy = deepCopy2D(s);
         shuffle(per3);
         for (var k = 0; k < 3; ++k) {
@@ -140,12 +140,12 @@ function permuteSuds(s, s_sol, n) {
             var offs_k = k * 3;
             for (var i = 0; i < 3; ++i) {
                 for (var j = 0; j < 9; ++j) {
-                    s_sol[j][offs_k + i] = sol_copy[j][offs + i];
+                    s_sol[j][offs_k + i] = solutionCopy[j][offs + i];
                     s[j][offs_k + i] = s_copy[j][offs + i];
                 }
             }
         }
     }
 }
-export { T, Tsol, Tinit, DEBUG, Marked, range, shuffle, deepCopy2D, read_sudoku_from_file, permuteSuds, copy_to_2d, allowed, checkSolved, deepCopy3D };
+export { T, Tsol, Tinit, DEBUG, Marked, range, shuffle, deepCopy2D, read_sudoku_from_file, permuteSuds, copy_to_2d, allowed, checkSolved, deepCopy3D, };
 //# sourceMappingURL=sudoku.js.map

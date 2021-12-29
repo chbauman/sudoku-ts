@@ -16,7 +16,7 @@ import {
   digits,
   log,
   elsewhere,
-  clickCell
+  clickCell,
 } from "./html_util.js";
 
 // State Variables
@@ -34,7 +34,7 @@ function init() {
   document.querySelector("body").addEventListener("click", elsewhere);
 
   // Set button map
-  let but_ids = [
+  const but_ids = [
     "down-but",
     "up-but",
     "restart_but",
@@ -48,7 +48,7 @@ function init() {
     "solve",
     "check",
     "fin-vid",
-    "solved-h"
+    "solved-h",
   ];
   for (let b_id of but_ids) {
     html_button_dict.set(b_id, document.getElementById(b_id));
@@ -60,12 +60,12 @@ function init() {
     digits[i] = document.getElementById("digit-" + String(i));
 
   // Initialize grid
-  let tbl = document.getElementById("grid") as HTMLTableElement;
+  const tbl = document.getElementById("grid") as HTMLTableElement;
   init_grid(tbl);
   log("Initialized grid!");
 
   // click on cells
-  $("#grid").on("click", ".gridCell", function(e) {
+  $("#grid").on("click", ".gridCell", function (e) {
     clickCell(this);
     e.stopPropagation();
   });
