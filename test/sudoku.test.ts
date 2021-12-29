@@ -9,7 +9,7 @@ import {
   allowed,
   checkSolved,
   deepCopy3D,
-} from "../src/sudoku.js";
+} from "../dist/sudoku";
 
 // Checks if sudoku contains valid values
 function checkSudoku(s) {
