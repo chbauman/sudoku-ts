@@ -12,7 +12,7 @@ import {
   checkSolved,
   deepCopy2D,
   deepCopy3D,
-} from "./sudoku";
+} from "./sudoku.js";
 
 // Colors
 const col1 = "#0A85FF";

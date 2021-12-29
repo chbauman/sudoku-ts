@@ -7,6 +7,7 @@
 // - Unit-test main.ts
 // - Test installation from scratch (e.g. without node.js installed)
 // - Better sub-cell placement for pencil mark
+// - Make jest test run with typescript files!
 
 // Import sudoku module
 import {
@@ -17,7 +18,7 @@ import {
   log,
   elsewhere,
   clickCell,
-} from "./html_util";
+} from "./html_util.js";
 
 // State Variables
 var initialized = false;

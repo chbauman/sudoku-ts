@@ -1,4 +1,4 @@
-import { initGrid, setButtons, htmlButtonDict, digits, log, elsewhere, clickCell, } from "./html_util";
+import { initGrid, setButtons, htmlButtonDict, digits, log, elsewhere, clickCell, } from "./html_util.js";
 var initialized = false;
 var getDocEl = function (id) {
     var res = document.getElementById(id);
