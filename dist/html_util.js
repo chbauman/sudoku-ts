@@ -229,11 +229,11 @@ function setCell(y, x, n, largeMode, highlightCells, removeRed) {
 }
 function hypothesis1() {
     if (!choosingHyp) {
-        log("Choosing " + (hyps.length + 1) + "-th hypothesis.");
+        log("Choosing ".concat(hyps.length + 1, "-th hypothesis."));
         disableSmallDigs();
         getAssertedButton("but1").style.color = "#F00";
         choosingHyp = true;
-        log("Started choosing, curX = " + curX);
+        log("Started choosing, curX = ".concat(curX));
         if (curX >= 0) {
             clickCell(Tref[curY][curX]);
         }
@@ -253,7 +253,7 @@ function hypothesis3() {
     if (nHyps < 1)
         return;
     var lastHyp = hyps[nHyps - 1];
-    log("N hyps: " + nHyps);
+    log("N hyps: ".concat(nHyps));
     var markCopy = deepCopy2D(Marked);
     if (nHyps < 2) {
         copyTo2d(Tinit, T);
@@ -281,7 +281,7 @@ function hypothesis3() {
                     if (m > 0) {
                         Tref[i][j].style.backgroundColor = wrongHypCol;
                         Marked[i][j] = 1;
-                        log("m is " + m + ", setting (" + i + ", " + j + ")");
+                        log("m is ".concat(m, ", setting (").concat(i, ", ").concat(j, ")"));
                     }
                 }
             }
@@ -336,7 +336,7 @@ function check() {
     for (var i = 0; i < 9; i++) {
         for (var j = 0; j < 9; j++) {
             if (T[i][j] != Tsol[i][j] && T[i][j] != 0) {
-                console.log("Cell (" + i + ", " + j + ") is incorrect!");
+                console.log("Cell (".concat(i, ", ").concat(j, ") is incorrect!"));
                 Tref[i][j].style.backgroundColor = wrongHypCol;
                 Marked[i][j] = 1;
             }
@@ -639,7 +639,7 @@ function loadRandomSud(lvl) {
         inputCustomSudoku();
     }
     readSudokuFromFile(setSudFromStr, lvl);
-    log("Loaded sudoku with level " + lvl);
+    log("Loaded sudoku with level ".concat(lvl));
 }
 function setHypButtons() {
     getAssertedButton("but1").style.color = "#000";
