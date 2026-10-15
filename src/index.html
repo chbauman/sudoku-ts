@@ -1,0 +1,191 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <title>Sudoku Solving Assistant</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" />
+
+    <link rel="icon" type="image/jpg" href="Entwurf.jpg" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"
+    />
+    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@5.0.0/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+      nomodule=""
+      src="https://unpkg.com/ionicons@5.0.0/dist/ionicons/ionicons.js"
+    ></script>
+
+    <script type="module" src="../dist/main.js"></script>
+    <script type="module" src="../dist/sudoku.js"></script>
+    <script type="module" src="../dist/html_util.js"></script>
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <div data-role="page" id="home">
+      <div role="main" class="ui-content">
+        <h1>Sudoku</h1>
+
+        <div class="table">
+          <table id="grid"></table>
+        </div>
+
+        <div class="table panel">
+          <table id="digits">
+            <tr>
+              <td id="digit-0" class="digit">
+                <ion-icon name="backspace"></ion-icon>
+              </td>
+              <td id="digit-1" class="digit">1</td>
+              <td id="digit-2" class="digit">2</td>
+              <td id="digit-3" class="digit">3</td>
+              <td id="digit-4" class="digit">4</td>
+              <td id="up-but" class="digit">
+                <ion-icon name="arrow-up"></ion-icon>
+              </td>
+            </tr>
+
+            <tr>
+              <td id="digit-5" class="digit">5</td>
+              <td id="digit-6" class="digit">6</td>
+              <td id="digit-7" class="digit">7</td>
+              <td id="digit-8" class="digit">8</td>
+              <td id="digit-9" class="digit">9</td>
+              <td id="down-but" class="digit">
+                <ion-icon name="arrow-down"></ion-icon>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <div class="panel">
+          <ul id="buttons1"></ul>
+        </div>
+        <div>
+          <ul id="buttons2">
+            <li onclick='$( "#restart" ).popup( "open" );'>
+              <ion-icon name="reload"></ion-icon>
+            </li>
+            <li onclick='$( "#newGrid" ).popup( "open" );'>
+              <ion-icon name="code-working"></ion-icon>
+            </li>
+            <li id="auto-fill-button">
+              <ion-icon class="icon" name="help-circle"></ion-icon>
+            </li>
+            <li id="but1"><ion-icon name="git-branch"></ion-icon></li>
+            <li id="but3"><ion-icon name="close"></ion-icon></li>
+            <li id="own_sud"><ion-icon name="document-outline"></ion-icon></li>
+            <li onclick='$( "#help" ).popup( "open" );'>
+              <ion-icon name="information-circle"></ion-icon>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div
+        data-role="popup"
+        id="waiting"
+        class="ui-content"
+        data-theme="b"
+        data-overlay-theme="b"
+      >
+        <p>generating a new grid…</p>
+      </div>
+
+      <div
+        data-role="popup"
+        id="newGrid"
+        class="ui-content"
+        data-theme="b"
+        data-overlay-theme="b"
+      >
+        <h2>Select level:</h2>
+        <ul id="lvl_list">
+          <li>Lvl 0</li>
+          <li>Lvl 1</li>
+          <li>Lvl 2</li>
+          <li>Lvl 3</li>
+          <li>Lvl 4</li>
+          <li>Lvl 5</li>
+          <li>Lvl 6</li>
+          <li>Lvl 7</li>
+          <li>Lvl 8</li>
+        </ul>
+      </div>
+
+      <div
+        data-role="popup"
+        id="restart"
+        class="ui-content"
+        data-theme="b"
+        data-overlay-theme="b"
+      >
+        <h2>Restart game?</h2>
+        <ul>
+          <li id="restart_but">yes</li>
+          <li id="cancel" onclick='$( "#restart" ).popup( "close" );'>
+            cancel
+          </li>
+        </ul>
+      </div>
+
+      <div
+        data-role="popup"
+        id="win"
+        class="ui-content"
+        data-theme="b"
+        data-overlay-theme="b"
+      >
+        <h2 id="solved-h">You Solved it!!</h2>
+        <video autoplay loop id="fin-vid">
+          <source src="gifs/nice.mp4" type="video/mp4" />
+          Your browser does not support HTML5 videos.
+        </video>
+        <p id="log-txt"></p>
+      </div>
+
+      <div
+        data-role="popup"
+        id="help"
+        class="ui-content"
+        data-theme="b"
+        data-overlay-theme="b"
+      >
+        <h2>Help</h2>
+        <p>Main symbols</p>
+        <ul>
+          <li><ion-icon name="reload"></ion-icon></li>
+          <li class="help">Restart current sudoku</li>
+          <li><ion-icon name="code-working"></ion-icon></li>
+          <li class="help">Load a new sudoku</li>
+          <li><ion-icon name="help-circle"></ion-icon></li>
+          <li class="help">Fill in pencil marks</li>
+          <li><ion-icon name="git-branch"></ion-icon></li>
+          <li class="help">Make a hypothesis</li>
+          <li><ion-icon name="close"></ion-icon></li>
+          <li class="help">Reject hypothesis</li>
+          <li><ion-icon name="document-outline"></ion-icon></li>
+          <li class="help">Input your own sudoku</li>
+        </ul>
+        <p>
+          More help is available
+          <a href="https://chbauman.github.io/info/2020/03/25/sudoku-ts/">
+            here</a
+          >.
+        </p>
+        <p>Additional tools:</p>
+        <h3 id="check" class="helpButton">Show wrong answers</h3>
+        <h3 id="solve" class="helpButton">Solve current grid</h3>
+        <p>(Not available for custom sudokus.)</p>
+      </div>
+    </div>
+  </body>
+</html>
