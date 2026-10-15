@@ -348,26 +348,26 @@ function checkSolvedSud() {
     if (!slvd) {
         return;
     }
-    var vidSrc = "./gifs/gj.mp4";
+    var vidSrc = "../gifs/gj.mp4";
     var title = "You solved it!! :)";
     if (sudLvl == -2) {
-        vidSrc = "./gifs/uncivilized.mp4";
+        vidSrc = "../gifs/uncivilized.mp4";
         title = "You used the solver :(";
     }
     else if (sudLvl == -1) {
-        vidSrc = "./gifs/thumbs_up.mp4";
+        vidSrc = "../gifs/thumbs_up.mp4";
         title = "You solved your own sudoku.";
     }
     else if (sudLvl == 0) {
-        vidSrc = "./gifs/yoda_fear.mp4";
+        vidSrc = "../gifs/yoda_fear.mp4";
         title = "Do not fear the harder ones.";
     }
     else if (sudLvl < 5) {
-        vidSrc = "./gifs/good.mp4";
+        vidSrc = "../gifs/good.mp4";
         title = "Now try another one.";
     }
     else if (sudLvl == 8) {
-        vidSrc = "./gifs/unlim_power.mp4";
+        vidSrc = "../gifs/unlim_power.mp4";
         title = "Nothing you can't solve.";
     }
     htmlButtonDict.get("fin-vid").src = vidSrc;

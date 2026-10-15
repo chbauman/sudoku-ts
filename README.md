@@ -27,7 +27,7 @@ Requires `Node.js`. Everything is run through npm:
 $ npm install     # install dependencies
 $ npm run build   # compile TypeScript to dist/
 $ npm run watch   # recompile on changes
-$ npm start       # build and serve at http://localhost:8080/index.html
+$ npm start       # build and serve at http://localhost:8080/src/index.html
 $ npm run dev     # watch + serve
 $ npm test        # run the jest tests
 ```

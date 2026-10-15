@@ -7,7 +7,7 @@
     "test": "jest --coverage",
     "build": "tsc",
     "watch": "tsc --watch",
-    "serve": "http-server -c-1 -o /index.html",
+    "serve": "http-server -c-1 -o /src/index.html",
     "start": "npm run build && npm run serve",
     "dev": "tsc --watch & http-server -c-1"
   },
