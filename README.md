@@ -4,7 +4,7 @@ A game of sudoku written in TypeScript as a mobile app.
 Let's you solve the hardest sudokus by hand with depth-first search.
 It allows you to guess a number and continue solving while being able to
 return to the point of guessing. This process can be done in a nested way.
-Try it at [sudoku.emeki.ch](sudoku.emeki.ch), a screenshot is shown below.
+Try it at [chrisbaumann.ch/sudoku-ts](https://chrisbaumann.ch/sudoku-ts/), a screenshot is shown below.
 
 ![](https://chbauman.github.io/assets/img/posts/screen_sudoku_broad.png)
 
@@ -39,5 +39,8 @@ Note that an internet connection is required to load the icons.
 
 Pushes to `main` trigger `.github/workflows/deploy.yml`, which runs the tests,
 builds the TypeScript (`dist/` is not committed) and publishes the site to the
-`gh-pages` branch (site root = `src/` contents plus `dist/` and `assets/`). In the repository settings, set Pages to deploy from the
-`gh-pages` branch (root).
+`gh-pages` branch (site root = `src/` contents plus `dist/` and `assets/`).
+In the repository settings, set Pages to deploy from the `gh-pages` branch
+(root). The page is then available at the default GitHub Pages address,
+<https://chrisbaumann.ch/sudoku-ts/>. All paths are relative, so it works
+under the `/sudoku-ts/` sub-path.
