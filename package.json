@@ -14,11 +14,6 @@
   "type": "module",
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "esm": "^3.2.25",
-    "node-fetch": "^3.3.2",
-    "node-fetch-polyfill": "^2.0.6"
-  },
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "@types/jquery": "^4.0.1",
