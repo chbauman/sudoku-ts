@@ -39,5 +39,5 @@ Note that an internet connection is required to load the icons.
 
 Pushes to `main` trigger `.github/workflows/deploy.yml`, which runs the tests,
 builds the TypeScript (`dist/` is not committed) and publishes the site to the
-`gh-pages` branch. In the repository settings, set Pages to deploy from the
+`gh-pages` branch (site root = `src/` contents plus `dist/` and `assets/`). In the repository settings, set Pages to deploy from the
 `gh-pages` branch (root).
