@@ -3,3 +3,6 @@ coverage
 
 src/*.js.map
 **/*.js.map
+# build output
+dist
+_site

@@ -19,26 +19,25 @@ and is specifically designed to be unsolvable to all but the sharpest minds.](ht
 Built upon simpler JavaScript version found at https://github.com/baruchel/sudoku-js.
 The icons open source and taken from https://ionicons.com/.
 
-## Installation for testing locally
+## Development
 
-For local development and testing, `Node.js` was used with `jest` as a
-testing framework. For installation run:
-
-```
-$ npm install --save-dev jest babel-jest babel-preset-env
-$ npm i @types/jquery
-```
-
-To then test the website locally, one possibility is to
-use `http-server` with `node.js`. You will probably also want
-to compile the TypeScript code:
+Requires `Node.js`. Everything is run through npm:
 
 ```
-$ tsc
-$ npx http-server
+$ npm install     # install dependencies
+$ npm run build   # compile TypeScript to dist/
+$ npm run watch   # recompile on changes
+$ npm start       # build and serve at http://localhost:8080/src/index.html
+$ npm run dev     # watch + serve
+$ npm test        # run the jest tests
 ```
 
-And then go to `http://localhost:8080/index.html`.
-This might change if the port is already in use.
-Note that an internet connection is required to load
-the icons.
+The port may differ if 8080 is already in use.
+Note that an internet connection is required to load the icons.
+
+## Deployment
+
+Pushes to `main` trigger `.github/workflows/deploy.yml`, which runs the tests,
+builds the TypeScript (`dist/` is not committed) and publishes the site to the
+`gh-pages` branch. In the repository settings, set Pages to deploy from the
+`gh-pages` branch (root).

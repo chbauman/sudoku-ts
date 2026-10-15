@@ -9,10 +9,10 @@ import {
   allowed,
   checkSolved,
   deepCopy3D,
-} from "../dist/sudoku";
+} from "../src/sudoku";
 
 // Checks if sudoku contains valid values
-function checkSudoku(s) {
+function checkSudoku(s: number[][]) {
   const n1 = s.length;
   const n2 = s[0].length;
   for (let i = 0; i < n1; ++i) {
@@ -81,7 +81,7 @@ test("test 2d deep copy 2", () => {
 test("test shuffle", () => {
   const arr1 = [1, 2, 3, 4, 5];
   const arr2 = shuffle(arr1);
-  const arrSum = (arr2) => arr2.reduce((a, b) => a + b, 0);
+  const arrSum = (arr: number[]) => arr.reduce((a, b) => a + b, 0);
   expect(arr2.length).toBe(5);
   expect(arrSum(arr2)).toBe(15);
 });
