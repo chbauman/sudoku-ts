@@ -4,7 +4,7 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "test": "jest --coverage",
+    "test": "jest --config test/jest.config.cjs --coverage",
     "build": "tsc",
     "watch": "tsc --watch",
     "serve": "http-server -c-1 -o /src/index.html",
