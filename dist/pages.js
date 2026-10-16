@@ -1,8 +1,10 @@
+import { loadHistory, bestTime, formatTime } from "./history.js";
 import { settings, loadSettings, saveSettings, applyTheme, } from "./settings.js";
 const TITLES = {
     game: "Sudoku",
     help: "Help",
     settings: "Settings",
+    history: "History",
 };
 const byId = (id) => document.getElementById(id);
 export function currentPage() {
@@ -18,6 +20,44 @@ function showPage() {
     byId("back-btn").hidden = page === "game";
     closeMenu();
     window.scrollTo(0, 0);
+    if (page === "history")
+        renderHistory();
+}
+async function renderHistory() {
+    const entries = await loadHistory();
+    byId("history-empty").hidden = entries.length > 0;
+    byId("history-content").hidden = entries.length === 0;
+    const row = (cells, tag = "td") => "<tr>" +
+        cells
+            .map((c, i) => `<${tag}${i > 0 ? ' class="num"' : ""}>${c}</${tag}>`)
+            .join("") +
+        "</tr>";
+    const levels = [...new Set(entries.map((e) => e.level))].sort((a, b) => a - b);
+    byId("history-levels").innerHTML =
+        row(["Level", "Solved", "Best", "Average"], "th") +
+            levels
+                .map((level) => {
+                const times = entries.filter((e) => e.level === level).map((e) => e.seconds);
+                const avg = times.reduce((a, b) => a + b, 0) / times.length;
+                return row([
+                    `Lvl ${level}`,
+                    String(times.length),
+                    formatTime(bestTime(entries, level)),
+                    formatTime(avg),
+                ]);
+            })
+                .join("");
+    const recent = entries.slice(-20).reverse();
+    byId("history-recent").innerHTML =
+        row(["Date", "Level", "Time", "ID"], "th") +
+            recent
+                .map((e) => row([
+                new Date(e.date).toLocaleDateString(),
+                `Lvl ${e.level}`,
+                formatTime(e.seconds),
+                `#${e.id.split("-")[1]}`,
+            ]))
+                .join("");
 }
 function closeMenu() {
     byId("menu").hidden = true;

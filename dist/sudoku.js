@@ -58,7 +58,7 @@ function readSudokuFromFile(callback, lvl = 7) {
         const items = data.split("\n");
         const nItems = items.length - 1;
         const sInd = Math.floor(Math.random() * nItems);
-        callback(items[sInd]);
+        callback(items[sInd], sInd);
     });
 }
 function allowed(A, y, x, ignoreSet = false) {
