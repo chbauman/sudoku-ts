@@ -452,15 +452,30 @@ li {
     width: auto;
 }
 
+/* Icon legend of the help page: icon column + text column */
 #help ul {
-    width: 290px;
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    align-items: center;
+    row-gap: 10px;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    font-size: 16px;
 }
 
-.help {
-    font-size: 14px;
-    width: 200px;
+#help li {
+    display: block;
+    width: auto;
+    padding: 0;
+    font-size: 28px;
+    cursor: default;
+}
+
+#help li.help {
+    font-size: 15px;
     text-align: left;
-    top: -8px;
 }
 
 /* Dialog sizes */

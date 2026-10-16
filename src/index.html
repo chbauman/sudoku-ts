@@ -51,11 +51,11 @@
 
     <div id="home">
       <header class="bar">
-        <button id="back-btn" class="icon-btn" aria-label="Back" hidden>
+        <button id="back-btn" class="icon-btn" title="Back" aria-label="Back" hidden>
           <svg class="icon" aria-hidden="true"><use href="#i-arrow-back-outline" /></svg>
         </button>
         <h1 id="page-title">Sudoku</h1>
-        <button id="menu-btn" class="icon-btn" aria-label="Menu" aria-haspopup="true" aria-expanded="false">
+        <button id="menu-btn" class="icon-btn" title="Menu" aria-label="Menu" aria-haspopup="true" aria-expanded="false">
           <svg class="icon" aria-hidden="true"><use href="#i-menu-outline" /></svg>
         </button>
         <nav id="menu" hidden>
@@ -73,14 +73,14 @@
         <div class="table panel">
           <table id="digits">
             <tr>
-              <td id="digit-0" class="digit">
+              <td id="digit-0" class="digit" title="Clear cell" aria-label="Clear cell">
                 <svg class="icon" aria-hidden="true"><use href="#i-backspace-outline" /></svg>
               </td>
               <td id="digit-1" class="digit">1</td>
               <td id="digit-2" class="digit">2</td>
               <td id="digit-3" class="digit">3</td>
               <td id="digit-4" class="digit">4</td>
-              <td id="mode-but" class="digit" title="Pencil marks">
+              <td id="mode-but" class="digit" title="Pencil marks" aria-label="Pencil marks">
                 <svg class="icon" aria-hidden="true"><use href="#i-pencil-outline" /></svg>
               </td>
             </tr>
@@ -91,7 +91,7 @@
               <td id="digit-7" class="digit">7</td>
               <td id="digit-8" class="digit">8</td>
               <td id="digit-9" class="digit">9</td>
-              <td id="undo-but" class="digit" title="Undo (Ctrl+Z)">
+              <td id="undo-but" class="digit" title="Undo (Ctrl+Z)" aria-label="Undo">
                 <svg class="icon" aria-hidden="true"><use href="#i-arrow-undo-outline" /></svg>
               </td>
             </tr>
@@ -100,19 +100,19 @@
 
         <div>
           <ul id="buttons2">
-            <li data-open="restart">
+            <li data-open="restart" title="Restart sudoku" aria-label="Restart sudoku">
               <svg class="icon" aria-hidden="true"><use href="#i-refresh-outline" /></svg>
             </li>
-            <li data-open="newGrid">
+            <li data-open="newGrid" title="New sudoku" aria-label="New sudoku">
               <svg class="icon" aria-hidden="true"><use href="#i-add-circle-outline" /></svg>
             </li>
-            <li id="auto-fill-button">
+            <li id="auto-fill-button" title="Fill in pencil marks" aria-label="Fill in pencil marks">
               <svg class="icon" aria-hidden="true"><use href="#i-color-wand-outline" /></svg>
             </li>
-            <li id="but1"><svg class="icon" aria-hidden="true"><use href="#i-git-branch-outline" /></svg></li>
-            <li id="but3"><svg class="icon" aria-hidden="true"><use href="#i-close-circle-outline" /></svg></li>
-            <li id="own_sud"><svg class="icon" aria-hidden="true"><use href="#i-create-outline" /></svg></li>
-            <li data-open="tools" title="Tools"><svg class="icon" aria-hidden="true"><use href="#i-help-circle-outline" /></svg></li>
+            <li id="but1" title="Make a hypothesis" aria-label="Make a hypothesis"><svg class="icon" aria-hidden="true"><use href="#i-git-branch-outline" /></svg></li>
+            <li id="but3" title="Reject hypothesis" aria-label="Reject hypothesis"><svg class="icon" aria-hidden="true"><use href="#i-close-circle-outline" /></svg></li>
+            <li id="own_sud" title="Enter your own sudoku" aria-label="Enter your own sudoku"><svg class="icon" aria-hidden="true"><use href="#i-create-outline" /></svg></li>
+            <li data-open="tools" title="Mark mistakes / solve" aria-label="Mark mistakes / solve"><svg class="icon" aria-hidden="true"><use href="#i-help-circle-outline" /></svg></li>
           </ul>
         </div>
 
