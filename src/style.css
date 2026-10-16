@@ -11,6 +11,7 @@
     --hyp: #0c5;
     --wrong: #f22;
     --selected-bg: #bbb;
+    --pencil: #838383;
     --small-dig-bg: #dfd;
     --forbid-bg: #fee9e9;
     --same-bg: #fbb;
@@ -47,6 +48,7 @@
         --hyp: #2fd47a;
         --wrong: #ff5a5a;
         --selected-bg: #4a4e58;
+        --pencil: #7b7e87;
         --small-dig-bg: #1e3a28;
         --forbid-bg: #2a2125;
         --same-bg: #6b2f33;
@@ -66,6 +68,7 @@
     --hyp: #2fd47a;
     --wrong: #ff5a5a;
     --selected-bg: #4a4e58;
+    --pencil: #7b7e87;
     --small-dig-bg: #1e3a28;
     --forbid-bg: #2a2125;
     --same-bg: #6b2f33;
@@ -356,6 +359,7 @@ table {
 }
 
 .subGridCell {
+    color: var(--pencil);
     padding: 0;
     box-sizing: border-box;
     width: calc(var(--cell) / 3);
