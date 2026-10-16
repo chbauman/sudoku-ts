@@ -70,10 +70,20 @@ function log(msg: string) {
   }
 }
 
+// Uniform button states (see .active / .disabled in style.css):
+// toggle buttons are "active" while their mode is on, any button can be
+// disabled.
+function setActive(id: string, on: boolean) {
+  getAssertedButton(id).classList.toggle("active", on);
+}
+function setEnabled(id: string, on: boolean) {
+  getAssertedButton(id).classList.toggle("disabled", !on);
+}
+
 // Change digit input mode (large digits <-> pencil marks)
 function toggleLargeSmall() {
   large = !large;
-  getAssertedButton("mode-but").classList.toggle("active", !large);
+  setActive("mode-but", !large);
 }
 function enlarge(e: Event | undefined = undefined) {
   if (!large) {
@@ -248,14 +258,12 @@ function setButtons() {
 }
 
 function disableHyp() {
-  const butt1 = getAssertedButton("but1");
-  butt1.onclick = null;
-  butt1.style.color = "var(--disabled)";
+  getAssertedButton("but1").onclick = null;
+  setEnabled("but1", false);
 }
 function enableHyp() {
-  const butt1 = getAssertedButton("but1");
-  butt1.onclick = startHyp;
-  butt1.style.color = "var(--fg)";
+  getAssertedButton("but1").onclick = startHyp;
+  setEnabled("but1", true);
 }
 
 // Removes digit in mini cell
@@ -331,7 +339,7 @@ function hypothesis1() {
     // Choose hypothesis digit
     log(`Choosing ${hyps.length + 1}-th hypothesis.`);
     disableSmallDigs();
-    getAssertedButton("but1").style.color = "var(--danger)";
+    setActive("but1", true);
     choosingHyp = true;
     log(`Started choosing, curX = ${curX}`);
     if (curX >= 0) {
@@ -424,19 +432,17 @@ function finishedHypChoosing() {
   if (choosingHyp == false) return;
   log("Stopping hypothesis choosing");
   enableSmallDigs();
-  getAssertedButton("but1").style.color = "";
+  setActive("but1", false);
   choosingHyp = false;
 }
 
 // Enable / disable the hypothesis rejection button
 function enableHypRejection() {
-  const rejBut = getAssertedButton("but3");
-  rejBut.style.color = "var(--fg)";
+  setEnabled("but3", true);
   hypRejectionEnabled = true;
 }
 function disableHypRejection() {
-  const rejBut = getAssertedButton("but3");
-  rejBut.style.color = "var(--disabled)";
+  setEnabled("but3", false);
   hypRejectionEnabled = false;
 }
 
@@ -710,12 +716,12 @@ function disableSmallDigs() {
   log("Disabled pencil mark toggle");
   enlarge();
   smallDigsEnabled = false;
-  getAssertedButton("mode-but").classList.add("disabled");
+  setEnabled("mode-but", false);
 }
 // Enables the pencil mark toggle
 function enableSmallDigs() {
   smallDigsEnabled = true;
-  getAssertedButton("mode-but").classList.remove("disabled");
+  setEnabled("mode-but", true);
 }
 
 // Lets the user input a custom sudoku
@@ -728,8 +734,7 @@ function inputCustomSudoku() {
     // Toggle State and Button color
     inputtingOwnSud = true;
     solAvailable = false;
-    const ownBut = getAssertedButton("own_sud");
-    ownBut.style.color = "var(--danger)";
+    setActive("own_sud", true);
 
     // Remove current sudoku
     for (let i = 0; i < 9; i++) {
@@ -749,8 +754,7 @@ function inputCustomSudoku() {
 
     // Toggle State
     inputtingOwnSud = false;
-    const ownBut = getAssertedButton("own_sud");
-    ownBut.style.color = "";
+    setActive("own_sud", false);
 
     // Activate small numbers and set set numbers to unclickable
     copyTo2d(T, Tinit);
@@ -770,8 +774,9 @@ function loadRandomSud(lvl = 7) {
 
 // Setup hypothesis buttons
 function setHypButtons() {
-  getAssertedButton("but1").style.color = "var(--fg)";
-  getAssertedButton("but3").style.color = "var(--disabled)";
+  setActive("but1", false);
+  setEnabled("but1", true);
+  setEnabled("but3", false);
 }
 
 // Sets the current sudoku to the solution.
@@ -800,6 +805,7 @@ function clearHyps() {
   log("Clearing hypotheses");
   hyps = [];
   choosingHyp = false;
+  setActive("but1", false);
   disableHypRejection();
 }
 

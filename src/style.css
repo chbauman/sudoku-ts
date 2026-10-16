@@ -14,6 +14,7 @@
     --small-dig-bg: #dfd;
     --forbid-bg: #fdd;
     --same-bg: #fbb;
+    --active-bg: rgba(10, 133, 255, 0.14);
     --overlay: rgba(0, 0, 0, 0.5);
 
     --cell: min(9.8vw, 44px);
@@ -36,6 +37,7 @@
         --small-dig-bg: #1f3a27;
         --forbid-bg: #4a2a2c;
         --same-bg: #6b2f33;
+        --active-bg: rgba(74, 163, 255, 0.22);
         --overlay: rgba(0, 0, 0, 0.7);
     }
 }
@@ -171,16 +173,25 @@ table {
     height: auto;
 }
 
-#mode-but.active {
+/* Uniform button states: toggles are .active while on, any button can be
+   .disabled. */
+.active {
     color: var(--accent);
+    background: var(--active-bg);
+}
+
+.digit.active {
     border-color: var(--accent);
-    background: var(--small-dig-bg);
+}
+
+.disabled {
+    color: var(--disabled);
+    background: none;
+    cursor: default;
 }
 
 .digit.disabled {
-    color: var(--disabled);
     border-color: var(--disabled);
-    cursor: default;
 }
 
 .topBorder {
@@ -250,7 +261,8 @@ li {
 
 #buttons2 li {
     width: calc(var(--btn) * 1.05);
-    padding: 0;
+    padding: 4px 0;
+    border-radius: 10px;
     font-size: calc(var(--btn) * 0.75);
 }
 
