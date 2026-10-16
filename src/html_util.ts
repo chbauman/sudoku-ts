@@ -230,8 +230,8 @@ function setButtons() {
       inputCustomSudoku();
     } else {
       confirmAction(
-        "Enter your own sudoku?",
-        "Empties the grid so you can type in your own sudoku. The current game is lost.",
+        "Empty grid?",
+        "Current game will be lost.",
         inputCustomSudoku
       );
     }
