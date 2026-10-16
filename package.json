@@ -9,17 +9,23 @@
     "watch": "tsc --watch",
     "serve": "http-server -c-1 -o /src/index.html",
     "start": "npm run build && npm run serve",
-    "dev": "tsc --watch & http-server -c-1"
+    "dev": "tsc --watch & http-server -c-1",
+    "assemble": "npm run build && node scripts/assemble-site.mjs"
   },
   "type": "module",
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@capacitor/cli": "^8.5.3",
     "@types/jest": "^30.0.0",
     "@types/node": "^26.6.5",
     "http-server": "^14.1.1",
     "jest": "^30.5.2",
     "ts-jest": "^29.4.15",
     "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.5.3",
+    "@capacitor/core": "^8.5.3"
   }
 }

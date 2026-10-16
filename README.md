@@ -70,3 +70,26 @@ icons and all level files. On deploy the cache name gets the commit hash, so
 every release replaces the cached version. The service worker is not
 registered when the page is served from `/src/` (local dev), so changes show
 up immediately while developing.
+
+## Android app
+
+The Android app is a thin [Capacitor](https://capacitorjs.com) wrapper around
+the same web app: `npm run assemble` builds the site into `_site/` (the same
+step that is deployed to GitHub Pages) and `npx cap sync android` copies it
+into the Android project in `android/`. There is no separate Android code to
+maintain; the app works offline because all files are bundled.
+
+The workflow `.github/workflows/android.yml` builds a debug APK on every push
+to `main` and for pull requests that touch the app (Actions run -> Artifacts ->
+`sudoku-debug-apk`). To install it, copy `app-debug.apk` to the phone and open
+it (allow installing from unknown sources). To build locally you need Node 22,
+JDK 21 and the Android SDK:
+
+```
+$ npm run assemble
+$ npx cap sync android
+$ cd android && ./gradlew assembleDebug   # android/app/build/outputs/apk/debug/
+```
+
+A Play Store release additionally needs a release signing key
+(`./gradlew bundleRelease`); this is not set up yet.

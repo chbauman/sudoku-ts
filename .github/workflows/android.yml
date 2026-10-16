@@ -1,0 +1,44 @@
+name: Android app
+
+# Builds the Android app (Capacitor wrapper around the web app, see
+# android/) and uploads the APK as a workflow artifact.
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+    paths:
+      - "android/**"
+      - "capacitor.config.json"
+      - "scripts/**"
+      - "src/**"
+      - "assets/**"
+      - ".github/workflows/android.yml"
+  workflow_dispatch:
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: android-actions/setup-android@v3
+      - run: npm ci
+      - run: npm test
+      # Builds the web app into _site/ and copies it into the Android project
+      - run: npm run assemble
+      - run: npx cap sync android
+      - name: Build debug APK
+        working-directory: android
+        run: ./gradlew assembleDebug --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sudoku-debug-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
