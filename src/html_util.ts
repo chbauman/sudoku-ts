@@ -15,7 +15,7 @@ import {
 } from "./sudoku.js";
 import { storageGet, storageSet, storageRemove } from "./storage.js";
 import { settings, loadSettings } from "./settings.js";
-import { currentPage, goHome } from "./pages.js";
+import { currentPage } from "./pages.js";
 
 // Colors
 const col1 = "var(--accent)";
@@ -227,6 +227,12 @@ function confirmAction(
   openDialog("confirm");
 }
 
+// "Mark mistakes" and "Solve" need the solution, which custom sudokus lack
+function updateToolButtons() {
+  setEnabled("check", solAvailable);
+  setEnabled("solve", solAvailable);
+}
+
 // Sets functionality to the buttons
 function setButtons() {
   setupDialogs();
@@ -308,19 +314,21 @@ function setButtons() {
   // Select levels
   setLevelFun();
 
-  // Solver
-  function solveAndClose() {
-    solve();
-    goHome();
-  }
-  getAssertedButton("solve").addEventListener("click", solveAndClose);
-
-  // Check
-  function checkAndClose() {
+  // Tools below the sudoku
+  getAssertedButton("solve").addEventListener("click", () => {
+    if (solAvailable)
+      confirmAction(
+        "Solve sudoku?",
+        "Fills in the solution. The sudoku counts as solved with the solver.",
+        solve
+      );
+  });
+  getAssertedButton("check").addEventListener("click", (e) => {
     check();
-    goHome();
-  }
-  getAssertedButton("check").addEventListener("click", checkAndClose);
+    reselect();
+    e.stopPropagation(); // keep the selected cell
+  });
+  updateToolButtons();
 }
 
 function disableHyp() {
@@ -707,6 +715,7 @@ async function loadGame(): Promise<boolean> {
     copyTo2d(g.Tsol, Tsol);
     sudLvl = g.sudLvl;
     solAvailable = g.solAvailable;
+    updateToolButtons();
     applySnapshot(g);
     setHypButtons();
     if (hyps.length > 0) enableHypRejection();
@@ -972,6 +981,7 @@ function setSudFromStr(retSud: string) {
   copyTo2d(T, Tinit);
   elsewhere();
   if (!solAvailable) solAvailable = true;
+  updateToolButtons();
   updateGrid();
   setClickableTrefT();
   clearHyps();
@@ -1003,6 +1013,7 @@ function inputCustomSudoku() {
     // Toggle State and Button color
     inputtingOwnSud = true;
     solAvailable = false;
+    updateToolButtons();
     setActive("own_sud", true);
 
     // Remove current sudoku

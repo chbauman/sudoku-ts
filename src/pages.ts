@@ -25,11 +25,6 @@ export function currentPage(): string {
   return page in TITLES ? page : "game";
 }
 
-/** Goes back to the game page */
-export function goHome() {
-  if (currentPage() !== "game") location.hash = "";
-}
-
 function showPage() {
   const page = currentPage();
   document.querySelectorAll<HTMLElement>("[data-page]").forEach((el) => {
@@ -71,16 +66,29 @@ function setupSettings() {
 }
 
 export function setupPages() {
-  // Back: undo the navigation if it came from within the app, so that the
-  // browser / Android back button and this button behave the same
-  let navigated = false;
+  // History is [game, subpage] at most: opening a subpage from another one
+  // replaces the entry, so the back button (and the Android back button) always
+  // returns to the game. Without a game entry before (page opened directly with
+  // a #hash), back just sets an empty hash.
+  let prev = currentPage();
+  let cameFromGame = false;
   window.addEventListener("hashchange", () => {
-    navigated = true;
+    const page = currentPage();
+    if (page === "game") cameFromGame = false;
+    else if (prev === "game") cameFromGame = true;
+    prev = page;
     showPage();
   });
   byId("back-btn").addEventListener("click", () => {
-    if (navigated) history.back();
+    if (cameFromGame) history.back();
     else location.hash = "";
+  });
+  byId("menu").addEventListener("click", (e) => {
+    const link = (e.target as Element).closest("a");
+    if (link && currentPage() !== "game") {
+      e.preventDefault();
+      location.replace(link.getAttribute("href")!);
+    }
   });
 
   byId("menu-btn").addEventListener("click", toggleMenu);
