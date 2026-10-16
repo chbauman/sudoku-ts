@@ -14,9 +14,15 @@ export function init() {
     else {
         initialized = true;
     }
-    document.querySelector("body").addEventListener("click", elsewhere);
+    document.querySelector("body").addEventListener("click", (e) => {
+        const target = e.target;
+        if (!target.closest("dialog, [data-open], #auto-fill-button, #own_sud")) {
+            elsewhere();
+        }
+    });
     const butIds = [
         "mode-but",
+        "undo-but",
         "confirm-title",
         "confirm-desc",
         "confirm-yes",
