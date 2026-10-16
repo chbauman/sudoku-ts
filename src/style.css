@@ -77,6 +77,11 @@ dialog {
     text-align: center;
 }
 
+dialog:focus,
+dialog:focus-visible {
+    outline: none;
+}
+
 dialog > :first-child {
     margin-top: 0;
 }
