@@ -231,6 +231,7 @@ function confirmAction(
 function updateToolButtons() {
   setEnabled("check", solAvailable);
   setEnabled("solve", solAvailable);
+  getAssertedButton("tools-note").hidden = solAvailable;
 }
 
 // Sets functionality to the buttons
@@ -314,19 +315,27 @@ function setButtons() {
   // Select levels
   setLevelFun();
 
-  // Tools below the sudoku
-  getAssertedButton("solve").addEventListener("click", () => {
-    if (solAvailable)
-      confirmAction(
-        "Solve sudoku?",
-        "Fills in the solution. The sudoku counts as solved with the solver.",
-        solve
-      );
+  // Tools dialog: each tool asks for confirmation first
+  getAssertedButton("check").addEventListener("click", () => {
+    if (!solAvailable) return;
+    closeDialog("tools");
+    confirmAction(
+      "Show wrong answers?",
+      "Marks every digit that differs from the solution.",
+      () => {
+        check();
+        reselect();
+      }
+    );
   });
-  getAssertedButton("check").addEventListener("click", (e) => {
-    check();
-    reselect();
-    e.stopPropagation(); // keep the selected cell
+  getAssertedButton("solve").addEventListener("click", () => {
+    if (!solAvailable) return;
+    closeDialog("tools");
+    confirmAction(
+      "Solve sudoku?",
+      "Fills in the solution. The sudoku counts as solved with the solver.",
+      solve
+    );
   });
   updateToolButtons();
 }

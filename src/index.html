@@ -112,13 +112,10 @@
             <li id="but1"><svg class="icon" aria-hidden="true"><use href="#i-git-branch-outline" /></svg></li>
             <li id="but3"><svg class="icon" aria-hidden="true"><use href="#i-close-circle-outline" /></svg></li>
             <li id="own_sud"><svg class="icon" aria-hidden="true"><use href="#i-create-outline" /></svg></li>
+            <li data-open="tools" title="Tools"><svg class="icon" aria-hidden="true"><use href="#i-help-circle-outline" /></svg></li>
           </ul>
         </div>
 
-        <div class="tools">
-          <button id="check" class="tool-btn">Mark mistakes</button>
-          <button id="solve" class="tool-btn">Solve</button>
-        </div>
       </main>
 
       <section id="help" data-page="help" hidden>
@@ -136,6 +133,8 @@
           <li class="help">Reject hypothesis</li>
           <li><svg class="icon" aria-hidden="true"><use href="#i-create-outline" /></svg></li>
           <li class="help">Input your own sudoku</li>
+          <li><svg class="icon" aria-hidden="true"><use href="#i-help-circle-outline" /></svg></li>
+          <li class="help">Show wrong answers or solve the sudoku</li>
         </ul>
       </section>
 
@@ -199,6 +198,16 @@
         <ul>
           <li id="confirm-yes">yes</li>
           <li id="confirm-cancel">cancel</li>
+        </ul>
+      </dialog>
+
+      <dialog id="tools">
+        <h2>Tools</h2>
+        <button id="check" class="tool-item">Show wrong answers</button>
+        <button id="solve" class="tool-item">Solve current grid</button>
+        <p id="tools-note" hidden>Not available for custom sudokus.</p>
+        <ul>
+          <li data-close>close</li>
         </ul>
       </dialog>
 

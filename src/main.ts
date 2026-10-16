@@ -36,7 +36,7 @@ export function init() {
   // that open them (cancelling must not lose the selection).
   document.querySelector("body")!.addEventListener("click", (e) => {
     const target = e.target as Element;
-    if (!target.closest("dialog, [data-open], #auto-fill-button, #own_sud, #check, .bar")) {
+    if (!target.closest("dialog, [data-open], #auto-fill-button, #own_sud, .bar")) {
       elsewhere();
     }
   });
@@ -45,6 +45,7 @@ export function init() {
   const butIds = [
     "mode-but",
     "undo-but",
+    "tools-note",
     "confirm-title",
     "confirm-desc",
     "confirm-yes",
