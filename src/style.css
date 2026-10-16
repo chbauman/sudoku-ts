@@ -200,7 +200,7 @@ table {
 }
 
 #digits {
-    margin: 18px 0 18px 4px;
+    margin: 18px 0 10px 4px;
     border-spacing: 8px;
 }
 
@@ -243,15 +243,15 @@ li {
 #buttons2 {
     display: flex;
     justify-content: center;
-    gap: 2px;
+    gap: 0;
     padding: 0;
     max-width: 100%;
 }
 
 #buttons2 li {
-    width: var(--btn);
+    width: calc(var(--btn) * 1.05);
     padding: 0;
-    font-size: calc(var(--btn) * 0.55);
+    font-size: calc(var(--btn) * 0.75);
 }
 
 #newGrid ul {
