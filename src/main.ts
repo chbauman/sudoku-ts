@@ -11,6 +11,7 @@ import {
   elsewhere,
   clickCell,
 } from "./html_util.js";
+import { setupPages } from "./pages.js";
 
 // State Variables
 let initialized = false;
@@ -35,7 +36,7 @@ export function init() {
   // that open them (cancelling must not lose the selection).
   document.querySelector("body")!.addEventListener("click", (e) => {
     const target = e.target as Element;
-    if (!target.closest("dialog, [data-open], #auto-fill-button, #own_sud")) {
+    if (!target.closest("dialog, [data-open], #auto-fill-button, #own_sud, .bar")) {
       elsewhere();
     }
   });
@@ -64,6 +65,7 @@ export function init() {
     htmlButtonDict.set(bId, getDocEl(bId));
   }
   setButtons();
+  setupPages();
 
   // Set digits
   for (let i = 0; i < 10; i++) digits[i] = getDocEl("digit-" + String(i));

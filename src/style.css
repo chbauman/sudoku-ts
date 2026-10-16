@@ -22,8 +22,10 @@
     --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
+/* Dark theme: automatic (system setting) unless the user picked a theme in the
+   settings (data-theme on <html>, see src/settings.ts). */
 @media (prefers-color-scheme: dark) {
-    :root {
+    :root:not([data-theme="light"]) {
         --bg: #16181d;
         --fg: #e8e8ea;
         --grid-line: #e8e8ea;
@@ -40,6 +42,24 @@
         --active-bg: rgba(74, 163, 255, 0.22);
         --overlay: rgba(0, 0, 0, 0.7);
     }
+}
+
+:root[data-theme="dark"] {
+    --bg: #16181d;
+    --fg: #e8e8ea;
+    --grid-line: #e8e8ea;
+    --grid-line-thin: #5a5d66;
+    --disabled: #5f636c;
+    --accent: #4aa3ff;
+    --danger: #ff5a5a;
+    --hyp: #2fd47a;
+    --wrong: #ff5a5a;
+    --selected-bg: #4a4e58;
+    --small-dig-bg: #1f3a27;
+    --forbid-bg: #4a2a2c;
+    --same-bg: #6b2f33;
+    --active-bg: rgba(74, 163, 255, 0.22);
+    --overlay: rgba(0, 0, 0, 0.7);
 }
 
 html,
@@ -61,7 +81,11 @@ body {
     margin: 0;
 }
 
-main {
+[hidden] {
+    display: none !important;
+}
+
+[data-page] {
     padding: 0 16px 1em;
 }
 
@@ -131,6 +155,110 @@ h1 {
     margin: 0;
     padding: 0.75em 0 0.7em;
     line-height: 1.2;
+}
+
+/* Page header: back button | title | menu button */
+.bar {
+    position: relative;
+    display: grid;
+    grid-template-columns: 56px 1fr 56px;
+    align-items: center;
+}
+
+.bar h1 {
+    grid-column: 2;
+}
+
+.icon-btn {
+    border: none;
+    background: none;
+    color: var(--fg);
+    font-size: 28px;
+    padding: 8px;
+    cursor: pointer;
+    justify-self: center;
+}
+
+#back-btn {
+    grid-column: 1;
+    grid-row: 1;
+}
+
+#menu-btn {
+    grid-column: 3;
+    grid-row: 1;
+}
+
+#menu {
+    position: absolute;
+    top: 100%;
+    right: 12px;
+    z-index: 5;
+    min-width: 180px;
+    background: var(--bg);
+    border: 1px solid var(--grid-line-thin);
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+    padding: 6px 0;
+    text-align: left;
+}
+
+#menu a,
+#menu span {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 18px;
+    font-size: 18px;
+    color: var(--fg);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#menu span.disabled {
+    color: var(--disabled);
+    cursor: default;
+}
+
+#menu .icon {
+    margin: 0;
+    font-size: 22px;
+    flex: none;
+}
+
+/* Settings */
+.setting {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    max-width: 420px;
+    margin: 0 auto;
+    padding: 14px 4px;
+    font-size: 18px;
+    border-bottom: 1px solid var(--grid-line-thin);
+}
+
+.setting select {
+    font: inherit;
+    color: var(--fg);
+    background: var(--bg);
+    border: 2px solid var(--grid-line);
+    border-radius: 8px;
+    padding: 6px 10px;
+}
+
+#help,
+#settings {
+    max-width: 480px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+#help > p {
+    font-weight: bold;
+    font-size: 16px;
+    margin: 18px 0 8px;
 }
 
 table {
@@ -315,14 +443,6 @@ li {
     width: 200px;
     text-align: left;
     top: -8px;
-}
-
-#help p {
-    font-weight: bold;
-    text-align: left;
-    margin-top: 18px;
-    margin-bottom: 8px;
-    font-size: 16px;
 }
 
 .helpButton {

@@ -14,6 +14,8 @@ import {
   deepCopy3D,
 } from "./sudoku.js";
 import { storageGet, storageSet, storageRemove } from "./storage.js";
+import { settings, loadSettings } from "./settings.js";
+import { currentPage, goHome } from "./pages.js";
 
 // Colors
 const col1 = "var(--accent)";
@@ -184,9 +186,11 @@ function initGrid(tbl: HTMLTableElement) {
 
   // Load sudoku
   setTimeout(function () {
-    loadGame().then((loaded) => {
-      if (!loaded) loadRandomSud(4);
-    });
+    loadSettings()
+      .then(loadGame)
+      .then((loaded) => {
+        if (!loaded) loadRandomSud(settings.level);
+      });
   }, 250);
 }
 
@@ -307,14 +311,14 @@ function setButtons() {
   // Solver
   function solveAndClose() {
     solve();
-    closeDialog("help");
+    goHome();
   }
   getAssertedButton("solve").addEventListener("click", solveAndClose);
 
   // Check
   function checkAndClose() {
     check();
-    closeDialog("help");
+    goHome();
   }
   getAssertedButton("check").addEventListener("click", checkAndClose);
 }
@@ -720,7 +724,7 @@ function pressDigit(d: number, e: Event) {
 
 // Keyboard support
 function onKeyDown(e: KeyboardEvent) {
-  if (document.querySelector("dialog[open]")) return;
+  if (currentPage() !== "game" || document.querySelector("dialog[open]")) return;
   const mod = e.ctrlKey || e.metaKey;
   if (mod && e.key.toLowerCase() === "z" && !e.shiftKey) {
     e.preventDefault();
