@@ -21,12 +21,21 @@ The icons are open source (Ionicons, MIT) and taken from https://ionicons.com/; 
 
 ## Menu, pages and settings
 
-The hamburger menu in the header opens the Help and Settings pages (History is
-a placeholder until the leaderboard exists). The pages are sections of the single
+The hamburger menu in the header opens the Help, Settings and History pages. The pages are sections of the single
 `index.html`, selected by the URL hash (`#help`, `#settings`), so the browser and
 Android back buttons work and the game state is kept while a page is open.
 Settings (stored like the saved game, see `src/settings.ts`): the level that is
 loaded when there is no saved game, and the appearance (system / light / dark).
+
+## History (personal leaderboard)
+
+The time to solve a sudoku (only the time the game page is visible, restarting
+the sudoku restarts the clock) and the puzzle ID (`<level>-<line in the level
+file>`) are stored when you finish a sudoku without the solver; custom sudokus
+are not recorded. The History page shows the best and average time per level
+and the 20 most recent solves, the win dialog shows the time and whether it is a
+new best. The data stays on the device (same storage as the saved game, see
+below), there is no server; the last 500 solves are kept.
 
 ## Saved game
 

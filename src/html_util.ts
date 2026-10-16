@@ -16,6 +16,7 @@ import {
 import { storageGet, storageSet, storageRemove } from "./storage.js";
 import { settings, loadSettings } from "./settings.js";
 import { currentPage } from "./pages.js";
+import { HistoryEntry, recordSolve, formatTime } from "./history.js";
 
 // Colors
 const col1 = "var(--accent)";
@@ -34,6 +35,12 @@ let curY = 0;
 let solAvailable = false;
 let inputtingOwnSud = false;
 let sudLvl: number;
+
+// Solve time: measured while the game page is visible
+let puzzleId: string | null = null; // null for custom sudokus
+let timing = false;
+let elapsedMs = 0;
+let lastTick = Date.now();
 let choosingHyp = false;
 let hypRejectionEnabled = false;
 
@@ -183,6 +190,13 @@ function initGrid(tbl: HTMLTableElement) {
       TsubBinaryTables[i][j] = new Array(9).fill(false);
     }
   }
+
+  // Solve timer; the time is saved when the page is hidden
+  setInterval(tick, 1000);
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") saveGame();
+  });
+  window.addEventListener("pagehide", saveGame);
 
   // Load sudoku
   setTimeout(function () {
@@ -546,6 +560,50 @@ function check() {
   saveGame();
 }
 
+// Records the solve time (not for custom sudokus and when the solver was used)
+// and shows it in the win dialog
+function showSolveTime() {
+  const text = getAssertedButton("log-txt");
+  text.textContent = "";
+  if (!timing || puzzleId === null || sudLvl < 0) return;
+  timing = false;
+  updateTimer();
+  const seconds = elapsedMs / 1000;
+  const entry: HistoryEntry = {
+    id: puzzleId,
+    level: sudLvl,
+    seconds,
+    date: new Date().toISOString(),
+  };
+  recordSolve(entry).then(({ previousBest, isBest }) => {
+    text.textContent =
+      `Time: ${formatTime(seconds)}` +
+      (isBest
+        ? previousBest === null
+          ? ""
+          : " - new best!"
+        : ` (best: ${formatTime(previousBest as number)})`);
+  });
+}
+
+// Shows the running time below the buttons, nothing when no clock is running
+function updateTimer() {
+  getAssertedButton("timer").textContent = timing
+    ? formatTime(elapsedMs / 1000)
+    : "";
+}
+
+// Counts the playing time: only while the game page is visible
+function tick() {
+  const now = Date.now();
+  const delta = Math.min(now - lastTick, 2000);
+  lastTick = now;
+  if (timing && document.visibilityState === "visible" && currentPage() === "game") {
+    elapsedMs += delta;
+  }
+  updateTimer();
+}
+
 // Check if sudoku was solved
 function checkSolvedSud() {
   const slvd = checkSolved(T);
@@ -553,6 +611,7 @@ function checkSolvedSud() {
     return;
   }
   clearSavedGame();
+  showSolveTime();
   let vidSrc = "../assets/gifs/gj.mp4";
   let title = "You solved it!! :)";
   if (sudLvl == -2) {
@@ -674,6 +733,8 @@ interface SavedGame extends Snapshot {
   Tsol: number[][];
   sudLvl: number;
   solAvailable: boolean;
+  puzzleId: string | null;
+  elapsed: number;
 }
 
 function saveGame() {
@@ -686,6 +747,8 @@ function saveGame() {
       Tsol,
       sudLvl,
       solAvailable,
+      puzzleId,
+      elapsed: elapsedMs,
     };
     storageSet(SAVE_KEY, JSON.stringify(game));
   } catch (e) {
@@ -724,6 +787,10 @@ async function loadGame(): Promise<boolean> {
     copyTo2d(g.Tsol, Tsol);
     sudLvl = g.sudLvl;
     solAvailable = g.solAvailable;
+    puzzleId = typeof g.puzzleId === "string" ? g.puzzleId : null;
+    elapsedMs = typeof g.elapsed === "number" ? g.elapsed : 0;
+    timing = puzzleId !== null && sudLvl >= 0;
+    updateTimer();
     updateToolButtons();
     applySnapshot(g);
     setHypButtons();
@@ -970,7 +1037,7 @@ function setClickableTrefT() {
 }
 
 // Sets the sudoku to the one specified with the string 'ret_sud'.
-function setSudFromStr(retSud: string) {
+function setSudFromStr(retSud: string, index: number) {
   closeDialog("newGrid");
   openDialog("waiting");
 
@@ -988,6 +1055,10 @@ function setSudFromStr(retSud: string) {
   // Shuffle
   permuteSuds(T, Tsol);
   copyTo2d(T, Tinit);
+  puzzleId = `${sudLvl}-${index}`;
+  elapsedMs = 0;
+  timing = true;
+  updateTimer();
   elsewhere();
   if (!solAvailable) solAvailable = true;
   updateToolButtons();
@@ -1015,6 +1086,9 @@ function enableSmallDigs() {
 function inputCustomSudoku() {
   if (!inputtingOwnSud) {
     log("Own Input");
+    puzzleId = null;
+    timing = false;
+    updateTimer();
     elsewhere();
     clearHyps();
     disableHyp();
@@ -1074,6 +1148,8 @@ function setHypButtons() {
 function solve() {
   if (solAvailable == false) return;
   sudLvl = -2;
+  timing = false;
+  updateTimer();
   for (let i = 0; i < 9; i++) {
     for (let j = 0; j < 9; j++) {
       if (T[i][j] == 0) {
@@ -1109,6 +1185,9 @@ function restart() {
     inputCustomSudoku();
   }
   log("Restarting");
+  elapsedMs = 0;
+  timing = puzzleId !== null && sudLvl >= 0;
+  updateTimer();
   elsewhere();
   unhighlightAll();
   for (let i = 0; i < 9; i++) {
