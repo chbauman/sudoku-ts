@@ -122,23 +122,66 @@
       </main>
 
       <section id="help" data-page="help" hidden>
-        <p>Main symbols</p>
+        <p>How to play</p>
+        <p class="help-text">
+          Tap a cell, then tap a digit to set it. Digits that would directly
+          conflict with the row, column or 3&times;3 block of the cell are greyed
+          out and cannot be set. Given digits are black, digits you set are blue.
+          Tap anywhere else to deselect the cell.
+        </p>
+        <p class="help-text">
+          Tapping a cell that contains a digit highlights its row, column and
+          block in light red, the same digit elsewhere in red, and the empty cells
+          that still have this digit as a pencil mark in green.
+        </p>
+
+        <p>Number pad</p>
+        <ul>
+          <li><svg class="icon" aria-hidden="true"><use href="#i-backspace-outline" /></svg></li>
+          <li class="help">Clear the selected cell (digit and pencil marks).</li>
+          <li><svg class="icon" aria-hidden="true"><use href="#i-pencil-outline" /></svg></li>
+          <li class="help">Pencil mode: digits toggle small pencil marks instead of setting the cell. Marks that become impossible are removed automatically when you set digits in the same row, column or block.</li>
+          <li><svg class="icon" aria-hidden="true"><use href="#i-arrow-undo-outline" /></svg></li>
+          <li class="help">Undo the last digit, pencil mark, autofill or rejected hypothesis.</li>
+        </ul>
+
+        <p>Buttons below the sudoku</p>
         <ul>
           <li><svg class="icon" aria-hidden="true"><use href="#i-refresh-outline" /></svg></li>
-          <li class="help">Restart current sudoku</li>
+          <li class="help">Restart this sudoku. All progress, including all hypotheses, is lost.</li>
           <li><svg class="icon" aria-hidden="true"><use href="#i-add-circle-outline" /></svg></li>
-          <li class="help">Load a new sudoku</li>
+          <li class="help">Start a new sudoku and choose its level (0 is the easiest, 8 the hardest). The level that is used at startup can be set in the settings.</li>
           <li><svg class="icon" aria-hidden="true"><use href="#i-color-wand-outline" /></svg></li>
-          <li class="help">Fill in pencil marks</li>
+          <li class="help">Fill in the pencil marks: every empty cell gets all digits that are still possible.</li>
           <li><svg class="icon" aria-hidden="true"><use href="#i-git-branch-outline" /></svg></li>
-          <li class="help">Make a hypothesis</li>
+          <li class="help">Make a hypothesis (a guess), see below.</li>
           <li><svg class="icon" aria-hidden="true"><use href="#i-close-circle-outline" /></svg></li>
-          <li class="help">Reject hypothesis</li>
+          <li class="help">Reject the last hypothesis, see below.</li>
           <li><svg class="icon" aria-hidden="true"><use href="#i-create-outline" /></svg></li>
-          <li class="help">Input your own sudoku</li>
+          <li class="help">Enter your own sudoku: the grid is emptied, set the digits you want. Tap the button again to fix them and solve the sudoku as usual. Custom sudokus cannot be checked or solved by the app.</li>
           <li><svg class="icon" aria-hidden="true"><use href="#i-help-circle-outline" /></svg></li>
-          <li class="help">Mark mistakes or solve the sudoku</li>
+          <li class="help">Mark mistakes (marks digits that differ from the solution in red) or solve the sudoku. Using the solver does not count as a solved sudoku in the history.</li>
         </ul>
+
+        <p>Guessing: hypotheses</p>
+        <p class="help-text">
+          For hard sudokus you sometimes have to guess. Tap the branch button and
+          then a digit: the digit is a guess and shown in green. All digits set so
+          far are fixed (black) and assumed to be correct, this is a save point.
+          If the guess leads to a contradiction, tap the cross button: everything
+          done since the last hypothesis is reverted. You can make another guess
+          inside a guess, so you can do a depth-first search for the solution by
+          hand. Rejecting hypotheses can be undone with the undo button.
+        </p>
+
+        <p>Time and history</p>
+        <p class="help-text">
+          The time below the buttons only runs while you are solving on this page.
+          When you finish a sudoku without the solver, its time is saved in the
+          history (menu), together with the level and the ID of the sudoku. The
+          current game is saved on your device, so you can close the app and
+          continue later.
+        </p>
 
         <div id="keyboard-help" hidden>
           <p>Keyboard shortcuts</p>
