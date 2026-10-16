@@ -57,7 +57,9 @@ export function init() {
     });
     log("Setup buttons!");
 }
-if ("serviceWorker" in navigator && !location.pathname.includes("/src/")) {
+if ("serviceWorker" in navigator &&
+    !location.pathname.includes("/src/") &&
+    !("Capacitor" in window)) {
     navigator.serviceWorker
         .register("sw.js")
         .catch((e) => log("Service worker registration failed: " + e));
