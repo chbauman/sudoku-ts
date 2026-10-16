@@ -331,13 +331,21 @@ table {
     border-spacing: 0;
 }
 
+/* The 3x3 pencil marks of a cell: a grid with equal tracks, so a mark is at the
+   same place whichever other marks are present (table layout distributed the
+   space by content). */
 .innerTable {
     width: 100%;
     height: 100%;
-    margin: 0 auto;
-    display: table;
-    border-collapse: collapse;
-    border-spacing: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: repeat(3, minmax(0, 1fr));
+}
+
+.innerTable tbody,
+.innerTable tr {
+    display: contents;
 }
 
 .gridRow {
@@ -360,18 +368,16 @@ table {
 }
 
 .subGridCell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
     color: var(--pencil);
     padding: 0;
     box-sizing: border-box;
-    width: calc(var(--cell) / 3);
-    /* height is distributed by the inner table (100% of the cell); a fixed
-       height here makes rows taller than columns are wide */
-    height: 0;
-    text-align: center;
     font-weight: 600;
     font-size: calc(var(--cell) * 0.3);
     line-height: 1;
-    /*border: 1px dotted black;*/
     margin: 0;
 }
 
