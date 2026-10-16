@@ -15,16 +15,17 @@ import {
 } from "./sudoku.js";
 
 // Colors
-const col1 = "#0A85FF";
-const smallDigCol = "#DFD";
-const rowColSquareForbidCol = "#FDD";
-const sameDigCol = "#FBB";
-const hypCol = "#0C5";
-const normH = "#BBB";
-const wrongHypCol = "#F22";
+const col1 = "var(--accent)";
+const smallDigCol = "var(--small-dig-bg)";
+const rowColSquareForbidCol = "var(--forbid-bg)";
+const sameDigCol = "var(--same-bg)";
+const hypCol = "var(--hyp)";
+const normH = "var(--selected-bg)";
+const wrongHypCol = "var(--wrong)";
 
 // State variables
 var large = true;
+var smallDigsEnabled = true;
 var curX = -1;
 var curY = 0;
 var solAvailable = false;
@@ -69,17 +70,20 @@ function log(msg: string) {
   }
 }
 
-// Change digit input mode
+// Uniform button states (see .active / .disabled in style.css):
+// toggle buttons are "active" while their mode is on, any button can be
+// disabled.
+function setActive(id: string, on: boolean) {
+  getAssertedButton(id).classList.toggle("active", on);
+}
+function setEnabled(id: string, on: boolean) {
+  getAssertedButton(id).classList.toggle("disabled", !on);
+}
+
+// Change digit input mode (large digits <-> pencil marks)
 function toggleLargeSmall() {
-  const upBut = getAssertedButton("up-but");
-  const downBut = getAssertedButton("down-but");
-  const but2 = large ? upBut : downBut;
-  const but1 = !large ? upBut : downBut;
-  but1.style.color = col1;
-  but1.style.borderColor = col1;
-  but2.style.color = "black";
-  but2.style.borderColor = "black";
   large = !large;
+  setActive("mode-but", !large);
 }
 function enlarge(e: Event | undefined = undefined) {
   if (!large) {
@@ -167,15 +171,25 @@ function startHyp(e: Event) {
   e.stopPropagation();
 }
 
+// Asks for confirmation before running a destructive action
+let pendingConfirm: (() => void) | null = null;
+function confirmAction(
+  title: string,
+  description: string,
+  action: () => void
+) {
+  pendingConfirm = action;
+  getAssertedButton("confirm-title").textContent = title;
+  getAssertedButton("confirm-desc").textContent = description;
+  ($("#confirm") as any).popup("open");
+}
+
 // Sets functionality to the buttons
 function setButtons() {
-  // Up button
-  const upBut = getAssertedButton("up-but");
-  upBut.style.color = col1;
-  upBut.style.borderColor = col1;
-  upBut.addEventListener("click", enlarge);
-
-  // Down button
+  // Pencil mark toggle
+  getAssertedButton("mode-but").addEventListener("click", () => {
+    if (smallDigsEnabled) large ? shrink() : enlarge();
+  });
   enableSmallDigs();
 
   // Restart button
@@ -186,14 +200,42 @@ function setButtons() {
   }
   getAssertedButton("restart_but").addEventListener("click", restAndClose);
 
+  // Confirmation dialog
+  getAssertedButton("confirm-yes").addEventListener("click", (e) => {
+    const action = pendingConfirm;
+    pendingConfirm = null;
+    ($("#confirm") as any).popup("close");
+    if (action) action();
+    e.stopPropagation();
+  });
+  getAssertedButton("confirm-cancel").addEventListener("click", (e) => {
+    pendingConfirm = null;
+    ($("#confirm") as any).popup("close");
+    e.stopPropagation();
+  });
+
   // Autofill button
-  getAssertedButton("auto-fill-button").addEventListener(
-    "click",
-    fillSmallDigits
+  getAssertedButton("auto-fill-button").addEventListener("click", () =>
+    confirmAction(
+      "Fill in pencil marks?",
+      "Adds all digits that are still possible as pencil marks to every empty cell.",
+      fillSmallDigits
+    )
   );
 
-  // Custom sudoku import
-  getAssertedButton("own_sud").addEventListener("click", inputCustomSudoku);
+  // Custom sudoku import: only the first click (clearing the grid) needs
+  // confirmation, the second click finishes the input.
+  getAssertedButton("own_sud").addEventListener("click", () => {
+    if (inputtingOwnSud) {
+      inputCustomSudoku();
+    } else {
+      confirmAction(
+        "Empty grid?",
+        "Add your own sudoku. Current game will be lost.",
+        inputCustomSudoku
+      );
+    }
+  });
 
   // Hypothesis
   enableHyp();
@@ -223,14 +265,12 @@ function setButtons() {
 }
 
 function disableHyp() {
-  const butt1 = getAssertedButton("but1");
-  butt1.onclick = null;
-  butt1.style.color = "#B8B8B8";
+  getAssertedButton("but1").onclick = null;
+  setEnabled("but1", false);
 }
 function enableHyp() {
-  const butt1 = getAssertedButton("but1");
-  butt1.onclick = startHyp;
-  butt1.style.color = "#000";
+  getAssertedButton("but1").onclick = startHyp;
+  setEnabled("but1", true);
 }
 
 // Removes digit in mini cell
@@ -306,7 +346,7 @@ function hypothesis1() {
     // Choose hypothesis digit
     log(`Choosing ${hyps.length + 1}-th hypothesis.`);
     disableSmallDigs();
-    getAssertedButton("but1").style.color = "#F00";
+    setActive("but1", true);
     choosingHyp = true;
     log(`Started choosing, curX = ${curX}`);
     if (curX >= 0) {
@@ -399,19 +439,17 @@ function finishedHypChoosing() {
   if (choosingHyp == false) return;
   log("Stopping hypothesis choosing");
   enableSmallDigs();
-  getAssertedButton("but1").style.color = "";
+  setActive("but1", false);
   choosingHyp = false;
 }
 
 // Enable / disable the hypothesis rejection button
 function enableHypRejection() {
-  const rejBut = getAssertedButton("but3");
-  rejBut.style.color = "#000";
+  setEnabled("but3", true);
   hypRejectionEnabled = true;
 }
 function disableHypRejection() {
-  const rejBut = getAssertedButton("but3");
-  rejBut.style.color = "#B8B8B8";
+  setEnabled("but3", false);
   hypRejectionEnabled = false;
 }
 
@@ -456,9 +494,8 @@ function checkSolvedSud() {
     title = "Nothing you can't solve.";
   }
   (htmlButtonDict.get("fin-vid") as HTMLVideoElement).src = vidSrc;
-  (htmlButtonDict.get("solved-h") as HTMLVideoElement).src = title;
+  getAssertedButton("solved-h").textContent = title;
   ($("#win") as any).popup("open");
-  console.log(sudLvl);
 }
 
 // Executed when cell is clicked
@@ -502,7 +539,7 @@ function clickCell(cell: HTMLTableCellElement) {
             if (large || v == 0) {
               T[y][x] = v;
               if (v == 0) {
-                Tref[y][x].style.color = "#000";
+                Tref[y][x].style.color = "var(--fg)";
               } else {
                 Tref[y][x].style.color = col1;
               }
@@ -543,9 +580,8 @@ function clickCell(cell: HTMLTableCellElement) {
           });
         }
       } else {
-        digits[i].style.color = "#B8B8B8";
-        digits[i].style.borderColor = "#B8B8B8";
-        digits[i].style.cursor = "pointer";
+        digits[i].style.color = "var(--disabled)";
+        digits[i].style.borderColor = "var(--disabled)";
         $("#digits").on("click", "#digit-" + String(i), function (e) {
           log("Cannot set this number!");
           e.stopPropagation();
@@ -555,9 +591,8 @@ function clickCell(cell: HTMLTableCellElement) {
   } else {
     $("#digits").off("click", "**");
     for (let i = 0; i < 10; i++) {
-      digits[i].style.color = "#B8B8B8";
-      digits[i].style.borderColor = "#B8B8B8";
-      digits[i].style.cursor = "pointer";
+      digits[i].style.color = "var(--disabled)";
+      digits[i].style.borderColor = "var(--disabled)";
     }
     //elsewhere();
   }
@@ -571,9 +606,8 @@ function elsewhere() {
     curX = -1;
     unhighlightAll();
     for (let i = 0; i < digits.length; ++i) {
-      digits[i].style.color = "#B8B8B8";
-      digits[i].style.borderColor = "#B8B8B8";
-      digits[i].style.cursor = "pointer";
+      digits[i].style.color = "var(--disabled)";
+      digits[i].style.borderColor = "var(--disabled)";
       $("#digits").on("click", "#digit-" + String(i), function (e) {
         log("Neet to select a cell first.");
         e.stopPropagation();
@@ -684,22 +718,17 @@ function setSudFromStr(retSud: string) {
   ($("#waiting") as any).popup("close");
 }
 
-// Disables down button
+// Disables the pencil mark toggle (forces large digit mode)
 function disableSmallDigs() {
-  log("Disabled down button");
+  log("Disabled pencil mark toggle");
   enlarge();
-  const downBut = getAssertedButton("down-but");
-  downBut.onclick = null;
-  downBut.style.color = "#B8B8B8";
-  downBut.style.borderColor = "#B8B8B8";
-  downBut.style.cursor = "pointer";
+  smallDigsEnabled = false;
+  setEnabled("mode-but", false);
 }
-// Enables down button
+// Enables the pencil mark toggle
 function enableSmallDigs() {
-  const downBut = getAssertedButton("down-but");
-  downBut.onclick = shrink;
-  downBut.style.color = "";
-  downBut.style.borderColor = "";
+  smallDigsEnabled = true;
+  setEnabled("mode-but", true);
 }
 
 // Lets the user input a custom sudoku
@@ -712,8 +741,7 @@ function inputCustomSudoku() {
     // Toggle State and Button color
     inputtingOwnSud = true;
     solAvailable = false;
-    const ownBut = getAssertedButton("own_sud");
-    ownBut.style.color = "#F00";
+    setActive("own_sud", true);
 
     // Remove current sudoku
     for (let i = 0; i < 9; i++) {
@@ -733,8 +761,7 @@ function inputCustomSudoku() {
 
     // Toggle State
     inputtingOwnSud = false;
-    const ownBut = getAssertedButton("own_sud");
-    ownBut.style.color = "";
+    setActive("own_sud", false);
 
     // Activate small numbers and set set numbers to unclickable
     copyTo2d(T, Tinit);
@@ -754,8 +781,9 @@ function loadRandomSud(lvl = 7) {
 
 // Setup hypothesis buttons
 function setHypButtons() {
-  getAssertedButton("but1").style.color = "#000";
-  getAssertedButton("but3").style.color = "#B8B8B8";
+  setActive("but1", false);
+  setEnabled("but1", true);
+  setEnabled("but3", false);
 }
 
 // Sets the current sudoku to the solution.
@@ -767,12 +795,12 @@ function solve() {
       if (T[i][j] == 0) {
         T[i][j] = Tsol[i][j];
         setCell(i, j, T[i][j]);
-        Tref[i][j].style.color = "#B8B8B8";
+        Tref[i][j].style.color = "var(--disabled)";
       } else if (T[i][j] != Tsol[i][j]) {
         T[i][j] = Tsol[i][j];
         setCell(i, j, T[i][j]);
-        Tref[i][j].style.color = "#B8B8B8";
-        Tref[i][j].style.backgroundColor = "#FBB";
+        Tref[i][j].style.color = "var(--disabled)";
+        Tref[i][j].style.backgroundColor = "var(--same-bg)";
       }
     }
   }
@@ -784,6 +812,7 @@ function clearHyps() {
   log("Clearing hypotheses");
   hyps = [];
   choosingHyp = false;
+  setActive("but1", false);
   disableHypRejection();
 }
 
