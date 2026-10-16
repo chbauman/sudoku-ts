@@ -70,11 +70,15 @@ dialog {
     border: 1px solid var(--grid-line-thin);
     border-radius: 12px;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
-    padding: 1em 1.5em;
+    padding: 0.8em 1.5em 1em;
     max-width: min(92vw, 520px);
     max-height: 90vh;
     overflow-y: auto;
     text-align: center;
+}
+
+dialog > :first-child {
+    margin-top: 0;
 }
 
 dialog::backdrop {
