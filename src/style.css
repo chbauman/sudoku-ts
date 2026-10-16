@@ -17,7 +17,7 @@
     --overlay: rgba(0, 0, 0, 0.5);
 
     --cell: min(9.8vw, 44px);
-    --btn: min(12vw, 52px);
+    --btn: min(10.5vw, 46px);
     --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
@@ -100,8 +100,16 @@ ion-icon {
     font-size: 0;
 }
 
+/* Title sits midway between the page top and the grid. */
+[role="main"].ui-content {
+    padding-top: 0;
+}
+
 h1 {
     text-align: center;
+    margin: 0;
+    padding: 0.5em 0 0.7em;
+    line-height: 1.2;
 }
 
 table {
@@ -192,7 +200,7 @@ table {
 }
 
 #digits {
-    margin-left: 4px;
+    margin: 18px 0 18px 4px;
     border-spacing: 8px;
 }
 
@@ -241,7 +249,7 @@ li {
 #buttons2 li {
     width: var(--btn);
     padding: 0;
-    font-size: calc(var(--btn) * 0.6);
+    font-size: calc(var(--btn) * 0.55);
 }
 
 #newGrid ul {
