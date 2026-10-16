@@ -21,6 +21,7 @@
     --page-width: 560px;
     --side: 8px; /* minimum margin at the sides of the game page */
     --cell: min(calc((100vw - 2 * var(--side)) / 9), 44px);
+    --digit-size: calc(var(--cell) * 0.7); /* grid digits and digit buttons */
     --btn: min(10.5vw, 46px);
     --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
@@ -349,7 +350,7 @@ table {
     height: var(--cell);
     text-align: center;
     font-weight: 600;
-    font-size: calc(var(--cell) * 0.62);
+    font-size: var(--digit-size);
     line-height: 1;
     box-sizing: border-box;
     overflow: hidden;
@@ -421,7 +422,7 @@ table {
     height: var(--btn);
     text-align: center;
     /* same digit style as the grid cells; same outline as the block borders */
-    font-size: calc(var(--cell) * 0.62);
+    font-size: var(--digit-size);
     font-weight: 600;
     border: 2px solid var(--grid-line);
     border-radius: 8px;
