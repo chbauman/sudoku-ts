@@ -25,9 +25,11 @@ jobs:
           # Serve src/ (index.html, css, icon) from the site root. The page
           # and code reference siblings as "../dist", "../assets".
           mkdir -p _site
-          cp src/index.html src/style.css _site/
+          cp src/index.html src/style.css src/manifest.webmanifest src/sw.js _site/
           cp -r dist assets _site/
-          sed -i 's#"\.\./#"./#g' _site/index.html _site/dist/*.js
+          sed -i 's#"\.\./#"./#g' _site/index.html _site/manifest.webmanifest _site/dist/*.js
+          # New cache name per release
+          sed -i "s#__BUILD__#${GITHUB_SHA::10}#" _site/sw.js
       - uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

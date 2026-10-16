@@ -85,5 +85,13 @@ export function init() {
   log("Setup buttons!");
 }
 
+// Offline support / installability. Only in the deployed layout: the local dev
+// server serves the page from /src/, where the service worker paths differ.
+if ("serviceWorker" in navigator && !location.pathname.includes("/src/")) {
+  navigator.serviceWorker
+    .register("sw.js")
+    .catch((e) => log("Service worker registration failed: " + e));
+}
+
 // Initialize
 init();

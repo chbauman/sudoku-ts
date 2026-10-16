@@ -17,7 +17,7 @@ and is specifically designed to be unsolvable to all but the sharpest minds.](ht
 ## Implementation
 
 Built upon simpler JavaScript version found at https://github.com/baruchel/sudoku-js.
-The icons open source and taken from https://ionicons.com/.
+The icons are open source (Ionicons, MIT) and taken from https://ionicons.com/; they are inlined in `src/index.html`.
 
 ## Saved game
 
@@ -50,7 +50,7 @@ $ npm test        # run the jest tests
 ```
 
 The port may differ if 8080 is already in use.
-Note that an internet connection is required to load the icons.
+The local dev server does not register the service worker (see below).
 
 ## Deployment
 
@@ -61,3 +61,12 @@ In the repository settings, set Pages to deploy from the `gh-pages` branch
 (root). The page is then available at the default GitHub Pages address,
 <https://chrisbaumann.ch/sudoku-ts/>. All paths are relative, so it works
 under the `/sudoku-ts/` sub-path.
+
+## Installable / offline (PWA)
+
+The deployed page is an installable web app (`src/manifest.webmanifest`) and
+works offline: `src/sw.js` is a service worker that precaches the app, the
+icons and all level files. On deploy the cache name gets the commit hash, so
+every release replaces the cached version. The service worker is not
+registered when the page is served from `/src/` (local dev), so changes show
+up immediately while developing.
