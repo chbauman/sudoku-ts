@@ -22,7 +22,10 @@ The icons are open source (Ionicons, MIT) and taken from https://ionicons.com/; 
 ## Saved game
 
 The current game (digits, pencil marks and hypotheses) is stored in the
-browser's `localStorage` after every move, so reloading the page (easily done
+browser's `localStorage` (in the Android app additionally in the native
+Preferences, see `src/storage.ts`: the WebView writes `localStorage` to disk
+lazily, so a game could be lost when the app was swiped away right after a
+move) after every move, so reloading the page (easily done
 by accident on mobile) continues where you left off. Solving a sudoku, loading
 a new one or clearing the site data starts a fresh game. The undo history is
 not saved.

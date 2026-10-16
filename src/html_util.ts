@@ -13,6 +13,7 @@ import {
   deepCopy2D,
   deepCopy3D,
 } from "./sudoku.js";
+import { storageGet, storageSet, storageRemove } from "./storage.js";
 
 // Colors
 const col1 = "var(--accent)";
@@ -183,7 +184,9 @@ function initGrid(tbl: HTMLTableElement) {
 
   // Load sudoku
   setTimeout(function () {
-    if (!loadGame()) loadRandomSud(4);
+    loadGame().then((loaded) => {
+      if (!loaded) loadRandomSud(4);
+    });
   }, 250);
 }
 
@@ -663,18 +666,14 @@ function saveGame() {
       sudLvl,
       solAvailable,
     };
-    localStorage.setItem(SAVE_KEY, JSON.stringify(game));
+    storageSet(SAVE_KEY, JSON.stringify(game));
   } catch (e) {
     log("Could not save the game");
   }
 }
 
 function clearSavedGame() {
-  try {
-    localStorage.removeItem(SAVE_KEY);
-  } catch (e) {
-    log("Could not clear the saved game");
-  }
+  storageRemove(SAVE_KEY);
 }
 
 const isGrid = (a: any, depth = 2): boolean =>
@@ -683,9 +682,9 @@ const isGrid = (a: any, depth = 2): boolean =>
   a.every((r) => (depth > 1 ? isGrid(r, depth - 1) : true));
 
 // Restores the saved game, returns false if there is none (or it is invalid)
-function loadGame(): boolean {
+async function loadGame(): Promise<boolean> {
   try {
-    const raw = localStorage.getItem(SAVE_KEY);
+    const raw = await storageGet(SAVE_KEY);
     if (!raw) return false;
     const g = JSON.parse(raw) as SavedGame;
     const valid =

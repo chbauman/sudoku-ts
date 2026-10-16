@@ -21,7 +21,7 @@ const flatten = (s) => s.replaceAll('"../', '"./');
 for (const f of ["index.html", "manifest.webmanifest"]) {
   rewrite(`${out}/${f}`, flatten);
 }
-for (const f of ["main", "html_util", "sudoku"]) {
+for (const f of ["main", "html_util", "sudoku", "storage"]) {
   rewrite(`${out}/dist/${f}.js`, flatten);
 }
 // New service worker cache per release
