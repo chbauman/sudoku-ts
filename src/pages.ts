@@ -65,7 +65,19 @@ function setupSettings() {
   });
 }
 
+// Keyboard shortcuts are only listed where a keyboard is likely: with a mouse
+// as primary pointer (also covers laptops with a touch screen) or without any
+// touch screen.
+function keyboardLikely(): boolean {
+  return (
+    matchMedia("(hover: hover) and (pointer: fine)").matches ||
+    navigator.maxTouchPoints === 0
+  );
+}
+
 export function setupPages() {
+  byId("keyboard-help").hidden = !keyboardLikely();
+
   // History is [game, subpage] at most: opening a subpage from another one
   // replaces the entry, so the back button (and the Android back button) always
   // returns to the game. Without a game entry before (page opened directly with
