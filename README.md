@@ -4,9 +4,9 @@ Hard Sudoku is a game of sudoku written in TypeScript as a mobile app.
 Let's you solve the hardest sudokus by hand with depth-first search.
 It allows you to guess a number and continue solving while being able to
 return to the point of guessing. This process can be done in a nested way.
-Try it at [chrisbaumann.ch/sudoku-ts](https://chrisbaumann.ch/sudoku-ts/), a screenshot is shown below.
+Try it at [chrisbaumann.ch/sudoku-ts](https://chrisbaumann.ch/sudoku-ts/), a screenshot (light and dark mode) is shown below.
 
-![](https://chbauman.github.io/assets/img/posts/screen_sudoku_broad.png)
+![Screenshot of Hard Sudoku in light and dark mode](docs/screenshot.png)
 
 More instructions can be found in a blog post [here.](https://chbauman.github.io/info/2020/03/25/sudoku-ts/)
 Can you solve the one below? It was [devised by Arto Inkala, a Finnish mathematician,
