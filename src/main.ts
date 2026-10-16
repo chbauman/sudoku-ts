@@ -45,6 +45,9 @@ export function init() {
   // Set button map
   const butIds = [
     "mode-but",
+    "confirm-desc",
+    "confirm-yes",
+    "confirm-cancel",
     "restart_but",
     "auto-fill-button",
     "but1",

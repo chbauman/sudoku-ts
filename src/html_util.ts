@@ -161,6 +161,14 @@ function startHyp(e: Event) {
   e.stopPropagation();
 }
 
+// Asks for confirmation before running a destructive action
+let pendingConfirm: (() => void) | null = null;
+function confirmAction(description: string, action: () => void) {
+  pendingConfirm = action;
+  getAssertedButton("confirm-desc").textContent = description;
+  ($("#confirm") as any).popup("open");
+}
+
 // Sets functionality to the buttons
 function setButtons() {
   // Pencil mark toggle
@@ -177,14 +185,40 @@ function setButtons() {
   }
   getAssertedButton("restart_but").addEventListener("click", restAndClose);
 
+  // Confirmation dialog
+  getAssertedButton("confirm-yes").addEventListener("click", (e) => {
+    const action = pendingConfirm;
+    pendingConfirm = null;
+    ($("#confirm") as any).popup("close");
+    if (action) action();
+    e.stopPropagation();
+  });
+  getAssertedButton("confirm-cancel").addEventListener("click", (e) => {
+    pendingConfirm = null;
+    ($("#confirm") as any).popup("close");
+    e.stopPropagation();
+  });
+
   // Autofill button
-  getAssertedButton("auto-fill-button").addEventListener(
-    "click",
-    fillSmallDigits
+  getAssertedButton("auto-fill-button").addEventListener("click", () =>
+    confirmAction(
+      "Adds all digits that are still possible as pencil marks to every empty cell.",
+      fillSmallDigits
+    )
   );
 
-  // Custom sudoku import
-  getAssertedButton("own_sud").addEventListener("click", inputCustomSudoku);
+  // Custom sudoku import: only the first click (clearing the grid) needs
+  // confirmation, the second click finishes the input.
+  getAssertedButton("own_sud").addEventListener("click", () => {
+    if (inputtingOwnSud) {
+      inputCustomSudoku();
+    } else {
+      confirmAction(
+        "Empties the grid so you can type in your own sudoku. The current game is lost.",
+        inputCustomSudoku
+      );
+    }
+  });
 
   // Hypothesis
   enableHyp();

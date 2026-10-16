@@ -266,7 +266,13 @@ li {
     width: 200px;
 }
 
-#restart li {
+#confirm p {
+    max-width: 260px;
+    margin: 0 auto 1em;
+}
+
+#restart li,
+#confirm li {
     font-size: 24px;
     width: auto;
 }
