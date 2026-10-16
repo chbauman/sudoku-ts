@@ -59,6 +59,7 @@ export function init() {
     "lvl_list",
     "solve",
     "check",
+    "log-txt",
     "fin-vid",
     "solved-h",
   ];

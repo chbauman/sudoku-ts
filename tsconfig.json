@@ -11,6 +11,6 @@
     "outDir": "dist",
     "strict": true
   },
-  "files": ["src/main.ts", "src/sudoku.ts", "src/html_util.ts", "src/storage.ts", "src/settings.ts", "src/pages.ts"],
+  "files": ["src/main.ts", "src/sudoku.ts", "src/html_util.ts", "src/storage.ts", "src/settings.ts", "src/pages.ts", "src/history.ts"],
   "exclude": ["./node_modules/*"]
 }

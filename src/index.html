@@ -61,7 +61,7 @@
         <nav id="menu" hidden>
           <a href="#help"><svg class="icon" aria-hidden="true"><use href="#i-help-circle-outline" /></svg>Help</a>
           <a href="#settings"><svg class="icon" aria-hidden="true"><use href="#i-settings-outline" /></svg>Settings</a>
-          <span class="disabled" title="Not implemented yet"><svg class="icon" aria-hidden="true"><use href="#i-time-outline" /></svg>History</span>
+          <a href="#history"><svg class="icon" aria-hidden="true"><use href="#i-time-outline" /></svg>History</a>
         </nav>
       </header>
 
@@ -149,6 +149,16 @@
             <dt><kbd>Ctrl</kbd> + <kbd>Z</kbd></dt>
             <dd>Undo</dd>
           </dl>
+        </div>
+      </section>
+
+      <section id="history" data-page="history" hidden>
+        <p id="history-empty">No solved sudokus yet. Your solve times will show up here.</p>
+        <div id="history-content" hidden>
+          <p>Best times</p>
+          <table class="stats" id="history-levels"></table>
+          <p>Recent</p>
+          <table class="stats" id="history-recent"></table>
         </div>
       </section>
 

@@ -2,6 +2,7 @@
 // index.html, selected by the URL hash (#help, #settings). The hamburger menu
 // in the header opens the other pages, the back button (and the Android back
 // button) return to the game.
+import { loadHistory, bestTime, formatTime, HistoryEntry } from "./history.js";
 import {
   settings,
   loadSettings,
@@ -14,6 +15,7 @@ const TITLES: { [page: string]: string } = {
   game: "Sudoku",
   help: "Help",
   settings: "Settings",
+  history: "History",
 };
 
 const byId = <T extends HTMLElement>(id: string) =>
@@ -34,6 +36,51 @@ function showPage() {
   byId("back-btn").hidden = page === "game";
   closeMenu();
   window.scrollTo(0, 0);
+  if (page === "history") renderHistory();
+}
+
+// Personal leaderboard: best time per level and the most recent solves
+async function renderHistory() {
+  const entries = await loadHistory();
+  byId("history-empty").hidden = entries.length > 0;
+  byId("history-content").hidden = entries.length === 0;
+
+  const row = (cells: string[], tag = "td") =>
+    "<tr>" +
+    cells
+      .map((c, i) => `<${tag}${i > 0 ? ' class="num"' : ""}>${c}</${tag}>`)
+      .join("") +
+    "</tr>";
+
+  const levels = [...new Set(entries.map((e) => e.level))].sort((a, b) => a - b);
+  byId("history-levels").innerHTML =
+    row(["Level", "Solved", "Best", "Average"], "th") +
+    levels
+      .map((level) => {
+        const times = entries.filter((e) => e.level === level).map((e) => e.seconds);
+        const avg = times.reduce((a, b) => a + b, 0) / times.length;
+        return row([
+          `Lvl ${level}`,
+          String(times.length),
+          formatTime(bestTime(entries, level) as number),
+          formatTime(avg),
+        ]);
+      })
+      .join("");
+
+  const recent: HistoryEntry[] = entries.slice(-20).reverse();
+  byId("history-recent").innerHTML =
+    row(["Date", "Level", "Time", "ID"], "th") +
+    recent
+      .map((e) =>
+        row([
+          new Date(e.date).toLocaleDateString(),
+          `Lvl ${e.level}`,
+          formatTime(e.seconds),
+          `#${e.id.split("-")[1]}`,
+        ])
+      )
+      .join("");
 }
 
 function closeMenu() {
