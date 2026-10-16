@@ -29,7 +29,10 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
-      - uses: android-actions/setup-android@v3
+      # The runner image ships the Android SDK; only the licenses need accepting
+      # so Gradle can download missing platform / build-tools packages.
+      - name: Accept Android SDK licenses
+        run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
       - run: npm ci
       - run: npm test
       # Builds the web app into _site/ and copies it into the Android project
