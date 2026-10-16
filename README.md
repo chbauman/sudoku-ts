@@ -19,6 +19,15 @@ and is specifically designed to be unsolvable to all but the sharpest minds.](ht
 Built upon simpler JavaScript version found at https://github.com/baruchel/sudoku-js.
 The icons open source and taken from https://ionicons.com/.
 
+## Keyboard shortcuts
+
+| Key | Action |
+| --- | --- |
+| Arrow keys | Move the selected cell (starts at the top left) |
+| `1`-`9` | Enter the digit (or toggle the pencil mark in pencil mode) |
+| `Delete` / `Backspace` / `0` | Clear the selected cell |
+| `Ctrl`/`Cmd` + `Z` | Undo (digits, pencil marks, autofill, hypothesis rejection) |
+
 ## Development
 
 Requires `Node.js`. Everything is run through npm:
