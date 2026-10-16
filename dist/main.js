@@ -1,4 +1,5 @@
 import { initGrid, setButtons, htmlButtonDict, digits, log, elsewhere, clickCell, } from "./html_util.js";
+import { setupPages } from "./pages.js";
 let initialized = false;
 const getDocEl = (id) => {
     const res = document.getElementById(id);
@@ -16,13 +17,14 @@ export function init() {
     }
     document.querySelector("body").addEventListener("click", (e) => {
         const target = e.target;
-        if (!target.closest("dialog, [data-open], #auto-fill-button, #own_sud")) {
+        if (!target.closest("dialog, [data-open], #auto-fill-button, #own_sud, .bar")) {
             elsewhere();
         }
     });
     const butIds = [
         "mode-but",
         "undo-but",
+        "tools-note",
         "confirm-title",
         "confirm-desc",
         "confirm-yes",
@@ -43,6 +45,7 @@ export function init() {
         htmlButtonDict.set(bId, getDocEl(bId));
     }
     setButtons();
+    setupPages();
     for (let i = 0; i < 10; i++)
         digits[i] = getDocEl("digit-" + String(i));
     const tbl = getDocEl("grid");

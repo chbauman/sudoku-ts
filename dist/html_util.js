@@ -1,5 +1,7 @@
 import { T, DEBUG, Marked, readSudokuFromFile, Tsol, Tinit, permuteSuds, copyTo2d, allowed, checkSolved, deepCopy2D, deepCopy3D, } from "./sudoku.js";
 import { storageGet, storageSet, storageRemove } from "./storage.js";
+import { settings, loadSettings } from "./settings.js";
+import { currentPage } from "./pages.js";
 const col1 = "var(--accent)";
 const smallDigCol = "var(--small-dig-bg)";
 const rowColSquareForbidCol = "var(--forbid-bg)";
@@ -133,9 +135,11 @@ function initGrid(tbl) {
         }
     }
     setTimeout(function () {
-        loadGame().then((loaded) => {
+        loadSettings()
+            .then(loadGame)
+            .then((loaded) => {
             if (!loaded)
-                loadRandomSud(4);
+                loadRandomSud(settings.level);
         });
     }, 250);
 }
@@ -162,6 +166,11 @@ function confirmAction(title, description, action) {
     getAssertedButton("confirm-title").textContent = title;
     getAssertedButton("confirm-desc").textContent = description;
     openDialog("confirm");
+}
+function updateToolButtons() {
+    setEnabled("check", solAvailable);
+    setEnabled("solve", solAvailable);
+    getAssertedButton("tools-note").hidden = solAvailable;
 }
 function setButtons() {
     setupDialogs();
@@ -216,16 +225,22 @@ function setButtons() {
     getAssertedButton("digits").style.display = "none";
     getAssertedButton("digits").style.display = "inline-block";
     setLevelFun();
-    function solveAndClose() {
-        solve();
-        closeDialog("help");
-    }
-    getAssertedButton("solve").addEventListener("click", solveAndClose);
-    function checkAndClose() {
-        check();
-        closeDialog("help");
-    }
-    getAssertedButton("check").addEventListener("click", checkAndClose);
+    getAssertedButton("check").addEventListener("click", () => {
+        if (!solAvailable)
+            return;
+        closeDialog("tools");
+        confirmAction("Mark mistakes?", "Marks every digit that differs from the solution.", () => {
+            check();
+            reselect();
+        });
+    });
+    getAssertedButton("solve").addEventListener("click", () => {
+        if (!solAvailable)
+            return;
+        closeDialog("tools");
+        confirmAction("Solve?", "Fills in the solution. The sudoku counts as solved with the solver.", solve);
+    });
+    updateToolButtons();
 }
 function disableHyp() {
     getAssertedButton("but1").onclick = null;
@@ -554,6 +569,7 @@ async function loadGame() {
         copyTo2d(g.Tsol, Tsol);
         sudLvl = g.sudLvl;
         solAvailable = g.solAvailable;
+        updateToolButtons();
         applySnapshot(g);
         setHypButtons();
         if (hyps.length > 0)
@@ -569,7 +585,7 @@ function pressDigit(d, e) {
     withUndo(() => digitHandlers[d]?.(e));
 }
 function onKeyDown(e) {
-    if (document.querySelector("dialog[open]"))
+    if (currentPage() !== "game" || document.querySelector("dialog[open]"))
         return;
     const mod = e.ctrlKey || e.metaKey;
     if (mod && e.key.toLowerCase() === "z" && !e.shiftKey) {
@@ -805,6 +821,7 @@ function setSudFromStr(retSud) {
     elsewhere();
     if (!solAvailable)
         solAvailable = true;
+    updateToolButtons();
     updateGrid();
     setClickableTrefT();
     clearHyps();
@@ -829,6 +846,7 @@ function inputCustomSudoku() {
         disableHyp();
         inputtingOwnSud = true;
         solAvailable = false;
+        updateToolButtons();
         setActive("own_sud", true);
         for (let i = 0; i < 9; i++) {
             for (let j = 0; j < 9; j++) {
