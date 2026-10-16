@@ -573,3 +573,12 @@ kbd {
     border-bottom-width: 2px;
     border-radius: 6px;
 }
+
+/* Solving time below the buttons (empty when no clock is running) */
+.timer {
+    min-height: 1.4em;
+    margin: 14px 0 0;
+    font-size: 18px;
+    font-variant-numeric: tabular-nums;
+    color: var(--disabled);
+}

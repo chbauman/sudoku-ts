@@ -567,6 +567,7 @@ function showSolveTime() {
   text.textContent = "";
   if (!timing || puzzleId === null || sudLvl < 0) return;
   timing = false;
+  updateTimer();
   const seconds = elapsedMs / 1000;
   const entry: HistoryEntry = {
     id: puzzleId,
@@ -585,6 +586,13 @@ function showSolveTime() {
   });
 }
 
+// Shows the running time below the buttons, nothing when no clock is running
+function updateTimer() {
+  getAssertedButton("timer").textContent = timing
+    ? formatTime(elapsedMs / 1000)
+    : "";
+}
+
 // Counts the playing time: only while the game page is visible
 function tick() {
   const now = Date.now();
@@ -593,6 +601,7 @@ function tick() {
   if (timing && document.visibilityState === "visible" && currentPage() === "game") {
     elapsedMs += delta;
   }
+  updateTimer();
 }
 
 // Check if sudoku was solved
@@ -781,6 +790,7 @@ async function loadGame(): Promise<boolean> {
     puzzleId = typeof g.puzzleId === "string" ? g.puzzleId : null;
     elapsedMs = typeof g.elapsed === "number" ? g.elapsed : 0;
     timing = puzzleId !== null && sudLvl >= 0;
+    updateTimer();
     updateToolButtons();
     applySnapshot(g);
     setHypButtons();
@@ -1048,6 +1058,7 @@ function setSudFromStr(retSud: string, index: number) {
   puzzleId = `${sudLvl}-${index}`;
   elapsedMs = 0;
   timing = true;
+  updateTimer();
   elsewhere();
   if (!solAvailable) solAvailable = true;
   updateToolButtons();
@@ -1077,6 +1088,7 @@ function inputCustomSudoku() {
     log("Own Input");
     puzzleId = null;
     timing = false;
+    updateTimer();
     elsewhere();
     clearHyps();
     disableHyp();
@@ -1137,6 +1149,7 @@ function solve() {
   if (solAvailable == false) return;
   sudLvl = -2;
   timing = false;
+  updateTimer();
   for (let i = 0; i < 9; i++) {
     for (let j = 0; j < 9; j++) {
       if (T[i][j] == 0) {
@@ -1174,6 +1187,7 @@ function restart() {
   log("Restarting");
   elapsedMs = 0;
   timing = puzzleId !== null && sudLvl >= 0;
+  updateTimer();
   elsewhere();
   unhighlightAll();
   for (let i = 0; i < 9; i++) {
