@@ -46,6 +46,8 @@ html,
 body {
     background: var(--bg);
     color: var(--fg);
+    /* No pull-to-refresh / overscroll glow (the page is installable as an app) */
+    overscroll-behavior: none;
 }
 
 body,
