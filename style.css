@@ -51,25 +51,42 @@ body {
 body,
 button,
 input,
-.ui-popup,
-.ui-popup *,
-.ui-body-a,
-.ui-body-b,
-.ui-btn {
+dialog {
     font-family: var(--font);
 }
 
-/* Dialogs share the page background instead of jQuery Mobile's dark swatch. */
-.ui-popup,
-.ui-popup.ui-body-b {
-    background: var(--bg);
-    color: var(--fg);
-    text-shadow: none;
-    border: 1px solid var(--grid-line-thin);
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+body {
+    margin: 0;
 }
 
-.ui-popup-screen.ui-overlay-b {
+main {
+    padding: 0 16px 1em;
+}
+
+/* Dialogs share the page background. */
+dialog {
+    background: var(--bg);
+    color: var(--fg);
+    border: 1px solid var(--grid-line-thin);
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+    padding: 0.8em 1.5em 1em;
+    max-width: min(92vw, 520px);
+    max-height: 90vh;
+    overflow-y: auto;
+    text-align: center;
+}
+
+dialog:focus,
+dialog:focus-visible {
+    outline: none;
+}
+
+dialog > :first-child {
+    margin-top: 0;
+}
+
+dialog::backdrop {
     background: var(--overlay);
 }
 
@@ -90,27 +107,23 @@ body {
 }
 
 
-ion-icon {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-}
-
 .panel {
     margin: 0;
     padding: 0;
     font-size: 0;
 }
 
-/* Title sits midway between the page top and the grid. */
-[role="main"].ui-content {
-    padding-top: 0;
+ion-icon {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
+/* Title sits midway between the page top and the grid. */
 h1 {
     text-align: center;
     margin: 0;
-    padding: 0.5em 0 0.7em;
+    padding: 0.75em 0 0.7em;
     line-height: 1.2;
 }
 
@@ -316,18 +329,8 @@ li {
 }
 
 /* Dialog sizes */
-#log {
-    font-size: 14px;
-    width: 460px;
-    text-align: left;
-    top: -8px;
-}
-
 #win {
-    font-size: 14px;
-    width: 460px;
-    text-align: left;
-    top: -8px;
+    width: min(460px, 92vw);
 }
 
 video {

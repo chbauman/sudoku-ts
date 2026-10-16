@@ -10,12 +10,6 @@
     <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon/favicon-16x16.png" />
     <link rel="apple-touch-icon" href="./assets/favicon/apple-touch-icon.png" />
     <link rel="manifest" href="./assets/favicon/site.webmanifest" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <link
-      rel="stylesheet"
-      href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"
-    />
-    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
 
     <script
       type="module"
@@ -34,8 +28,8 @@
   </head>
 
   <body>
-    <div data-role="page" id="home">
-      <div role="main" class="ui-content">
+    <div id="home">
+      <main>
         <h1>Sudoku</h1>
 
         <div class="table">
@@ -67,15 +61,12 @@
           </table>
         </div>
 
-        <div class="panel">
-          <ul id="buttons1"></ul>
-        </div>
         <div>
           <ul id="buttons2">
-            <li onclick='$( "#restart" ).popup( "open" );'>
+            <li data-open="restart">
               <ion-icon name="refresh-outline"></ion-icon>
             </li>
-            <li onclick='$( "#newGrid" ).popup( "open" );'>
+            <li data-open="newGrid">
               <ion-icon name="add-circle-outline"></ion-icon>
             </li>
             <li id="auto-fill-button">
@@ -84,30 +75,18 @@
             <li id="but1"><ion-icon name="git-branch-outline"></ion-icon></li>
             <li id="but3"><ion-icon name="close-circle-outline"></ion-icon></li>
             <li id="own_sud"><ion-icon name="create-outline"></ion-icon></li>
-            <li onclick='$( "#help" ).popup( "open" );'>
+            <li data-open="help">
               <ion-icon name="information-circle-outline"></ion-icon>
             </li>
           </ul>
         </div>
-      </div>
+      </main>
 
-      <div
-        data-role="popup"
-        id="waiting"
-        class="ui-content"
-        data-theme="b"
-        data-overlay-theme="b"
-      >
+      <dialog id="waiting" data-persistent>
         <p>generating a new grid…</p>
-      </div>
+      </dialog>
 
-      <div
-        data-role="popup"
-        id="newGrid"
-        class="ui-content"
-        data-theme="b"
-        data-overlay-theme="b"
-      >
+      <dialog id="newGrid">
         <h2>Select level:</h2>
         <ul id="lvl_list">
           <li>Lvl 0</li>
@@ -120,61 +99,37 @@
           <li>Lvl 7</li>
           <li>Lvl 8</li>
         </ul>
-      </div>
+      </dialog>
 
-      <div
-        data-role="popup"
-        id="restart"
-        class="ui-content"
-        data-theme="b"
-        data-overlay-theme="b"
-      >
+      <dialog id="restart">
         <h2>Restart game?</h2>
         <ul>
           <li id="restart_but">yes</li>
-          <li id="cancel" onclick='$( "#restart" ).popup( "close" );'>
+          <li id="cancel" data-close>
             cancel
           </li>
         </ul>
-      </div>
+      </dialog>
 
-      <div
-        data-role="popup"
-        id="confirm"
-        class="ui-content"
-        data-theme="b"
-        data-overlay-theme="b"
-      >
+      <dialog id="confirm">
         <h2 id="confirm-title"></h2>
         <p id="confirm-desc"></p>
         <ul>
           <li id="confirm-yes">yes</li>
           <li id="confirm-cancel">cancel</li>
         </ul>
-      </div>
+      </dialog>
 
-      <div
-        data-role="popup"
-        id="win"
-        class="ui-content"
-        data-theme="b"
-        data-overlay-theme="b"
-      >
+      <dialog id="win">
         <h2 id="solved-h">You Solved it!!</h2>
         <video autoplay loop muted playsinline id="fin-vid">
           <source src="./assets/gifs/nice.mp4" type="video/mp4" />
           Your browser does not support HTML5 videos.
         </video>
         <p id="log-txt"></p>
-      </div>
+      </dialog>
 
-      <div
-        data-role="popup"
-        id="help"
-        class="ui-content"
-        data-theme="b"
-        data-overlay-theme="b"
-      >
+      <dialog id="help">
         <h2>Help</h2>
         <p>Main symbols</p>
         <ul>
@@ -195,7 +150,7 @@
         <h3 id="check" class="helpButton">Show wrong answers</h3>
         <h3 id="solve" class="helpButton">Solve current grid</h3>
         <p>(Not available for custom sudokus.)</p>
-      </div>
+      </dialog>
     </div>
   </body>
 </html>
