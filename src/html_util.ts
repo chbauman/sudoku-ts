@@ -173,8 +173,13 @@ function startHyp(e: Event) {
 
 // Asks for confirmation before running a destructive action
 let pendingConfirm: (() => void) | null = null;
-function confirmAction(description: string, action: () => void) {
+function confirmAction(
+  title: string,
+  description: string,
+  action: () => void
+) {
   pendingConfirm = action;
+  getAssertedButton("confirm-title").textContent = title;
   getAssertedButton("confirm-desc").textContent = description;
   ($("#confirm") as any).popup("open");
 }
@@ -212,6 +217,7 @@ function setButtons() {
   // Autofill button
   getAssertedButton("auto-fill-button").addEventListener("click", () =>
     confirmAction(
+      "Fill in pencil marks?",
       "Adds all digits that are still possible as pencil marks to every empty cell.",
       fillSmallDigits
     )
@@ -224,6 +230,7 @@ function setButtons() {
       inputCustomSudoku();
     } else {
       confirmAction(
+        "Enter your own sudoku?",
         "Empties the grid so you can type in your own sudoku. The current game is lost.",
         inputCustomSudoku
       );
