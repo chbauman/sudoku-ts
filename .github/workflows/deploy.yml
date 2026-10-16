@@ -12,24 +12,14 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
       - run: npm ci
       - run: npm test
-      - run: npm run build
-      - name: Assemble site
-        run: |
-          # Serve src/ (index.html, css, icon) from the site root. The page
-          # and code reference siblings as "../dist", "../assets".
-          mkdir -p _site
-          cp src/index.html src/style.css src/manifest.webmanifest src/sw.js _site/
-          cp -r dist assets _site/
-          sed -i 's#"\.\./#"./#g' _site/index.html _site/manifest.webmanifest _site/dist/*.js
-          # New cache name per release
-          sed -i "s#__BUILD__#${GITHUB_SHA::10}#" _site/sw.js
+      - run: npm run assemble
       - uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
