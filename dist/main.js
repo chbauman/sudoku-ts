@@ -57,5 +57,10 @@ export function init() {
     });
     log("Setup buttons!");
 }
+if ("serviceWorker" in navigator && !location.pathname.includes("/src/")) {
+    navigator.serviceWorker
+        .register("sw.js")
+        .catch((e) => log("Service worker registration failed: " + e));
+}
 init();
 //# sourceMappingURL=main.js.map

@@ -116,7 +116,10 @@ body {
     font-size: 0;
 }
 
-ion-icon {
+.icon {
+    width: 1em;
+    height: 1em;
+    fill: currentColor;
     display: block;
     margin-left: auto;
     margin-right: auto;
