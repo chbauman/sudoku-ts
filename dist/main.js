@@ -17,8 +17,11 @@ export function init() {
     window.addEventListener("load", init);
     document.querySelector("body").addEventListener("click", elsewhere);
     var butIds = [
-        "down-but",
-        "up-but",
+        "mode-but",
+        "confirm-title",
+        "confirm-desc",
+        "confirm-yes",
+        "confirm-cancel",
         "restart_but",
         "auto-fill-button",
         "but1",

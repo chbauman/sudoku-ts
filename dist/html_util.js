@@ -1,12 +1,13 @@
 import { T, DEBUG, Marked, readSudokuFromFile, Tsol, Tinit, permuteSuds, copyTo2d, allowed, checkSolved, deepCopy2D, deepCopy3D, } from "./sudoku.js";
-var col1 = "#0A85FF";
-var smallDigCol = "#DFD";
-var rowColSquareForbidCol = "#FDD";
-var sameDigCol = "#FBB";
-var hypCol = "#0C5";
-var normH = "#BBB";
-var wrongHypCol = "#F22";
+var col1 = "var(--accent)";
+var smallDigCol = "var(--small-dig-bg)";
+var rowColSquareForbidCol = "var(--forbid-bg)";
+var sameDigCol = "var(--same-bg)";
+var hypCol = "var(--hyp)";
+var normH = "var(--selected-bg)";
+var wrongHypCol = "var(--wrong)";
 var large = true;
+var smallDigsEnabled = true;
 var curX = -1;
 var curY = 0;
 var solAvailable = false;
@@ -33,16 +34,15 @@ function log(msg) {
         console.log(msg);
     }
 }
+function setActive(id, on) {
+    getAssertedButton(id).classList.toggle("active", on);
+}
+function setEnabled(id, on) {
+    getAssertedButton(id).classList.toggle("disabled", !on);
+}
 function toggleLargeSmall() {
-    var upBut = getAssertedButton("up-but");
-    var downBut = getAssertedButton("down-but");
-    var but2 = large ? upBut : downBut;
-    var but1 = !large ? upBut : downBut;
-    but1.style.color = col1;
-    but1.style.borderColor = col1;
-    but2.style.color = "black";
-    but2.style.borderColor = "black";
     large = !large;
+    setActive("mode-but", !large);
 }
 function enlarge(e) {
     if (e === void 0) { e = undefined; }
@@ -130,11 +130,18 @@ function startHyp(e) {
     hypothesis1();
     e.stopPropagation();
 }
+var pendingConfirm = null;
+function confirmAction(title, description, action) {
+    pendingConfirm = action;
+    getAssertedButton("confirm-title").textContent = title;
+    getAssertedButton("confirm-desc").textContent = description;
+    $("#confirm").popup("open");
+}
 function setButtons() {
-    var upBut = getAssertedButton("up-but");
-    upBut.style.color = col1;
-    upBut.style.borderColor = col1;
-    upBut.addEventListener("click", enlarge);
+    getAssertedButton("mode-but").addEventListener("click", function () {
+        if (smallDigsEnabled)
+            large ? shrink() : enlarge();
+    });
     enableSmallDigs();
     function restAndClose(e) {
         restart();
@@ -142,8 +149,30 @@ function setButtons() {
         e.stopPropagation();
     }
     getAssertedButton("restart_but").addEventListener("click", restAndClose);
-    getAssertedButton("auto-fill-button").addEventListener("click", fillSmallDigits);
-    getAssertedButton("own_sud").addEventListener("click", inputCustomSudoku);
+    getAssertedButton("confirm-yes").addEventListener("click", function (e) {
+        var action = pendingConfirm;
+        pendingConfirm = null;
+        $("#confirm").popup("close");
+        if (action)
+            action();
+        e.stopPropagation();
+    });
+    getAssertedButton("confirm-cancel").addEventListener("click", function (e) {
+        pendingConfirm = null;
+        $("#confirm").popup("close");
+        e.stopPropagation();
+    });
+    getAssertedButton("auto-fill-button").addEventListener("click", function () {
+        return confirmAction("Fill in pencil marks?", "Adds all digits that are still possible as pencil marks to every empty cell.", fillSmallDigits);
+    });
+    getAssertedButton("own_sud").addEventListener("click", function () {
+        if (inputtingOwnSud) {
+            inputCustomSudoku();
+        }
+        else {
+            confirmAction("Empty grid?", "Add your own sudoku. Current game will be lost.", inputCustomSudoku);
+        }
+    });
     enableHyp();
     disableHypRejection();
     getAssertedButton("but3").addEventListener("click", endHyp);
@@ -163,14 +192,12 @@ function setButtons() {
     getAssertedButton("check").addEventListener("click", checkAndClose);
 }
 function disableHyp() {
-    var butt1 = getAssertedButton("but1");
-    butt1.onclick = null;
-    butt1.style.color = "#B8B8B8";
+    getAssertedButton("but1").onclick = null;
+    setEnabled("but1", false);
 }
 function enableHyp() {
-    var butt1 = getAssertedButton("but1");
-    butt1.onclick = startHyp;
-    butt1.style.color = "#000";
+    getAssertedButton("but1").onclick = startHyp;
+    setEnabled("but1", true);
 }
 function resetMiniCell(y, x, n) {
     TminiCells[y][x][n - 1].innerHTML = "";
@@ -231,7 +258,7 @@ function hypothesis1() {
     if (!choosingHyp) {
         log("Choosing ".concat(hyps.length + 1, "-th hypothesis."));
         disableSmallDigs();
-        getAssertedButton("but1").style.color = "#F00";
+        setActive("but1", true);
         choosingHyp = true;
         log("Started choosing, curX = ".concat(curX));
         if (curX >= 0) {
@@ -316,17 +343,15 @@ function finishedHypChoosing() {
         return;
     log("Stopping hypothesis choosing");
     enableSmallDigs();
-    getAssertedButton("but1").style.color = "";
+    setActive("but1", false);
     choosingHyp = false;
 }
 function enableHypRejection() {
-    var rejBut = getAssertedButton("but3");
-    rejBut.style.color = "#000";
+    setEnabled("but3", true);
     hypRejectionEnabled = true;
 }
 function disableHypRejection() {
-    var rejBut = getAssertedButton("but3");
-    rejBut.style.color = "#B8B8B8";
+    setEnabled("but3", false);
     hypRejectionEnabled = false;
 }
 function check() {
@@ -371,9 +396,8 @@ function checkSolvedSud() {
         title = "Nothing you can't solve.";
     }
     htmlButtonDict.get("fin-vid").src = vidSrc;
-    htmlButtonDict.get("solved-h").src = title;
+    getAssertedButton("solved-h").textContent = title;
     $("#win").popup("open");
-    console.log(sudLvl);
 }
 function clickCell(cell) {
     unhighlightAll();
@@ -413,7 +437,7 @@ function clickCell(cell) {
                         if (large || v_1 == 0) {
                             T[y][x] = v_1;
                             if (v_1 == 0) {
-                                Tref[y][x].style.color = "#000";
+                                Tref[y][x].style.color = "var(--fg)";
                             }
                             else {
                                 Tref[y][x].style.color = col1;
@@ -457,9 +481,8 @@ function clickCell(cell) {
                 }
             }
             else {
-                digits[i].style.color = "#B8B8B8";
-                digits[i].style.borderColor = "#B8B8B8";
-                digits[i].style.cursor = "pointer";
+                digits[i].style.color = "var(--disabled)";
+                digits[i].style.borderColor = "var(--disabled)";
                 $("#digits").on("click", "#digit-" + String(i), function (e) {
                     log("Cannot set this number!");
                     e.stopPropagation();
@@ -473,9 +496,8 @@ function clickCell(cell) {
     else {
         $("#digits").off("click", "**");
         for (var i = 0; i < 10; i++) {
-            digits[i].style.color = "#B8B8B8";
-            digits[i].style.borderColor = "#B8B8B8";
-            digits[i].style.cursor = "pointer";
+            digits[i].style.color = "var(--disabled)";
+            digits[i].style.borderColor = "var(--disabled)";
         }
     }
 }
@@ -486,9 +508,8 @@ function elsewhere() {
         curX = -1;
         unhighlightAll();
         for (var i = 0; i < digits.length; ++i) {
-            digits[i].style.color = "#B8B8B8";
-            digits[i].style.borderColor = "#B8B8B8";
-            digits[i].style.cursor = "pointer";
+            digits[i].style.color = "var(--disabled)";
+            digits[i].style.borderColor = "var(--disabled)";
             $("#digits").on("click", "#digit-" + String(i), function (e) {
                 log("Neet to select a cell first.");
                 e.stopPropagation();
@@ -587,19 +608,14 @@ function setSudFromStr(retSud) {
     $("#waiting").popup("close");
 }
 function disableSmallDigs() {
-    log("Disabled down button");
+    log("Disabled pencil mark toggle");
     enlarge();
-    var downBut = getAssertedButton("down-but");
-    downBut.onclick = null;
-    downBut.style.color = "#B8B8B8";
-    downBut.style.borderColor = "#B8B8B8";
-    downBut.style.cursor = "pointer";
+    smallDigsEnabled = false;
+    setEnabled("mode-but", false);
 }
 function enableSmallDigs() {
-    var downBut = getAssertedButton("down-but");
-    downBut.onclick = shrink;
-    downBut.style.color = "";
-    downBut.style.borderColor = "";
+    smallDigsEnabled = true;
+    setEnabled("mode-but", true);
 }
 function inputCustomSudoku() {
     if (!inputtingOwnSud) {
@@ -608,8 +624,7 @@ function inputCustomSudoku() {
         disableHyp();
         inputtingOwnSud = true;
         solAvailable = false;
-        var ownBut = getAssertedButton("own_sud");
-        ownBut.style.color = "#F00";
+        setActive("own_sud", true);
         for (var i = 0; i < 9; i++) {
             for (var j = 0; j < 9; j++) {
                 T[i][j] = 0;
@@ -626,8 +641,7 @@ function inputCustomSudoku() {
         enableHyp();
         sudLvl = -1;
         inputtingOwnSud = false;
-        var ownBut = getAssertedButton("own_sud");
-        ownBut.style.color = "";
+        setActive("own_sud", false);
         copyTo2d(T, Tinit);
         setClickableTrefT();
         enableSmallDigs();
@@ -642,8 +656,9 @@ function loadRandomSud(lvl) {
     log("Loaded sudoku with level ".concat(lvl));
 }
 function setHypButtons() {
-    getAssertedButton("but1").style.color = "#000";
-    getAssertedButton("but3").style.color = "#B8B8B8";
+    setActive("but1", false);
+    setEnabled("but1", true);
+    setEnabled("but3", false);
 }
 function solve() {
     if (solAvailable == false)
@@ -654,13 +669,13 @@ function solve() {
             if (T[i][j] == 0) {
                 T[i][j] = Tsol[i][j];
                 setCell(i, j, T[i][j]);
-                Tref[i][j].style.color = "#B8B8B8";
+                Tref[i][j].style.color = "var(--disabled)";
             }
             else if (T[i][j] != Tsol[i][j]) {
                 T[i][j] = Tsol[i][j];
                 setCell(i, j, T[i][j]);
-                Tref[i][j].style.color = "#B8B8B8";
-                Tref[i][j].style.backgroundColor = "#FBB";
+                Tref[i][j].style.color = "var(--disabled)";
+                Tref[i][j].style.backgroundColor = "var(--same-bg)";
             }
         }
     }
@@ -671,6 +686,7 @@ function clearHyps() {
     log("Clearing hypotheses");
     hyps = [];
     choosingHyp = false;
+    setActive("but1", false);
     disableHypRejection();
 }
 function restart() {

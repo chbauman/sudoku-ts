@@ -1,7 +1,94 @@
+/* Theme: colors are CSS variables so JS and dark mode share one palette. */
+:root {
+    color-scheme: light dark;
+    --bg: #fff;
+    --fg: #000;
+    --grid-line: #000;
+    --grid-line-thin: #888;
+    --disabled: #b8b8b8;
+    --accent: #0a85ff;
+    --danger: #f00;
+    --hyp: #0c5;
+    --wrong: #f22;
+    --selected-bg: #bbb;
+    --small-dig-bg: #dfd;
+    --forbid-bg: #fdd;
+    --same-bg: #fbb;
+    --active-bg: rgba(10, 133, 255, 0.14);
+    --overlay: rgba(0, 0, 0, 0.5);
+
+    --cell: min(9.8vw, 44px);
+    --btn: min(10.5vw, 46px);
+    --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #16181d;
+        --fg: #e8e8ea;
+        --grid-line: #e8e8ea;
+        --grid-line-thin: #5a5d66;
+        --disabled: #5f636c;
+        --accent: #4aa3ff;
+        --danger: #ff5a5a;
+        --hyp: #2fd47a;
+        --wrong: #ff5a5a;
+        --selected-bg: #4a4e58;
+        --small-dig-bg: #1f3a27;
+        --forbid-bg: #4a2a2c;
+        --same-bg: #6b2f33;
+        --active-bg: rgba(74, 163, 255, 0.22);
+        --overlay: rgba(0, 0, 0, 0.7);
+    }
+}
+
+html,
 body {
-    font-family: monospace;
+    background: var(--bg);
+    color: var(--fg);
+}
+
+body,
+button,
+input,
+.ui-popup,
+.ui-popup *,
+.ui-body-a,
+.ui-body-b,
+.ui-btn {
+    font-family: var(--font);
+}
+
+/* Dialogs share the page background instead of jQuery Mobile's dark swatch. */
+.ui-popup,
+.ui-popup.ui-body-b {
+    background: var(--bg);
+    color: var(--fg);
+    text-shadow: none;
+    border: 1px solid var(--grid-line-thin);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+}
+
+.ui-popup-screen.ui-overlay-b {
+    background: var(--overlay);
+}
+
+a {
+    color: var(--accent);
+}
+
+/* Everything clickable gets the same cursor. */
+.gridCell,
+.digit,
+li,
+.helpButton {
+    cursor: pointer;
+}
+
+body {
     text-align: center;
 }
+
 
 ion-icon {
     display: block;
@@ -15,8 +102,16 @@ ion-icon {
     font-size: 0;
 }
 
+/* Title sits midway between the page top and the grid. */
+[role="main"].ui-content {
+    padding-top: 0;
+}
+
 h1 {
     text-align: center;
+    margin: 0;
+    padding: 0.5em 0 0.7em;
+    line-height: 1.2;
 }
 
 table {
@@ -25,6 +120,7 @@ table {
 }
 
 #grid {
+    table-layout: fixed;
     margin-top: 0px;
     border-collapse: collapse;
     border-spacing: 0;
@@ -45,53 +141,88 @@ table {
 }
 
 .gridCell {
-    width: 2em;
-    height: 2em;
+    width: var(--cell);
+    height: var(--cell);
     text-align: center;
-    font-weight: bold;
-    font-size: 120%;
-    border: 1px dotted black;
+    font-weight: 600;
+    font-size: calc(var(--cell) * 0.62);
+    line-height: 1;
+    box-sizing: border-box;
+    overflow: hidden;
+    border: 1px dotted var(--grid-line-thin);
     margin: 0;
     padding: 0;
 }
 
 .subGridCell {
-    width: 0.5em;
-    height: 0.5em;
+    padding: 0;
+    box-sizing: border-box;
+    width: calc(var(--cell) / 3);
+    /* height is distributed by the inner table (100% of the cell); a fixed
+       height here makes rows taller than columns are wide */
+    height: 0;
     text-align: center;
-    font-weight: bold;
-    font-size: 50%;
+    font-weight: 600;
+    font-size: calc(var(--cell) * 0.3);
+    line-height: 1;
     /*border: 1px dotted black;*/
     margin: 0;
 }
 
+#mode-but {
+    height: auto;
+}
+
+/* Uniform button states: toggles are .active while on, any button can be
+   .disabled. */
+.active {
+    color: var(--accent);
+    background: var(--active-bg);
+}
+
+.digit.active {
+    border-color: var(--accent);
+}
+
+.disabled {
+    color: var(--disabled);
+    background: none;
+    cursor: default;
+}
+
+.digit.disabled {
+    border-color: var(--disabled);
+}
+
 .topBorder {
-    border-top: 2px solid black;
+    border-top: 2px solid var(--grid-line);
 }
 
 .bottomBorder {
-    border-bottom: 2px solid black;
+    border-bottom: 2px solid var(--grid-line);
 }
 
 .leftBorder {
-    border-left: 2px solid black;
+    border-left: 2px solid var(--grid-line);
 }
 
 .rightBorder {
-    border-right: 2px solid black;
+    border-right: 2px solid var(--grid-line);
 }
 
 #digits {
-    margin-left: 4px;
+    margin: 18px 0 10px 4px;
     border-spacing: 8px;
 }
 
 .digit {
-    width: 1.45em;
-    height: 1.45em;
+    width: var(--btn);
+    height: var(--btn);
     text-align: center;
-    font-size: 175%;
-    border: 1.5px solid #222;
+    /* same digit style as the grid cells; same outline as the block borders */
+    font-size: calc(var(--cell) * 0.62);
+    font-weight: 600;
+    border: 2px solid var(--grid-line);
     border-radius: 8px;
     padding: 0px;
     margin: 0;
@@ -118,26 +249,44 @@ li {
     text-align: center;
     font-weight: normal;
     font-size: 32px;
-    cursor: pointer;
+}
+
+#buttons2 {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    padding: 0;
+    max-width: 100%;
+}
+
+#buttons2 li {
+    width: calc(var(--btn) * 1.05);
+    padding: 4px 0;
+    border-radius: 10px;
+    font-size: calc(var(--btn) * 0.75);
 }
 
 #newGrid ul {
-    margin: 0 auto;    
+    margin: 0 auto;
 }
 
 #newGrid li {
     display: table;
     margin: 0 auto;
     text-align: center;
-    font-size: 24px;
-    color: #FF6;
+    color: var(--accent);
     font-size: 18px;
-    cursor: pointer;
     padding-bottom: 6px;
     width: 200px;
 }
 
-#restart li {
+#confirm p {
+    max-width: 260px;
+    margin: 0 auto 1em;
+}
+
+#restart li,
+#confirm li {
     font-size: 24px;
     width: auto;
 }
@@ -162,11 +311,11 @@ li {
 }
 
 .helpButton {
-    color: #FF6;
+    color: var(--accent);
     padding-bottom: 6px;
-    cursor: pointer;
 }
 
+/* Dialog sizes */
 #log {
     font-size: 14px;
     width: 460px;
