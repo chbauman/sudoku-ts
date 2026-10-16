@@ -65,6 +65,7 @@ main {
 
 /* Dialogs share the page background. */
 dialog {
+    box-sizing: border-box;
     background: var(--bg);
     color: var(--fg);
     border: 1px solid var(--grid-line-thin);
