@@ -208,8 +208,10 @@ table {
     width: var(--btn);
     height: var(--btn);
     text-align: center;
-    font-size: calc(var(--btn) * 0.5);
-    border: 1.5px solid var(--fg);
+    /* same digit style as the grid cells; same outline as the block borders */
+    font-size: calc(var(--cell) * 0.62);
+    font-weight: 600;
+    border: 2px solid var(--grid-line);
     border-radius: 8px;
     padding: 0px;
     margin: 0;
