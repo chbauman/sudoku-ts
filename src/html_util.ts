@@ -320,7 +320,7 @@ function setButtons() {
     if (!solAvailable) return;
     closeDialog("tools");
     confirmAction(
-      "Show wrong answers?",
+      "Mark mistakes?",
       "Marks every digit that differs from the solution.",
       () => {
         check();
@@ -332,7 +332,7 @@ function setButtons() {
     if (!solAvailable) return;
     closeDialog("tools");
     confirmAction(
-      "Solve sudoku?",
+      "Solve?",
       "Fills in the solution. The sudoku counts as solved with the solver.",
       solve
     );
