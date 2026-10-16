@@ -46,14 +46,14 @@
           <table id="digits">
             <tr>
               <td id="digit-0" class="digit">
-                <ion-icon name="backspace"></ion-icon>
+                <ion-icon name="backspace-outline"></ion-icon>
               </td>
               <td id="digit-1" class="digit">1</td>
               <td id="digit-2" class="digit">2</td>
               <td id="digit-3" class="digit">3</td>
               <td id="digit-4" class="digit">4</td>
               <td id="up-but" class="digit">
-                <ion-icon name="arrow-up"></ion-icon>
+                <ion-icon name="arrow-up-outline"></ion-icon>
               </td>
             </tr>
 
@@ -64,7 +64,7 @@
               <td id="digit-8" class="digit">8</td>
               <td id="digit-9" class="digit">9</td>
               <td id="down-but" class="digit">
-                <ion-icon name="arrow-down"></ion-icon>
+                <ion-icon name="arrow-down-outline"></ion-icon>
               </td>
             </tr>
           </table>
@@ -76,19 +76,19 @@
         <div>
           <ul id="buttons2">
             <li onclick='$( "#restart" ).popup( "open" );'>
-              <ion-icon name="reload"></ion-icon>
+              <ion-icon name="refresh-outline"></ion-icon>
             </li>
             <li onclick='$( "#newGrid" ).popup( "open" );'>
-              <ion-icon name="code-working"></ion-icon>
+              <ion-icon name="add-circle-outline"></ion-icon>
             </li>
             <li id="auto-fill-button">
-              <ion-icon class="icon" name="help-circle"></ion-icon>
+              <ion-icon name="color-wand-outline"></ion-icon>
             </li>
-            <li id="but1"><ion-icon name="git-branch"></ion-icon></li>
-            <li id="but3"><ion-icon name="close"></ion-icon></li>
-            <li id="own_sud"><ion-icon name="document-outline"></ion-icon></li>
+            <li id="but1"><ion-icon name="git-branch-outline"></ion-icon></li>
+            <li id="but3"><ion-icon name="close-circle-outline"></ion-icon></li>
+            <li id="own_sud"><ion-icon name="create-outline"></ion-icon></li>
             <li onclick='$( "#help" ).popup( "open" );'>
-              <ion-icon name="information-circle"></ion-icon>
+              <ion-icon name="information-circle-outline"></ion-icon>
             </li>
           </ul>
         </div>
@@ -149,8 +149,8 @@
         data-overlay-theme="b"
       >
         <h2 id="solved-h">You Solved it!!</h2>
-        <video autoplay loop id="fin-vid">
-          <source src="gifs/nice.mp4" type="video/mp4" />
+        <video autoplay loop muted playsinline id="fin-vid">
+          <source src="../assets/gifs/nice.mp4" type="video/mp4" />
           Your browser does not support HTML5 videos.
         </video>
         <p id="log-txt"></p>
@@ -166,17 +166,17 @@
         <h2>Help</h2>
         <p>Main symbols</p>
         <ul>
-          <li><ion-icon name="reload"></ion-icon></li>
+          <li><ion-icon name="refresh-outline"></ion-icon></li>
           <li class="help">Restart current sudoku</li>
-          <li><ion-icon name="code-working"></ion-icon></li>
+          <li><ion-icon name="add-circle-outline"></ion-icon></li>
           <li class="help">Load a new sudoku</li>
-          <li><ion-icon name="help-circle"></ion-icon></li>
+          <li><ion-icon name="color-wand-outline"></ion-icon></li>
           <li class="help">Fill in pencil marks</li>
-          <li><ion-icon name="git-branch"></ion-icon></li>
+          <li><ion-icon name="git-branch-outline"></ion-icon></li>
           <li class="help">Make a hypothesis</li>
-          <li><ion-icon name="close"></ion-icon></li>
+          <li><ion-icon name="close-circle-outline"></ion-icon></li>
           <li class="help">Reject hypothesis</li>
-          <li><ion-icon name="document-outline"></ion-icon></li>
+          <li><ion-icon name="create-outline"></ion-icon></li>
           <li class="help">Input your own sudoku</li>
         </ul>
         <p>

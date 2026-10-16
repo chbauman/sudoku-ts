@@ -15,13 +15,13 @@ import {
 } from "./sudoku.js";
 
 // Colors
-const col1 = "#0A85FF";
-const smallDigCol = "#DFD";
-const rowColSquareForbidCol = "#FDD";
-const sameDigCol = "#FBB";
-const hypCol = "#0C5";
-const normH = "#BBB";
-const wrongHypCol = "#F22";
+const col1 = "var(--accent)";
+const smallDigCol = "var(--small-dig-bg)";
+const rowColSquareForbidCol = "var(--forbid-bg)";
+const sameDigCol = "var(--same-bg)";
+const hypCol = "var(--hyp)";
+const normH = "var(--selected-bg)";
+const wrongHypCol = "var(--wrong)";
 
 // State variables
 var large = true;
@@ -225,12 +225,12 @@ function setButtons() {
 function disableHyp() {
   const butt1 = getAssertedButton("but1");
   butt1.onclick = null;
-  butt1.style.color = "#B8B8B8";
+  butt1.style.color = "var(--disabled)";
 }
 function enableHyp() {
   const butt1 = getAssertedButton("but1");
   butt1.onclick = startHyp;
-  butt1.style.color = "#000";
+  butt1.style.color = "var(--fg)";
 }
 
 // Removes digit in mini cell
@@ -306,7 +306,7 @@ function hypothesis1() {
     // Choose hypothesis digit
     log(`Choosing ${hyps.length + 1}-th hypothesis.`);
     disableSmallDigs();
-    getAssertedButton("but1").style.color = "#F00";
+    getAssertedButton("but1").style.color = "var(--danger)";
     choosingHyp = true;
     log(`Started choosing, curX = ${curX}`);
     if (curX >= 0) {
@@ -406,12 +406,12 @@ function finishedHypChoosing() {
 // Enable / disable the hypothesis rejection button
 function enableHypRejection() {
   const rejBut = getAssertedButton("but3");
-  rejBut.style.color = "#000";
+  rejBut.style.color = "var(--fg)";
   hypRejectionEnabled = true;
 }
 function disableHypRejection() {
   const rejBut = getAssertedButton("but3");
-  rejBut.style.color = "#B8B8B8";
+  rejBut.style.color = "var(--disabled)";
   hypRejectionEnabled = false;
 }
 
@@ -456,9 +456,8 @@ function checkSolvedSud() {
     title = "Nothing you can't solve.";
   }
   (htmlButtonDict.get("fin-vid") as HTMLVideoElement).src = vidSrc;
-  (htmlButtonDict.get("solved-h") as HTMLVideoElement).src = title;
+  getAssertedButton("solved-h").textContent = title;
   ($("#win") as any).popup("open");
-  console.log(sudLvl);
 }
 
 // Executed when cell is clicked
@@ -502,7 +501,7 @@ function clickCell(cell: HTMLTableCellElement) {
             if (large || v == 0) {
               T[y][x] = v;
               if (v == 0) {
-                Tref[y][x].style.color = "#000";
+                Tref[y][x].style.color = "var(--fg)";
               } else {
                 Tref[y][x].style.color = col1;
               }
@@ -543,9 +542,8 @@ function clickCell(cell: HTMLTableCellElement) {
           });
         }
       } else {
-        digits[i].style.color = "#B8B8B8";
-        digits[i].style.borderColor = "#B8B8B8";
-        digits[i].style.cursor = "pointer";
+        digits[i].style.color = "var(--disabled)";
+        digits[i].style.borderColor = "var(--disabled)";
         $("#digits").on("click", "#digit-" + String(i), function (e) {
           log("Cannot set this number!");
           e.stopPropagation();
@@ -555,9 +553,8 @@ function clickCell(cell: HTMLTableCellElement) {
   } else {
     $("#digits").off("click", "**");
     for (let i = 0; i < 10; i++) {
-      digits[i].style.color = "#B8B8B8";
-      digits[i].style.borderColor = "#B8B8B8";
-      digits[i].style.cursor = "pointer";
+      digits[i].style.color = "var(--disabled)";
+      digits[i].style.borderColor = "var(--disabled)";
     }
     //elsewhere();
   }
@@ -571,9 +568,8 @@ function elsewhere() {
     curX = -1;
     unhighlightAll();
     for (let i = 0; i < digits.length; ++i) {
-      digits[i].style.color = "#B8B8B8";
-      digits[i].style.borderColor = "#B8B8B8";
-      digits[i].style.cursor = "pointer";
+      digits[i].style.color = "var(--disabled)";
+      digits[i].style.borderColor = "var(--disabled)";
       $("#digits").on("click", "#digit-" + String(i), function (e) {
         log("Neet to select a cell first.");
         e.stopPropagation();
@@ -690,9 +686,8 @@ function disableSmallDigs() {
   enlarge();
   const downBut = getAssertedButton("down-but");
   downBut.onclick = null;
-  downBut.style.color = "#B8B8B8";
-  downBut.style.borderColor = "#B8B8B8";
-  downBut.style.cursor = "pointer";
+  downBut.style.color = "var(--disabled)";
+  downBut.style.borderColor = "var(--disabled)";
 }
 // Enables down button
 function enableSmallDigs() {
@@ -713,7 +708,7 @@ function inputCustomSudoku() {
     inputtingOwnSud = true;
     solAvailable = false;
     const ownBut = getAssertedButton("own_sud");
-    ownBut.style.color = "#F00";
+    ownBut.style.color = "var(--danger)";
 
     // Remove current sudoku
     for (let i = 0; i < 9; i++) {
@@ -754,8 +749,8 @@ function loadRandomSud(lvl = 7) {
 
 // Setup hypothesis buttons
 function setHypButtons() {
-  getAssertedButton("but1").style.color = "#000";
-  getAssertedButton("but3").style.color = "#B8B8B8";
+  getAssertedButton("but1").style.color = "var(--fg)";
+  getAssertedButton("but3").style.color = "var(--disabled)";
 }
 
 // Sets the current sudoku to the solution.
@@ -767,12 +762,12 @@ function solve() {
       if (T[i][j] == 0) {
         T[i][j] = Tsol[i][j];
         setCell(i, j, T[i][j]);
-        Tref[i][j].style.color = "#B8B8B8";
+        Tref[i][j].style.color = "var(--disabled)";
       } else if (T[i][j] != Tsol[i][j]) {
         T[i][j] = Tsol[i][j];
         setCell(i, j, T[i][j]);
-        Tref[i][j].style.color = "#B8B8B8";
-        Tref[i][j].style.backgroundColor = "#FBB";
+        Tref[i][j].style.color = "var(--disabled)";
+        Tref[i][j].style.backgroundColor = "var(--same-bg)";
       }
     }
   }
