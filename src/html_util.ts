@@ -227,12 +227,21 @@ function setButtons() {
   // Digit buttons: dispatch to the handler of the clicked digit
   getAssertedButton("digits").addEventListener("click", (e) => {
     const btn = (e.target as Element).closest<HTMLElement>("[id^='digit-']");
-    if (btn) digitHandlers[Number(btn.id.slice("digit-".length))]?.(e);
+    if (btn) pressDigit(Number(btn.id.slice("digit-".length)), e);
   });
+  document.addEventListener("keydown", onKeyDown);
+
+  // Undo button
+  getAssertedButton("undo-but").addEventListener("click", (e) => {
+    undo();
+    e.stopPropagation(); // keep the selected cell
+  });
+  updateUndoButton();
 
   // Pencil mark toggle
-  getAssertedButton("mode-but").addEventListener("click", () => {
+  getAssertedButton("mode-but").addEventListener("click", (e) => {
     if (smallDigsEnabled) large ? shrink() : enlarge();
+    e.stopPropagation(); // keep the selected cell
   });
   enableSmallDigs();
 
@@ -263,7 +272,7 @@ function setButtons() {
     confirmAction(
       "Fill in pencil marks?",
       "Adds all digits that are still possible as pencil marks to every empty cell.",
-      fillSmallDigits
+      () => withUndo(fillSmallDigits)
     )
   );
 
@@ -403,7 +412,7 @@ function hypothesis1() {
 
 function endHyp(e: Event) {
   if (hypRejectionEnabled) {
-    hypothesis3();
+    withUndo(hypothesis3);
   }
   e.stopPropagation();
 }
@@ -539,6 +548,129 @@ function checkSolvedSud() {
   (htmlButtonDict.get("fin-vid") as HTMLVideoElement).src = vidSrc;
   getAssertedButton("solved-h").textContent = title;
   openDialog("win");
+}
+
+// Refreshes the highlighting / digit buttons of the selected cell
+function reselect() {
+  if (curX >= 0) clickCell(Tref[curY][curX]);
+}
+
+// Undo: snapshots of everything the user can change by entering digits
+interface Snapshot {
+  T: number[][];
+  mini: boolean[][][];
+  marked: number[][];
+  hyps: any[][][];
+  clickable: string[][];
+  color: string[][];
+  rejectionEnabled: boolean;
+}
+const MAX_UNDO = 200;
+const undoStack: Snapshot[] = [];
+
+function captureState(): Snapshot {
+  const cellProp = (f: (c: HTMLTableCellElement) => string) =>
+    Tref.map((row) => row.map(f));
+  return {
+    T: deepCopy2D(T),
+    mini: deepCopy3D(TsubBinaryTables),
+    marked: deepCopy2D(Marked),
+    hyps: hyps.slice(),
+    clickable: cellProp((c) => c.getAttribute("clickable") ?? "0"),
+    color: cellProp((c) => c.style.color),
+    rejectionEnabled: hypRejectionEnabled,
+  };
+}
+
+// Runs an action and records an undo step if it changed anything
+function withUndo(action: () => void) {
+  const before = captureState();
+  action();
+  const key = (s: Snapshot) =>
+    JSON.stringify([s.T, s.mini, s.marked, s.clickable, s.color, s.hyps.length]);
+  if (key(before) !== key(captureState())) {
+    undoStack.push(before);
+    if (undoStack.length > MAX_UNDO) undoStack.shift();
+    updateUndoButton();
+  }
+}
+
+function updateUndoButton() {
+  setEnabled("undo-but", undoStack.length > 0);
+}
+
+function undo() {
+  const s = undoStack.pop();
+  updateUndoButton();
+  if (!s) return;
+  log("Undo");
+  finishedHypChoosing();
+  copyTo2d(s.T, T);
+  TsubBinaryTables = deepCopy3D(s.mini);
+  copyTo2d(s.marked, Marked);
+  hyps = s.hyps.slice();
+  for (let i = 0; i < 9; i++) {
+    for (let j = 0; j < 9; j++) {
+      const cell = Tref[i][j];
+      if (T[i][j] > 0) {
+        cell.textContent = String(T[i][j]);
+      } else {
+        cell.innerHTML = "";
+        cell.appendChild(TsubHTMLTables[i][j]);
+        for (let k = 0; k < 9; k++) {
+          TminiCells[i][j][k].textContent = TsubBinaryTables[i][j][k]
+            ? String(k + 1)
+            : "";
+        }
+      }
+      cell.setAttribute("clickable", s.clickable[i][j]);
+      cell.style.color = s.color[i][j];
+      cell.style.backgroundColor = Marked[i][j] ? wrongHypCol : "";
+    }
+  }
+  if (s.rejectionEnabled) enableHypRejection();
+  else disableHypRejection();
+  reselect();
+}
+
+// Press a digit button (0 = clear) as if it was clicked
+function pressDigit(d: number, e: Event) {
+  withUndo(() => digitHandlers[d]?.(e));
+}
+
+// Keyboard support
+function onKeyDown(e: KeyboardEvent) {
+  if (document.querySelector("dialog[open]")) return;
+  const mod = e.ctrlKey || e.metaKey;
+  if (mod && e.key.toLowerCase() === "z" && !e.shiftKey) {
+    e.preventDefault();
+    undo();
+    return;
+  }
+  if (mod || e.altKey) return;
+
+  const arrows: { [key: string]: [number, number] } = {
+    ArrowUp: [-1, 0],
+    ArrowDown: [1, 0],
+    ArrowLeft: [0, -1],
+    ArrowRight: [0, 1],
+  };
+  if (e.key in arrows) {
+    e.preventDefault();
+    if (curX < 0) {
+      clickCell(Tref[0][0]);
+    } else {
+      const [dy, dx] = arrows[e.key];
+      const ny = Math.min(8, Math.max(0, curY + dy));
+      const nx = Math.min(8, Math.max(0, curX + dx));
+      clickCell(Tref[ny][nx]);
+    }
+  } else if (/^[1-9]$/.test(e.key)) {
+    pressDigit(Number(e.key), e);
+  } else if (e.key === "Delete" || e.key === "Backspace" || e.key === "0") {
+    e.preventDefault();
+    pressDigit(0, e);
+  }
 }
 
 // Executed when cell is clicked
@@ -754,6 +886,7 @@ function setSudFromStr(retSud: string) {
   // Shuffle
   permuteSuds(T, Tsol);
   copyTo2d(T, Tinit);
+  elsewhere();
   if (!solAvailable) solAvailable = true;
   updateGrid();
   setClickableTrefT();
@@ -778,6 +911,7 @@ function enableSmallDigs() {
 function inputCustomSudoku() {
   if (!inputtingOwnSud) {
     log("Own Input");
+    elsewhere();
     clearHyps();
     disableHyp();
 
@@ -853,6 +987,8 @@ function solve() {
 
 function clearHyps() {
   log("Clearing hypotheses");
+  undoStack.length = 0;
+  updateUndoButton();
   hyps = [];
   choosingHyp = false;
   setActive("but1", false);
@@ -865,6 +1001,7 @@ function restart() {
     inputCustomSudoku();
   }
   log("Restarting");
+  elsewhere();
   unhighlightAll();
   for (let i = 0; i < 9; i++) {
     for (let j = 0; j < 9; j++) {
@@ -896,6 +1033,7 @@ function fillSmallDigits() {
     }
   }
   unhighlightAll();
+  reselect();
 }
 
 // Export

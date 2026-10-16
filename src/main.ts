@@ -31,11 +31,19 @@ export function init() {
   } else {
     initialized = true;
   }
-  document.querySelector("body")!.addEventListener("click", elsewhere);
+  // Clicking anywhere deselects the cell, except on dialogs and the buttons
+  // that open them (cancelling must not lose the selection).
+  document.querySelector("body")!.addEventListener("click", (e) => {
+    const target = e.target as Element;
+    if (!target.closest("dialog, [data-open], #auto-fill-button, #own_sud")) {
+      elsewhere();
+    }
+  });
 
   // Set button map
   const butIds = [
     "mode-but",
+    "undo-but",
     "confirm-title",
     "confirm-desc",
     "confirm-yes",
