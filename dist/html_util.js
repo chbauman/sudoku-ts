@@ -132,7 +132,8 @@ function initGrid(tbl) {
         }
     }
     setTimeout(function () {
-        loadRandomSud(4);
+        if (!loadGame())
+            loadRandomSud(4);
     }, 250);
 }
 function setLevelFun() {
@@ -396,12 +397,14 @@ function check() {
             }
         }
     }
+    saveGame();
 }
 function checkSolvedSud() {
     const slvd = checkSolved(T);
     if (!slvd) {
         return;
     }
+    clearSavedGame();
     let vidSrc = "./assets/gifs/gj.mp4";
     let title = "You solved it!! :)";
     if (sudLvl == -2) {
@@ -455,18 +458,13 @@ function withUndo(action) {
         if (undoStack.length > MAX_UNDO)
             undoStack.shift();
         updateUndoButton();
+        saveGame();
     }
 }
 function updateUndoButton() {
     setEnabled("undo-but", undoStack.length > 0);
 }
-function undo() {
-    const s = undoStack.pop();
-    updateUndoButton();
-    if (!s)
-        return;
-    log("Undo");
-    finishedHypChoosing();
+function applySnapshot(s) {
     copyTo2d(s.T, T);
     TsubBinaryTables = deepCopy3D(s.mini);
     copyTo2d(s.marked, Marked);
@@ -495,7 +493,79 @@ function undo() {
         enableHypRejection();
     else
         disableHypRejection();
+}
+function undo() {
+    const s = undoStack.pop();
+    updateUndoButton();
+    if (!s)
+        return;
+    log("Undo");
+    finishedHypChoosing();
+    applySnapshot(s);
     reselect();
+    saveGame();
+}
+const SAVE_KEY = "sudoku-ts:game:v1";
+function saveGame() {
+    if (inputtingOwnSud)
+        return;
+    try {
+        const game = {
+            ...captureState(),
+            Tinit,
+            Tsol,
+            sudLvl,
+            solAvailable,
+        };
+        localStorage.setItem(SAVE_KEY, JSON.stringify(game));
+    }
+    catch (e) {
+        log("Could not save the game");
+    }
+}
+function clearSavedGame() {
+    try {
+        localStorage.removeItem(SAVE_KEY);
+    }
+    catch (e) {
+        log("Could not clear the saved game");
+    }
+}
+const isGrid = (a, depth = 2) => Array.isArray(a) &&
+    a.length == 9 &&
+    a.every((r) => (depth > 1 ? isGrid(r, depth - 1) : true));
+function loadGame() {
+    try {
+        const raw = localStorage.getItem(SAVE_KEY);
+        if (!raw)
+            return false;
+        const g = JSON.parse(raw);
+        const valid = isGrid(g.T) &&
+            isGrid(g.Tinit) &&
+            isGrid(g.Tsol) &&
+            isGrid(g.marked) &&
+            isGrid(g.clickable) &&
+            isGrid(g.color) &&
+            isGrid(g.mini, 3) &&
+            g.mini.every((r) => r.every((c) => c.length == 9)) &&
+            Array.isArray(g.hyps) &&
+            !checkSolved(g.T);
+        if (!valid)
+            return false;
+        copyTo2d(g.Tinit, Tinit);
+        copyTo2d(g.Tsol, Tsol);
+        sudLvl = g.sudLvl;
+        solAvailable = g.solAvailable;
+        applySnapshot(g);
+        setHypButtons();
+        if (hyps.length > 0)
+            enableHypRejection();
+        unhighlightAll();
+        return true;
+    }
+    catch (e) {
+        return false;
+    }
 }
 function pressDigit(d, e) {
     withUndo(() => digitHandlers[d]?.(e));
@@ -741,6 +811,7 @@ function setSudFromStr(retSud) {
     setClickableTrefT();
     clearHyps();
     closeDialog("waiting");
+    saveGame();
 }
 function disableSmallDigs() {
     log("Disabled pencil mark toggle");
@@ -781,12 +852,14 @@ function inputCustomSudoku() {
         copyTo2d(T, Tinit);
         setClickableTrefT();
         enableSmallDigs();
+        saveGame();
     }
 }
 function loadRandomSud(lvl = 7) {
     if (inputtingOwnSud) {
         inputCustomSudoku();
     }
+    sudLvl = lvl;
     readSudokuFromFile(setSudFromStr, lvl);
     log(`Loaded sudoku with level ${lvl}`);
 }
@@ -816,6 +889,7 @@ function solve() {
     }
     clearHyps();
     setHypButtons();
+    saveGame();
 }
 function clearHyps() {
     log("Clearing hypotheses");
@@ -846,6 +920,7 @@ function restart() {
     }
     clearHyps();
     setHypButtons();
+    saveGame();
 }
 function fillSmallDigits() {
     log("Autofilling...");
