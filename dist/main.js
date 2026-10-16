@@ -15,7 +15,7 @@ export function init() {
     else {
         initialized = true;
     }
-    document.querySelector("body").addEventListener("click", (e) => {
+    document.addEventListener("click", (e) => {
         const target = e.target;
         if (!target.closest("dialog, [data-open], #auto-fill-button, #own_sud, .bar")) {
             elsewhere();

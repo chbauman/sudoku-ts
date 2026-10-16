@@ -1,7 +1,7 @@
 import { loadHistory, bestTime, formatTime } from "./history.js";
 import { settings, loadSettings, saveSettings, applyTheme, } from "./settings.js";
 const TITLES = {
-    game: "Sudoku",
+    game: "Hard Sudoku",
     help: "Help",
     settings: "Settings",
     history: "History",
