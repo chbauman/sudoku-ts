@@ -25,6 +25,7 @@ const wrongHypCol = "var(--wrong)";
 
 // State variables
 var large = true;
+var smallDigsEnabled = true;
 var curX = -1;
 var curY = 0;
 var solAvailable = false;
@@ -69,17 +70,10 @@ function log(msg: string) {
   }
 }
 
-// Change digit input mode
+// Change digit input mode (large digits <-> pencil marks)
 function toggleLargeSmall() {
-  const upBut = getAssertedButton("up-but");
-  const downBut = getAssertedButton("down-but");
-  const but2 = large ? upBut : downBut;
-  const but1 = !large ? upBut : downBut;
-  but1.style.color = col1;
-  but1.style.borderColor = col1;
-  but2.style.color = "black";
-  but2.style.borderColor = "black";
   large = !large;
+  getAssertedButton("mode-but").classList.toggle("active", !large);
 }
 function enlarge(e: Event | undefined = undefined) {
   if (!large) {
@@ -169,13 +163,10 @@ function startHyp(e: Event) {
 
 // Sets functionality to the buttons
 function setButtons() {
-  // Up button
-  const upBut = getAssertedButton("up-but");
-  upBut.style.color = col1;
-  upBut.style.borderColor = col1;
-  upBut.addEventListener("click", enlarge);
-
-  // Down button
+  // Pencil mark toggle
+  getAssertedButton("mode-but").addEventListener("click", () => {
+    if (smallDigsEnabled) large ? shrink() : enlarge();
+  });
   enableSmallDigs();
 
   // Restart button
@@ -680,21 +671,17 @@ function setSudFromStr(retSud: string) {
   ($("#waiting") as any).popup("close");
 }
 
-// Disables down button
+// Disables the pencil mark toggle (forces large digit mode)
 function disableSmallDigs() {
-  log("Disabled down button");
+  log("Disabled pencil mark toggle");
   enlarge();
-  const downBut = getAssertedButton("down-but");
-  downBut.onclick = null;
-  downBut.style.color = "var(--disabled)";
-  downBut.style.borderColor = "var(--disabled)";
+  smallDigsEnabled = false;
+  getAssertedButton("mode-but").classList.add("disabled");
 }
-// Enables down button
+// Enables the pencil mark toggle
 function enableSmallDigs() {
-  const downBut = getAssertedButton("down-but");
-  downBut.onclick = shrink;
-  downBut.style.color = "";
-  downBut.style.borderColor = "";
+  smallDigsEnabled = true;
+  getAssertedButton("mode-but").classList.remove("disabled");
 }
 
 // Lets the user input a custom sudoku

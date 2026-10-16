@@ -110,6 +110,7 @@ table {
 }
 
 #grid {
+    table-layout: fixed;
     margin-top: 0px;
     border-collapse: collapse;
     border-spacing: 0;
@@ -136,20 +137,42 @@ table {
     font-weight: 600;
     font-size: calc(var(--cell) * 0.62);
     line-height: 1;
+    box-sizing: border-box;
+    overflow: hidden;
     border: 1px dotted var(--grid-line-thin);
     margin: 0;
     padding: 0;
 }
 
 .subGridCell {
+    padding: 0;
+    box-sizing: border-box;
     width: calc(var(--cell) / 3);
-    height: calc(var(--cell) / 3);
+    /* height is distributed by the inner table (100% of the cell); a fixed
+       height here makes rows taller than columns are wide */
+    height: 0;
     text-align: center;
     font-weight: 600;
     font-size: calc(var(--cell) * 0.3);
     line-height: 1;
     /*border: 1px dotted black;*/
     margin: 0;
+}
+
+#mode-but {
+    height: auto;
+}
+
+#mode-but.active {
+    color: var(--accent);
+    border-color: var(--accent);
+    background: var(--small-dig-bg);
+}
+
+.digit.disabled {
+    color: var(--disabled);
+    border-color: var(--disabled);
+    cursor: default;
 }
 
 .topBorder {

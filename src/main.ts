@@ -44,8 +44,7 @@ export function init() {
 
   // Set button map
   const butIds = [
-    "down-but",
-    "up-but",
+    "mode-but",
     "restart_but",
     "auto-fill-button",
     "but1",
