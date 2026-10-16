@@ -14,6 +14,8 @@ import {
   deepCopy3D,
 } from "./sudoku.js";
 import { storageGet, storageSet, storageRemove } from "./storage.js";
+import { settings, loadSettings } from "./settings.js";
+import { currentPage } from "./pages.js";
 
 // Colors
 const col1 = "var(--accent)";
@@ -184,9 +186,11 @@ function initGrid(tbl: HTMLTableElement) {
 
   // Load sudoku
   setTimeout(function () {
-    loadGame().then((loaded) => {
-      if (!loaded) loadRandomSud(4);
-    });
+    loadSettings()
+      .then(loadGame)
+      .then((loaded) => {
+        if (!loaded) loadRandomSud(settings.level);
+      });
   }, 250);
 }
 
@@ -221,6 +225,13 @@ function confirmAction(
   getAssertedButton("confirm-title").textContent = title;
   getAssertedButton("confirm-desc").textContent = description;
   openDialog("confirm");
+}
+
+// "Mark mistakes" and "Solve" need the solution, which custom sudokus lack
+function updateToolButtons() {
+  setEnabled("check", solAvailable);
+  setEnabled("solve", solAvailable);
+  getAssertedButton("tools-note").hidden = solAvailable;
 }
 
 // Sets functionality to the buttons
@@ -304,19 +315,29 @@ function setButtons() {
   // Select levels
   setLevelFun();
 
-  // Solver
-  function solveAndClose() {
-    solve();
-    closeDialog("help");
-  }
-  getAssertedButton("solve").addEventListener("click", solveAndClose);
-
-  // Check
-  function checkAndClose() {
-    check();
-    closeDialog("help");
-  }
-  getAssertedButton("check").addEventListener("click", checkAndClose);
+  // Tools dialog: each tool asks for confirmation first
+  getAssertedButton("check").addEventListener("click", () => {
+    if (!solAvailable) return;
+    closeDialog("tools");
+    confirmAction(
+      "Mark mistakes?",
+      "Marks every digit that differs from the solution.",
+      () => {
+        check();
+        reselect();
+      }
+    );
+  });
+  getAssertedButton("solve").addEventListener("click", () => {
+    if (!solAvailable) return;
+    closeDialog("tools");
+    confirmAction(
+      "Solve?",
+      "Fills in the solution. The sudoku counts as solved with the solver.",
+      solve
+    );
+  });
+  updateToolButtons();
 }
 
 function disableHyp() {
@@ -703,6 +724,7 @@ async function loadGame(): Promise<boolean> {
     copyTo2d(g.Tsol, Tsol);
     sudLvl = g.sudLvl;
     solAvailable = g.solAvailable;
+    updateToolButtons();
     applySnapshot(g);
     setHypButtons();
     if (hyps.length > 0) enableHypRejection();
@@ -720,7 +742,7 @@ function pressDigit(d: number, e: Event) {
 
 // Keyboard support
 function onKeyDown(e: KeyboardEvent) {
-  if (document.querySelector("dialog[open]")) return;
+  if (currentPage() !== "game" || document.querySelector("dialog[open]")) return;
   const mod = e.ctrlKey || e.metaKey;
   if (mod && e.key.toLowerCase() === "z" && !e.shiftKey) {
     e.preventDefault();
@@ -968,6 +990,7 @@ function setSudFromStr(retSud: string) {
   copyTo2d(T, Tinit);
   elsewhere();
   if (!solAvailable) solAvailable = true;
+  updateToolButtons();
   updateGrid();
   setClickableTrefT();
   clearHyps();
@@ -999,6 +1022,7 @@ function inputCustomSudoku() {
     // Toggle State and Button color
     inputtingOwnSud = true;
     solAvailable = false;
+    updateToolButtons();
     setActive("own_sud", true);
 
     // Remove current sudoku

@@ -19,6 +19,15 @@ and is specifically designed to be unsolvable to all but the sharpest minds.](ht
 Built upon simpler JavaScript version found at https://github.com/baruchel/sudoku-js.
 The icons are open source (Ionicons, MIT) and taken from https://ionicons.com/; they are inlined in `src/index.html`.
 
+## Menu, pages and settings
+
+The hamburger menu in the header opens the Help and Settings pages (History is
+a placeholder until the leaderboard exists). The pages are sections of the single
+`index.html`, selected by the URL hash (`#help`, `#settings`), so the browser and
+Android back buttons work and the game state is kept while a page is open.
+Settings (stored like the saved game, see `src/settings.ts`): the level that is
+loaded when there is no saved game, and the appearance (system / light / dark).
+
 ## Saved game
 
 The current game (digits, pencil marks and hypotheses) is stored in the

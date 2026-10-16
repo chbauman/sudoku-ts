@@ -13,6 +13,8 @@ const PRECACHE = [
   "dist/html_util.js",
   "dist/sudoku.js",
   "dist/storage.js",
+  "dist/settings.js",
+  "dist/pages.js",
   "assets/favicon/favicon.ico",
   "assets/favicon/favicon-16x16.png",
   "assets/favicon/favicon-32x32.png",
