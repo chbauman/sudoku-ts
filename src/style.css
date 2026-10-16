@@ -182,10 +182,6 @@ table {
     margin: 0;
 }
 
-#mode-but {
-    height: auto;
-}
-
 /* Uniform button states: toggles are .active while on, any button can be
    .disabled. */
 .active {

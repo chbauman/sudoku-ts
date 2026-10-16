@@ -231,6 +231,13 @@ function setButtons() {
   });
   document.addEventListener("keydown", onKeyDown);
 
+  // Undo button
+  getAssertedButton("undo-but").addEventListener("click", (e) => {
+    undo();
+    e.stopPropagation(); // keep the selected cell
+  });
+  updateUndoButton();
+
   // Pencil mark toggle
   getAssertedButton("mode-but").addEventListener("click", (e) => {
     if (smallDigsEnabled) large ? shrink() : enlarge();
@@ -584,11 +591,17 @@ function withUndo(action: () => void) {
   if (key(before) !== key(captureState())) {
     undoStack.push(before);
     if (undoStack.length > MAX_UNDO) undoStack.shift();
+    updateUndoButton();
   }
+}
+
+function updateUndoButton() {
+  setEnabled("undo-but", undoStack.length > 0);
 }
 
 function undo() {
   const s = undoStack.pop();
+  updateUndoButton();
   if (!s) return;
   log("Undo");
   finishedHypChoosing();
@@ -975,6 +988,7 @@ function solve() {
 function clearHyps() {
   log("Clearing hypotheses");
   undoStack.length = 0;
+  updateUndoButton();
   hyps = [];
   choosingHyp = false;
   setActive("but1", false);
