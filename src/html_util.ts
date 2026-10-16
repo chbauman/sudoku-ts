@@ -183,7 +183,7 @@ function initGrid(tbl: HTMLTableElement) {
 
   // Load sudoku
   setTimeout(function () {
-    loadRandomSud(4);
+    if (!loadGame()) loadRandomSud(4);
   }, 250);
 }
 
@@ -519,6 +519,7 @@ function check() {
       }
     }
   }
+  saveGame();
 }
 
 // Check if sudoku was solved
@@ -527,6 +528,7 @@ function checkSolvedSud() {
   if (!slvd) {
     return;
   }
+  clearSavedGame();
   let vidSrc = "../assets/gifs/gj.mp4";
   let title = "You solved it!! :)";
   if (sudLvl == -2) {
@@ -592,6 +594,7 @@ function withUndo(action: () => void) {
     undoStack.push(before);
     if (undoStack.length > MAX_UNDO) undoStack.shift();
     updateUndoButton();
+    saveGame();
   }
 }
 
@@ -599,12 +602,8 @@ function updateUndoButton() {
   setEnabled("undo-but", undoStack.length > 0);
 }
 
-function undo() {
-  const s = undoStack.pop();
-  updateUndoButton();
-  if (!s) return;
-  log("Undo");
-  finishedHypChoosing();
+// Applies a snapshot to the game state and the grid
+function applySnapshot(s: Snapshot) {
   copyTo2d(s.T, T);
   TsubBinaryTables = deepCopy3D(s.mini);
   copyTo2d(s.marked, Marked);
@@ -630,7 +629,89 @@ function undo() {
   }
   if (s.rejectionEnabled) enableHypRejection();
   else disableHypRejection();
+}
+
+function undo() {
+  const s = undoStack.pop();
+  updateUndoButton();
+  if (!s) return;
+  log("Undo");
+  finishedHypChoosing();
+  applySnapshot(s);
   reselect();
+  saveGame();
+}
+
+// Persistence: the game survives page reloads (important on mobile)
+const SAVE_KEY = "sudoku-ts:game:v1";
+
+interface SavedGame extends Snapshot {
+  Tinit: number[][];
+  Tsol: number[][];
+  sudLvl: number;
+  solAvailable: boolean;
+}
+
+function saveGame() {
+  // Grids that are being typed in are not saved
+  if (inputtingOwnSud) return;
+  try {
+    const game: SavedGame = {
+      ...captureState(),
+      Tinit,
+      Tsol,
+      sudLvl,
+      solAvailable,
+    };
+    localStorage.setItem(SAVE_KEY, JSON.stringify(game));
+  } catch (e) {
+    log("Could not save the game");
+  }
+}
+
+function clearSavedGame() {
+  try {
+    localStorage.removeItem(SAVE_KEY);
+  } catch (e) {
+    log("Could not clear the saved game");
+  }
+}
+
+const isGrid = (a: any, depth = 2): boolean =>
+  Array.isArray(a) &&
+  a.length == 9 &&
+  a.every((r) => (depth > 1 ? isGrid(r, depth - 1) : true));
+
+// Restores the saved game, returns false if there is none (or it is invalid)
+function loadGame(): boolean {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return false;
+    const g = JSON.parse(raw) as SavedGame;
+    const valid =
+      isGrid(g.T) &&
+      isGrid(g.Tinit) &&
+      isGrid(g.Tsol) &&
+      isGrid(g.marked) &&
+      isGrid(g.clickable) &&
+      isGrid(g.color) &&
+      isGrid(g.mini, 3) &&
+      g.mini.every((r) => r.every((c) => c.length == 9)) &&
+      Array.isArray(g.hyps) &&
+      !checkSolved(g.T);
+    if (!valid) return false;
+    copyTo2d(g.Tinit, Tinit);
+    copyTo2d(g.Tsol, Tsol);
+    sudLvl = g.sudLvl;
+    solAvailable = g.solAvailable;
+    applySnapshot(g);
+    setHypButtons();
+    if (hyps.length > 0) enableHypRejection();
+    unhighlightAll();
+    return true;
+  } catch (e) {
+    return false;
+  }
 }
 
 // Press a digit button (0 = clear) as if it was clicked
@@ -892,6 +973,7 @@ function setSudFromStr(retSud: string) {
   setClickableTrefT();
   clearHyps();
   closeDialog("waiting");
+  saveGame();
 }
 
 // Disables the pencil mark toggle (forces large digit mode)
@@ -944,6 +1026,7 @@ function inputCustomSudoku() {
     copyTo2d(T, Tinit);
     setClickableTrefT();
     enableSmallDigs();
+    saveGame();
   }
 }
 
@@ -952,6 +1035,7 @@ function loadRandomSud(lvl = 7) {
   if (inputtingOwnSud) {
     inputCustomSudoku();
   }
+  sudLvl = lvl;
   readSudokuFromFile(setSudFromStr, lvl);
   log(`Loaded sudoku with level ${lvl}`);
 }
@@ -983,6 +1067,7 @@ function solve() {
   }
   clearHyps();
   setHypButtons();
+  saveGame();
 }
 
 function clearHyps() {
@@ -1016,6 +1101,7 @@ function restart() {
   }
   clearHyps();
   setHypButtons();
+  saveGame();
 }
 
 // Autofill

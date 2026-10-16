@@ -19,6 +19,14 @@ and is specifically designed to be unsolvable to all but the sharpest minds.](ht
 Built upon simpler JavaScript version found at https://github.com/baruchel/sudoku-js.
 The icons open source and taken from https://ionicons.com/.
 
+## Saved game
+
+The current game (digits, pencil marks and hypotheses) is stored in the
+browser's `localStorage` after every move, so reloading the page (easily done
+by accident on mobile) continues where you left off. Solving a sudoku, loading
+a new one or clearing the site data starts a fresh game. The undo history is
+not saved.
+
 ## Keyboard shortcuts
 
 | Key | Action |
