@@ -16,6 +16,7 @@ const PRECACHE = [
   "dist/settings.js",
   "dist/pages.js",
   "dist/history.js",
+  "assets/favicon/favicon.svg",
   "assets/favicon/favicon.ico",
   "assets/favicon/favicon-16x16.png",
   "assets/favicon/favicon-32x32.png",

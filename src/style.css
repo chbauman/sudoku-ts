@@ -11,14 +11,17 @@
     --hyp: #0c5;
     --wrong: #f22;
     --selected-bg: #bbb;
+    --pencil: #838383;
     --small-dig-bg: #dfd;
-    --forbid-bg: #fdd;
+    --forbid-bg: #fee9e9;
     --same-bg: #fbb;
     --active-bg: rgba(10, 133, 255, 0.14);
     --overlay: rgba(0, 0, 0, 0.5);
 
     --page-width: 560px;
-    --cell: min(9.8vw, 44px);
+    --side: 8px; /* minimum margin at the sides of the game page */
+    --cell: min(calc((100vw - 2 * var(--side)) / 9), 44px);
+    --digit-size: calc(var(--cell) * 0.7); /* grid digits and digit buttons */
     --btn: min(10.5vw, 46px);
     --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
@@ -46,8 +49,9 @@
         --hyp: #2fd47a;
         --wrong: #ff5a5a;
         --selected-bg: #4a4e58;
-        --small-dig-bg: #1f3a27;
-        --forbid-bg: #4a2a2c;
+        --pencil: #7b7e87;
+        --small-dig-bg: #1e3a28;
+        --forbid-bg: #2a2125;
         --same-bg: #6b2f33;
         --active-bg: rgba(74, 163, 255, 0.22);
         --overlay: rgba(0, 0, 0, 0.7);
@@ -65,8 +69,9 @@
     --hyp: #2fd47a;
     --wrong: #ff5a5a;
     --selected-bg: #4a4e58;
-    --small-dig-bg: #1f3a27;
-    --forbid-bg: #4a2a2c;
+    --pencil: #7b7e87;
+    --small-dig-bg: #1e3a28;
+    --forbid-bg: #2a2125;
     --same-bg: #6b2f33;
     --active-bg: rgba(74, 163, 255, 0.22);
     --overlay: rgba(0, 0, 0, 0.7);
@@ -169,6 +174,12 @@ h1 {
     margin: 0;
     padding: 0.75em 0 0.7em;
     line-height: 1.2;
+}
+
+/* The game uses (almost) the full width on phones */
+[data-page="game"] {
+    padding-left: var(--side);
+    padding-right: var(--side);
 }
 
 /* Page header: back button | title | menu button */
@@ -339,7 +350,7 @@ table {
     height: var(--cell);
     text-align: center;
     font-weight: 600;
-    font-size: calc(var(--cell) * 0.62);
+    font-size: var(--digit-size);
     line-height: 1;
     box-sizing: border-box;
     overflow: hidden;
@@ -349,6 +360,7 @@ table {
 }
 
 .subGridCell {
+    color: var(--pencil);
     padding: 0;
     box-sizing: border-box;
     width: calc(var(--cell) / 3);
@@ -410,7 +422,7 @@ table {
     height: var(--btn);
     text-align: center;
     /* same digit style as the grid cells; same outline as the block borders */
-    font-size: calc(var(--cell) * 0.62);
+    font-size: var(--digit-size);
     font-weight: 600;
     border: 2px solid var(--grid-line);
     border-radius: 8px;
