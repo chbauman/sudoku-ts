@@ -18,7 +18,8 @@
     --overlay: rgba(0, 0, 0, 0.5);
 
     --page-width: 560px;
-    --cell: min(9.8vw, 44px);
+    --side: 8px; /* minimum margin at the sides of the game page */
+    --cell: min(calc((100vw - 2 * var(--side)) / 9), 44px);
     --btn: min(10.5vw, 46px);
     --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
@@ -46,8 +47,8 @@
         --hyp: #2fd47a;
         --wrong: #ff5a5a;
         --selected-bg: #4a4e58;
-        --small-dig-bg: #1f3a27;
-        --forbid-bg: #4a2a2c;
+        --small-dig-bg: #183222;
+        --forbid-bg: #2a2125;
         --same-bg: #6b2f33;
         --active-bg: rgba(74, 163, 255, 0.22);
         --overlay: rgba(0, 0, 0, 0.7);
@@ -65,8 +66,8 @@
     --hyp: #2fd47a;
     --wrong: #ff5a5a;
     --selected-bg: #4a4e58;
-    --small-dig-bg: #1f3a27;
-    --forbid-bg: #4a2a2c;
+    --small-dig-bg: #183222;
+    --forbid-bg: #2a2125;
     --same-bg: #6b2f33;
     --active-bg: rgba(74, 163, 255, 0.22);
     --overlay: rgba(0, 0, 0, 0.7);
@@ -169,6 +170,12 @@ h1 {
     margin: 0;
     padding: 0.75em 0 0.7em;
     line-height: 1.2;
+}
+
+/* The game uses (almost) the full width on phones */
+[data-page="game"] {
+    padding-left: var(--side);
+    padding-right: var(--side);
 }
 
 /* Page header: back button | title | menu button */

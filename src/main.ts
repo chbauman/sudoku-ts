@@ -34,7 +34,7 @@ export function init() {
   }
   // Clicking anywhere deselects the cell, except on dialogs and the buttons
   // that open them (cancelling must not lose the selection).
-  document.querySelector("body")!.addEventListener("click", (e) => {
+  document.addEventListener("click", (e) => {
     const target = e.target as Element;
     if (!target.closest("dialog, [data-open], #auto-fill-button, #own_sud, .bar")) {
       elsewhere();
