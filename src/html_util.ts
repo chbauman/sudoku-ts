@@ -24,37 +24,40 @@ const normH = "var(--selected-bg)";
 const wrongHypCol = "var(--wrong)";
 
 // State variables
-var large = true;
-var smallDigsEnabled = true;
-var curX = -1;
-var curY = 0;
-var solAvailable = false;
-var inputtingOwnSud = false;
-var sudLvl: number;
-var choosingHyp = false;
-var hypRejectionEnabled = false;
+let large = true;
+let smallDigsEnabled = true;
+let curX = -1;
+let curY = 0;
+let solAvailable = false;
+let inputtingOwnSud = false;
+let sudLvl: number;
+let choosingHyp = false;
+let hypRejectionEnabled = false;
 
-var hyps: any[][][] = [];
+let hyps: any[][][] = [];
 
 // Array with html table cell elements
-var Tref: HTMLTableCellElement[][] = Array.from(
+const Tref: HTMLTableCellElement[][] = Array.from(
   new Array(9),
   () => new Array(9)
 );
+
+// Click handlers of the digit buttons, replaced whenever the selected cell changes
+const digitHandlers: ((e: Event) => void)[] = [];
 
 // Array with digit buttons
-var digits = new Array(10);
+const digits = new Array(10);
 
 // Pencil mark marker arrays
-var TsubHTMLTables = Array.from(new Array(9), () => new Array(9));
-var TsubBinaryTables: boolean[][][] = Array.from(
+const TsubHTMLTables = Array.from(new Array(9), () => new Array(9));
+let TsubBinaryTables: boolean[][][] = Array.from(
   new Array(9),
   () => new Array(9)
 );
-var TminiCells = Array.from(new Array(9), () => new Array(9));
+const TminiCells = Array.from(new Array(9), () => new Array(9));
 
 // Map containing html elements
-var htmlButtonDict: Map<string, HTMLElement> = new Map();
+const htmlButtonDict: Map<string, HTMLElement> = new Map();
 const getAssertedButton = (name: string) => {
   const res = htmlButtonDict.get(name);
   if (res === undefined) {
@@ -68,6 +71,39 @@ function log(msg: string) {
   if (DEBUG) {
     console.log(msg);
   }
+}
+
+// Dialogs (native <dialog> elements)
+function openDialog(id: string) {
+  const dlg = document.getElementById(id) as HTMLDialogElement;
+  if (!dlg.open) dlg.showModal();
+}
+function closeDialog(id: string) {
+  (document.getElementById(id) as HTMLDialogElement).close();
+}
+
+// Wires up dialogs: [data-open] opens, [data-close] closes the enclosing
+// dialog, clicking the backdrop dismisses (except for persistent dialogs).
+function setupDialogs() {
+  document.querySelectorAll<HTMLElement>("[data-open]").forEach((el) =>
+    el.addEventListener("click", () => openDialog(el.dataset.open!))
+  );
+  document.querySelectorAll<HTMLElement>("[data-close]").forEach((el) =>
+    el.addEventListener("click", () => el.closest("dialog")!.close())
+  );
+  document.querySelectorAll<HTMLDialogElement>("dialog").forEach((dlg) => {
+    const persistent = dlg.hasAttribute("data-persistent");
+    dlg.addEventListener("click", (e) => {
+      const r = dlg.getBoundingClientRect();
+      const outside =
+        e.clientX < r.left ||
+        e.clientX > r.right ||
+        e.clientY < r.top ||
+        e.clientY > r.bottom;
+      if (outside && !persistent) dlg.close();
+    });
+    if (persistent) dlg.addEventListener("cancel", (e) => e.preventDefault());
+  });
 }
 
 // Uniform button states (see .active / .disabled in style.css):
@@ -181,11 +217,19 @@ function confirmAction(
   pendingConfirm = action;
   getAssertedButton("confirm-title").textContent = title;
   getAssertedButton("confirm-desc").textContent = description;
-  ($("#confirm") as any).popup("open");
+  openDialog("confirm");
 }
 
 // Sets functionality to the buttons
 function setButtons() {
+  setupDialogs();
+
+  // Digit buttons: dispatch to the handler of the clicked digit
+  getAssertedButton("digits").addEventListener("click", (e) => {
+    const btn = (e.target as Element).closest<HTMLElement>("[id^='digit-']");
+    if (btn) digitHandlers[Number(btn.id.slice("digit-".length))]?.(e);
+  });
+
   // Pencil mark toggle
   getAssertedButton("mode-but").addEventListener("click", () => {
     if (smallDigsEnabled) large ? shrink() : enlarge();
@@ -195,7 +239,7 @@ function setButtons() {
   // Restart button
   function restAndClose(e: Event) {
     restart();
-    ($("#restart") as any).popup("close");
+    closeDialog("restart");
     e.stopPropagation();
   }
   getAssertedButton("restart_but").addEventListener("click", restAndClose);
@@ -204,13 +248,13 @@ function setButtons() {
   getAssertedButton("confirm-yes").addEventListener("click", (e) => {
     const action = pendingConfirm;
     pendingConfirm = null;
-    ($("#confirm") as any).popup("close");
+    closeDialog("confirm");
     if (action) action();
     e.stopPropagation();
   });
   getAssertedButton("confirm-cancel").addEventListener("click", (e) => {
     pendingConfirm = null;
-    ($("#confirm") as any).popup("close");
+    closeDialog("confirm");
     e.stopPropagation();
   });
 
@@ -244,7 +288,6 @@ function setButtons() {
 
   getAssertedButton("digits").style.display = "none";
   getAssertedButton("digits").style.display = "inline-block";
-  getAssertedButton("buttons1").style.display = "none";
 
   // Select levels
   setLevelFun();
@@ -252,14 +295,14 @@ function setButtons() {
   // Solver
   function solveAndClose() {
     solve();
-    ($("#help") as any).popup("close");
+    closeDialog("help");
   }
   getAssertedButton("solve").addEventListener("click", solveAndClose);
 
   // Check
   function checkAndClose() {
     check();
-    ($("#help") as any).popup("close");
+    closeDialog("help");
   }
   getAssertedButton("check").addEventListener("click", checkAndClose);
 }
@@ -495,7 +538,7 @@ function checkSolvedSud() {
   }
   (htmlButtonDict.get("fin-vid") as HTMLVideoElement).src = vidSrc;
   getAssertedButton("solved-h").textContent = title;
-  ($("#win") as any).popup("open");
+  openDialog("win");
 }
 
 // Executed when cell is clicked
@@ -518,7 +561,7 @@ function clickCell(cell: HTMLTableCellElement) {
   const clickable = c == 1;
   if (clickable) {
     // If Cell is clickable
-    $("#digits").off("click", "**");
+    digitHandlers.length = 0;
     // Enable all digits that are admissible
     const allowedArray = allowed(T, y, x, clickable);
     const d = new Array(10).fill(false);
@@ -534,7 +577,7 @@ function clickCell(cell: HTMLTableCellElement) {
         digits[i].style.color = col1;
         digits[i].style.borderColor = col1;
         if (!choosingHyp || v == 0) {
-          $("#digits").on("click", "#digit-" + String(i), function (e) {
+          digitHandlers[i] = (e) => {
             log("Setting digit");
             if (large || v == 0) {
               T[y][x] = v;
@@ -553,9 +596,9 @@ function clickCell(cell: HTMLTableCellElement) {
             }
             checkSolvedSud();
             e.stopPropagation();
-          });
+          };
         } else {
-          $("#digits").on("click", "#digit-" + String(i), function (e) {
+          digitHandlers[i] = (e) => {
             // Save current version
             if (!choosingHyp) {
               e.stopPropagation();
@@ -577,19 +620,19 @@ function clickCell(cell: HTMLTableCellElement) {
             checkSolvedSud();
             log("Saved current.");
             e.stopPropagation();
-          });
+          };
         }
       } else {
         digits[i].style.color = "var(--disabled)";
         digits[i].style.borderColor = "var(--disabled)";
-        $("#digits").on("click", "#digit-" + String(i), function (e) {
+        digitHandlers[i] = (e) => {
           log("Cannot set this number!");
           e.stopPropagation();
-        });
+        };
       }
     }
   } else {
-    $("#digits").off("click", "**");
+    digitHandlers.length = 0;
     for (let i = 0; i < 10; i++) {
       digits[i].style.color = "var(--disabled)";
       digits[i].style.borderColor = "var(--disabled)";
@@ -602,16 +645,16 @@ function clickCell(cell: HTMLTableCellElement) {
 function elsewhere() {
   log("Elsewhere");
   if (curX >= 0) {
-    $("#digits").off("click", "**");
+    digitHandlers.length = 0;
     curX = -1;
     unhighlightAll();
     for (let i = 0; i < digits.length; ++i) {
       digits[i].style.color = "var(--disabled)";
       digits[i].style.borderColor = "var(--disabled)";
-      $("#digits").on("click", "#digit-" + String(i), function (e) {
+      digitHandlers[i] = (e) => {
         log("Neet to select a cell first.");
         e.stopPropagation();
-      });
+      };
     }
   }
 }
@@ -625,9 +668,9 @@ function setIfNotMarked(y: number, x: number) {
 // Highlight the current cell and all same numbers in grid
 function highlight(y: number, x: number) {
   log("highlighting");
-  var currDig = T[y][x];
-  var xFloor = x - (x % 3);
-  var yFloor = y - (y % 3);
+  const currDig = T[y][x];
+  const xFloor = x - (x % 3);
+  const yFloor = y - (y % 3);
   for (let i = 0; i < 9; i++) {
     setIfNotMarked(y, i);
     setIfNotMarked(i, x);
@@ -694,8 +737,8 @@ function setClickableTrefT() {
 
 // Sets the sudoku to the one specified with the string 'ret_sud'.
 function setSudFromStr(retSud: string) {
-  ($("#newGrid") as any).popup("close");
-  ($("#waiting") as any).popup("open");
+  closeDialog("newGrid");
+  openDialog("waiting");
 
   const sudAndSolStr = retSud.substr(13, 324);
   const sStr = sudAndSolStr.substr(0, 162);
@@ -715,7 +758,7 @@ function setSudFromStr(retSud: string) {
   updateGrid();
   setClickableTrefT();
   clearHyps();
-  ($("#waiting") as any).popup("close");
+  closeDialog("waiting");
 }
 
 // Disables the pencil mark toggle (forces large digit mode)
@@ -845,7 +888,7 @@ function fillSmallDigits() {
     for (let j = 0; j < 9; j++) {
       if (T[i][j] == 0) {
         // Enable all digits that are admissible
-        var a = allowed(T, i, j);
+        const a = allowed(T, i, j);
         for (let k = 0; k < a.length; k++) {
           setMiniCell(i, j, a[k]);
         }

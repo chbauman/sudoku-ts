@@ -2,17 +2,17 @@ const DEBUG = false;
 
 // Arrays to store the current sudoku
 // T stores the currently set numbers
-var T: number[][] = Array.from(new Array(9), () => new Array(9).fill(0));
+const T: number[][] = Array.from(new Array(9), () => new Array(9).fill(0));
 // Tsol stores the solution if available
-var Tsol: number[][] = Array.from(new Array(9), () => new Array(9).fill(0));
+const Tsol: number[][] = Array.from(new Array(9), () => new Array(9).fill(0));
 // Tinit stores the initial sudoku
-var Tinit: number[][] = Array.from(new Array(9), () => new Array(9).fill(0));
+const Tinit: number[][] = Array.from(new Array(9), () => new Array(9).fill(0));
 
 // 0: Normal
 // 1: Wrong (checked)
 // 2: Current Hypothesis
 // 3: Current Hypothesis Wrong (checked)
-var Marked: number[][] = Array.from(new Array(9), () => new Array(9).fill(0));
+const Marked: number[][] = Array.from(new Array(9), () => new Array(9).fill(0));
 
 // 2D and 3D array deep copy functions
 function deepCopy2D(arr: any[][]): any[][] {
