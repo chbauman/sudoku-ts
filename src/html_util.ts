@@ -543,6 +543,11 @@ function checkSolvedSud() {
   openDialog("win");
 }
 
+// Refreshes the highlighting / digit buttons of the selected cell
+function reselect() {
+  if (curX >= 0) clickCell(Tref[curY][curX]);
+}
+
 // Undo: snapshots of everything the user can change by entering digits
 interface Snapshot {
   T: number[][];
@@ -612,7 +617,7 @@ function undo() {
   }
   if (s.rejectionEnabled) enableHypRejection();
   else disableHypRejection();
-  if (curX >= 0) clickCell(Tref[curY][curX]);
+  reselect();
 }
 
 // Press a digit button (0 = clear) as if it was clicked
@@ -868,6 +873,7 @@ function setSudFromStr(retSud: string) {
   // Shuffle
   permuteSuds(T, Tsol);
   copyTo2d(T, Tinit);
+  elsewhere();
   if (!solAvailable) solAvailable = true;
   updateGrid();
   setClickableTrefT();
@@ -892,6 +898,7 @@ function enableSmallDigs() {
 function inputCustomSudoku() {
   if (!inputtingOwnSud) {
     log("Own Input");
+    elsewhere();
     clearHyps();
     disableHyp();
 
@@ -980,6 +987,7 @@ function restart() {
     inputCustomSudoku();
   }
   log("Restarting");
+  elsewhere();
   unhighlightAll();
   for (let i = 0; i < 9; i++) {
     for (let j = 0; j < 9; j++) {
@@ -1011,6 +1019,7 @@ function fillSmallDigits() {
     }
   }
   unhighlightAll();
+  reselect();
 }
 
 // Export
