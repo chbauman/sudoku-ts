@@ -231,7 +231,7 @@ function setButtons() {
     } else {
       confirmAction(
         "Empty grid?",
-        "Current game will be lost.",
+        "Add your own sudoku. Current game will be lost.",
         inputCustomSudoku
       );
     }
