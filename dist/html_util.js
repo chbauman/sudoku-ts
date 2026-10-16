@@ -1,4 +1,5 @@
 import { T, DEBUG, Marked, readSudokuFromFile, Tsol, Tinit, permuteSuds, copyTo2d, allowed, checkSolved, deepCopy2D, deepCopy3D, } from "./sudoku.js";
+import { storageGet, storageSet, storageRemove } from "./storage.js";
 const col1 = "var(--accent)";
 const smallDigCol = "var(--small-dig-bg)";
 const rowColSquareForbidCol = "var(--forbid-bg)";
@@ -132,8 +133,10 @@ function initGrid(tbl) {
         }
     }
     setTimeout(function () {
-        if (!loadGame())
-            loadRandomSud(4);
+        loadGame().then((loaded) => {
+            if (!loaded)
+                loadRandomSud(4);
+        });
     }, 250);
 }
 function setLevelFun() {
@@ -517,26 +520,21 @@ function saveGame() {
             sudLvl,
             solAvailable,
         };
-        localStorage.setItem(SAVE_KEY, JSON.stringify(game));
+        storageSet(SAVE_KEY, JSON.stringify(game));
     }
     catch (e) {
         log("Could not save the game");
     }
 }
 function clearSavedGame() {
-    try {
-        localStorage.removeItem(SAVE_KEY);
-    }
-    catch (e) {
-        log("Could not clear the saved game");
-    }
+    storageRemove(SAVE_KEY);
 }
 const isGrid = (a, depth = 2) => Array.isArray(a) &&
     a.length == 9 &&
     a.every((r) => (depth > 1 ? isGrid(r, depth - 1) : true));
-function loadGame() {
+async function loadGame() {
     try {
-        const raw = localStorage.getItem(SAVE_KEY);
+        const raw = await storageGet(SAVE_KEY);
         if (!raw)
             return false;
         const g = JSON.parse(raw);
