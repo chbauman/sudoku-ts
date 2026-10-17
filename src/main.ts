@@ -33,10 +33,15 @@ export function init() {
     initialized = true;
   }
   // Clicking anywhere deselects the cell, except on dialogs and the buttons
-  // that open them (cancelling must not lose the selection).
+  // that open them (cancelling must not lose the selection), the header
+  // buttons and menu, and the digit pad (also between its buttons).
   document.addEventListener("click", (e) => {
     const target = e.target as Element;
-    if (!target.closest("dialog, [data-open], #auto-fill-button, #own_sud, .bar")) {
+    if (
+      !target.closest(
+        "dialog, [data-open], #auto-fill-button, #own_sud, .bar button, #menu, #digits"
+      )
+    ) {
       elsewhere();
     }
   });

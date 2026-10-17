@@ -43,6 +43,8 @@ let sudLvl: number;
 let puzzleId: string | null = null; // null for custom sudokus
 // The sudoku as in the level file (before shuffling), see gridToString()
 let puzzleStr: string | null = null;
+// The pencil marks were filled in automatically (the magic wand) in this game
+let autoFillUsed = false;
 let timing = false;
 let elapsedMs = 0;
 let lastTick = Date.now();
@@ -305,7 +307,10 @@ function setButtons() {
     confirmAction(
       "Fill in pencil marks?",
       "Adds all digits that are still possible as pencil marks to every empty cell.",
-      () => withUndo(fillSmallDigits)
+      () => {
+        autoFillUsed = true;
+        withUndo(fillSmallDigits);
+      }
     )
   );
 
@@ -578,18 +583,23 @@ function showSolveTime() {
     id: puzzleId,
     level: sudLvl,
     ...(puzzleStr ? { puzzle: puzzleStr } : {}),
+    ...(autoFillUsed ? { autoFill: true } : {}),
     seconds,
     date: new Date().toISOString(),
   };
-  recordSolve(entry).then(({ previousBest, isBest }) => {
-    text.textContent =
-      `Time: ${formatTime(seconds)}` +
-      (isBest
-        ? previousBest === null
-          ? ""
-          : " - new best!"
-        : ` (best: ${formatTime(previousBest as number)})`);
-  });
+  recordSolve(entry, settings.countAutoFill).then(
+    ({ previousBest, isBest, counted }) => {
+      text.textContent =
+        `Time: ${formatTime(seconds)}` +
+        (!counted
+          ? " (auto-filled pencil marks, not counted for the best time)"
+          : isBest
+          ? previousBest === null
+            ? ""
+            : " - new best!"
+          : ` (best: ${formatTime(previousBest as number)})`);
+    }
+  );
 }
 
 // Shows the running time below the buttons, nothing when no clock is running
@@ -741,6 +751,7 @@ interface SavedGame extends Snapshot {
   solAvailable: boolean;
   puzzleId: string | null;
   puzzle?: string | null;
+  autoFill?: boolean;
   elapsed: number;
 }
 
@@ -756,6 +767,7 @@ function saveGame() {
       solAvailable,
       puzzleId,
       puzzle: puzzleStr,
+      autoFill: autoFillUsed,
       elapsed: elapsedMs,
     };
     storageSet(SAVE_KEY, JSON.stringify(game));
@@ -797,6 +809,7 @@ async function loadGame(): Promise<boolean> {
     solAvailable = g.solAvailable;
     puzzleId = typeof g.puzzleId === "string" ? g.puzzleId : null;
     puzzleStr = typeof g.puzzle === "string" ? g.puzzle : null;
+    autoFillUsed = g.autoFill === true;
     elapsedMs = typeof g.elapsed === "number" ? g.elapsed : 0;
     timing = puzzleId !== null && sudLvl >= 0;
     updateTimer();
@@ -1054,6 +1067,7 @@ function setSudFromStr(retSud: string, index: number) {
   copyTo2d(sud, T);
   copyTo2d(sol, Tsol);
   puzzleStr = gridToString(sud);
+  autoFillUsed = false;
 
   // Shuffle
   permuteSuds(T, Tsol);
@@ -1190,6 +1204,7 @@ function restart() {
   }
   log("Restarting");
   elapsedMs = 0;
+  autoFillUsed = false;
   timing = puzzleId !== null && sudLvl >= 0;
   updateTimer();
   elsewhere();

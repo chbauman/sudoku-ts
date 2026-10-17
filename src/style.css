@@ -423,7 +423,10 @@ table {
     border-spacing: 8px;
 }
 
+/* The click target of a button reaches into the gap to its neighbours (half the
+   border-spacing of #digits), so clicking between the buttons hits one of them. */
 .digit {
+    position: relative;
     width: var(--btn);
     height: var(--btn);
     text-align: center;
@@ -434,6 +437,13 @@ table {
     border-radius: 8px;
     padding: 0px;
     margin: 0;
+}
+
+.digit::after {
+    content: "";
+    position: absolute;
+    /* measured from inside the 2px border: 4px beyond the border box */
+    inset: -6px;
 }
 
 

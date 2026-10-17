@@ -58,19 +58,35 @@ The hamburger menu in the header opens the Help, Settings and History pages. The
 `index.html`, selected by the URL hash (`#help`, `#settings`), so the browser and
 Android back buttons work and the game state is kept while a page is open.
 Settings (stored like the saved game, see `src/settings.ts`): the level that is
-loaded when there is no saved game, and the appearance (system / light / dark).
+loaded when there is no saved game, the appearance (system / light / dark) and
+whether solves with auto-filled pencil marks (the magic wand) count for the
+best times (off by default).
+
+In the Android app the back button / gesture closes the open dialog or menu,
+returns from a page to the game and only closes the app from the game. This
+needs the Capacitor App plugin (`@capacitor/app`), which Capacitor does not
+include in its core any more; it is called through the bridge in
+`setupAndroidBack` (`src/pages.ts`).
+
+Clicking anywhere deselects the selected cell, except on dialogs and the
+buttons that open them, the header buttons and menu, and the digit pad (the
+digit buttons also react between them).
 
 ## History (personal leaderboard)
 
 The time to solve a sudoku (only the time the game page is visible, restarting
 the sudoku restarts the clock), the level, the puzzle ID (`<level>-<line in the
-level file>`) and the sudoku itself as it is in the level file (81 digits, 0 =
+level file>`), the sudoku itself as it is in the level file (81 digits, 0 =
 empty, before it is shuffled; not in entries of older versions, so that the
-solves can be rated again if the levels change) are stored when you finish a
-sudoku without the solver; custom sudokus are not recorded. The History page shows the best and average time per level
-and the 20 most recent solves, the win dialog shows the time and whether it is a
-new best. The data stays on the device (same storage as the saved game, see
-below), there is no server; the last 500 solves are kept.
+solves can be rated again if the levels change) and whether the pencil marks
+were filled in automatically (the magic wand) are stored when you finish a
+sudoku without the solver; custom sudokus are not recorded. The History page
+shows the best and average time per level and the 10 most recent solves; solves
+with the magic wand are marked there and only count for the best and average
+times if the setting says so (they are always stored). The win dialog shows
+the time and whether it is a new best. The data stays on the device (same
+storage as the saved game, see below), there is no server; the last 500 solves
+are kept.
 
 ## Saved game
 
