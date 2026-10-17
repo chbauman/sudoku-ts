@@ -24,6 +24,14 @@ and is specifically designed to be unsolvable to all but the sharpest minds.](ht
 Built upon simpler JavaScript version found at https://github.com/baruchel/sudoku-js.
 The icons are open source (Ionicons, MIT) and taken from https://ionicons.com/; they are inlined in `src/index.html`.
 
+## Level files
+
+The sudokus are in `assets/data/ext_lvl_<level>.txt`, one per line in the
+format of the generator in [sudoku-cpp](https://github.com/chbauman/sudoku-cpp):
+`<description>;<puzzle>;<solution>`, where puzzle and solution are the 81
+space separated cell values (0 = empty) and the description is
+`<level>,<number of givens>,<digit frequencies>`.
+
 ## Menu, pages and settings
 
 The hamburger menu in the header opens the Help, Settings and History pages. The pages are sections of the single
