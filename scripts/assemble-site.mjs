@@ -10,7 +10,7 @@ const build = (process.env.GITHUB_SHA ?? "dev").slice(0, 10);
 
 rmSync(out, { recursive: true, force: true });
 mkdirSync(out);
-for (const f of ["index.html", "style.css", "manifest.webmanifest", "sw.js"]) {
+for (const f of ["index.html", "style.css", "manifest.webmanifest", "sw.js", "privacy.html"]) {
   cpSync(`src/${f}`, `${out}/${f}`);
 }
 cpSync("dist", `${out}/dist`, { recursive: true });
