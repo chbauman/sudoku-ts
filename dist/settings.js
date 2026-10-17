@@ -1,7 +1,11 @@
 import { storageGet, storageSet } from "./storage.js";
 import { MAX_LEVEL } from "./sudoku.js";
 const SETTINGS_KEY = "sudoku-ts:settings:v1";
-export const settings = { level: 2, theme: "auto" };
+export const settings = {
+    level: 2,
+    theme: "auto",
+    countAutoFill: false,
+};
 const THEME_COLORS = { light: "#ffffff", dark: "#16181d" };
 export function applyTheme(theme) {
     const root = document.documentElement;
@@ -32,6 +36,8 @@ async function readSettings() {
             }
             if (["auto", "light", "dark"].includes(s.theme))
                 settings.theme = s.theme;
+            if (typeof s.countAutoFill === "boolean")
+                settings.countAutoFill = s.countAutoFill;
         }
     }
     catch (e) {

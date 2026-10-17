@@ -5,6 +5,7 @@ let loading = null;
 const isEntry = (e) => typeof e?.id === "string" &&
     Number.isInteger(e.level) &&
     (e.puzzle === undefined || typeof e.puzzle === "string") &&
+    (e.autoFill === undefined || typeof e.autoFill === "boolean") &&
     typeof e.seconds === "number" &&
     typeof e.date === "string";
 export function loadHistory() {
@@ -19,20 +20,33 @@ export function loadHistory() {
         }
     })()));
 }
-export function bestTime(entries, level) {
-    const times = entries.filter((e) => e.level === level).map((e) => e.seconds);
+export function isCounted(e, countAutoFill) {
+    return countAutoFill || !e.autoFill;
+}
+export function bestTime(entries, level, countAutoFill = true) {
+    const times = entries
+        .filter((e) => e.level === level && isCounted(e, countAutoFill))
+        .map((e) => e.seconds);
     return times.length ? Math.min(...times) : null;
 }
-export async function recordSolve(entry) {
+export function averageTime(entries, level, countAutoFill = true) {
+    const times = entries
+        .filter((e) => e.level === level && isCounted(e, countAutoFill))
+        .map((e) => e.seconds);
+    return times.length ? times.reduce((a, b) => a + b, 0) / times.length : null;
+}
+export async function recordSolve(entry, countAutoFill = true) {
     const entries = await loadHistory();
-    const previousBest = bestTime(entries, entry.level);
+    const previousBest = bestTime(entries, entry.level, countAutoFill);
+    const counted = isCounted(entry, countAutoFill);
     entries.push(entry);
     if (entries.length > MAX_ENTRIES)
         entries.splice(0, entries.length - MAX_ENTRIES);
     storageSet(HISTORY_KEY, JSON.stringify(entries));
     return {
         previousBest,
-        isBest: previousBest === null || entry.seconds < previousBest,
+        isBest: counted && (previousBest === null || entry.seconds < previousBest),
+        counted,
     };
 }
 export function formatTime(seconds) {

@@ -19,6 +19,7 @@ let inputtingOwnSud = false;
 let sudLvl;
 let puzzleId = null;
 let puzzleStr = null;
+let autoFillUsed = false;
 let timing = false;
 let elapsedMs = 0;
 let lastTick = Date.now();
@@ -222,7 +223,10 @@ function setButtons() {
         closeDialog("confirm");
         e.stopPropagation();
     });
-    getAssertedButton("auto-fill-button").addEventListener("click", () => confirmAction("Fill in pencil marks?", "Adds all digits that are still possible as pencil marks to every empty cell.", () => withUndo(fillSmallDigits)));
+    getAssertedButton("auto-fill-button").addEventListener("click", () => confirmAction("Fill in pencil marks?", "Adds all digits that are still possible as pencil marks to every empty cell.", () => {
+        autoFillUsed = true;
+        withUndo(fillSmallDigits);
+    }));
     getAssertedButton("own_sud").addEventListener("click", () => {
         if (inputtingOwnSud) {
             inputCustomSudoku();
@@ -441,17 +445,20 @@ function showSolveTime() {
         id: puzzleId,
         level: sudLvl,
         ...(puzzleStr ? { puzzle: puzzleStr } : {}),
+        ...(autoFillUsed ? { autoFill: true } : {}),
         seconds,
         date: new Date().toISOString(),
     };
-    recordSolve(entry).then(({ previousBest, isBest }) => {
+    recordSolve(entry, settings.countAutoFill).then(({ previousBest, isBest, counted }) => {
         text.textContent =
             `Time: ${formatTime(seconds)}` +
-                (isBest
-                    ? previousBest === null
-                        ? ""
-                        : " - new best!"
-                    : ` (best: ${formatTime(previousBest)})`);
+                (!counted
+                    ? " (auto-filled pencil marks, not counted for the best time)"
+                    : isBest
+                        ? previousBest === null
+                            ? ""
+                            : " - new best!"
+                        : ` (best: ${formatTime(previousBest)})`);
     });
 }
 function updateTimer() {
@@ -588,6 +595,7 @@ function saveGame() {
             solAvailable,
             puzzleId,
             puzzle: puzzleStr,
+            autoFill: autoFillUsed,
             elapsed: elapsedMs,
         };
         storageSet(SAVE_KEY, JSON.stringify(game));
@@ -626,6 +634,7 @@ async function loadGame() {
         solAvailable = g.solAvailable;
         puzzleId = typeof g.puzzleId === "string" ? g.puzzleId : null;
         puzzleStr = typeof g.puzzle === "string" ? g.puzzle : null;
+        autoFillUsed = g.autoFill === true;
         elapsedMs = typeof g.elapsed === "number" ? g.elapsed : 0;
         timing = puzzleId !== null && sudLvl >= 0;
         updateTimer();
@@ -870,6 +879,7 @@ function setSudFromStr(retSud, index) {
     copyTo2d(sud, T);
     copyTo2d(sol, Tsol);
     puzzleStr = gridToString(sud);
+    autoFillUsed = false;
     permuteSuds(T, Tsol);
     copyTo2d(T, Tinit);
     puzzleId = `${sudLvl}-${index}`;
@@ -986,6 +996,7 @@ function restart() {
     }
     log("Restarting");
     elapsedMs = 0;
+    autoFillUsed = false;
     timing = puzzleId !== null && sudLvl >= 0;
     updateTimer();
     elsewhere();

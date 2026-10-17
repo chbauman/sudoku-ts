@@ -1,4 +1,4 @@
-import { loadHistory, bestTime, formatTime } from "./history.js";
+import { loadHistory, bestTime, averageTime, formatTime, } from "./history.js";
 import { settings, loadSettings, saveSettings, applyTheme, } from "./settings.js";
 const TITLES = {
     game: "Hard Sudoku",
@@ -6,6 +6,9 @@ const TITLES = {
     settings: "Settings",
     history: "History",
 };
+const RECENT_ENTRIES = 10;
+const WAND = ' <svg class="icon" role="img" aria-label="Pencil marks filled in automatically">' +
+    '<use href="#i-color-wand-outline" /></svg>';
 const byId = (id) => document.getElementById(id);
 export function currentPage() {
     const page = location.hash.slice(1);
@@ -24,7 +27,8 @@ function showPage() {
         renderHistory();
 }
 async function renderHistory() {
-    const entries = await loadHistory();
+    const [entries] = await Promise.all([loadHistory(), loadSettings()]);
+    const count = settings.countAutoFill;
     byId("history-empty").hidden = entries.length > 0;
     byId("history-content").hidden = entries.length === 0;
     const row = (cells, tag = "td") => "<tr>" +
@@ -37,27 +41,29 @@ async function renderHistory() {
         row(["Level", "Solved", "Best", "Average"], "th") +
             levels
                 .map((level) => {
-                const times = entries.filter((e) => e.level === level).map((e) => e.seconds);
-                const avg = times.reduce((a, b) => a + b, 0) / times.length;
+                const solved = entries.filter((e) => e.level === level).length;
+                const best = bestTime(entries, level, count);
+                const avg = averageTime(entries, level, count);
                 return row([
                     `Lvl ${level}`,
-                    String(times.length),
-                    formatTime(bestTime(entries, level)),
-                    formatTime(avg),
+                    String(solved),
+                    best === null ? "-" : formatTime(best),
+                    avg === null ? "-" : formatTime(avg),
                 ]);
             })
                 .join("");
-    const recent = entries.slice(-20).reverse();
+    const recent = entries.slice(-RECENT_ENTRIES).reverse();
     byId("history-recent").innerHTML =
         row(["Date", "Level", "Time", "ID"], "th") +
             recent
                 .map((e) => row([
                 new Date(e.date).toLocaleDateString(),
                 `Lvl ${e.level}`,
-                formatTime(e.seconds),
+                formatTime(e.seconds) + (e.autoFill ? WAND : ""),
                 `#${e.id.split("-")[1]}`,
             ]))
                 .join("");
+    byId("history-note").hidden = !recent.some((e) => e.autoFill);
 }
 function closeMenu() {
     byId("menu").hidden = true;
@@ -71,12 +77,18 @@ function toggleMenu() {
 function setupSettings() {
     const level = byId("setting-level");
     const theme = byId("setting-theme");
+    const countAutoFill = byId("setting-count-autofill");
     loadSettings().then(() => {
         level.value = String(settings.level);
         theme.value = settings.theme;
+        countAutoFill.checked = settings.countAutoFill;
     });
     level.addEventListener("change", () => {
         settings.level = Number(level.value);
+        saveSettings();
+    });
+    countAutoFill.addEventListener("change", () => {
+        settings.countAutoFill = countAutoFill.checked;
         saveSettings();
     });
     theme.addEventListener("change", () => {
@@ -88,6 +100,27 @@ function setupSettings() {
 function keyboardLikely() {
     return (matchMedia("(hover: hover) and (pointer: fine)").matches ||
         navigator.maxTouchPoints === 0);
+}
+function setupAndroidBack() {
+    const app = window.Capacitor?.Plugins?.App;
+    if (!app?.addListener)
+        return;
+    app.addListener("backButton", () => {
+        const dialog = document.querySelector("dialog[open]");
+        if (dialog) {
+            if (dialog.dispatchEvent(new Event("cancel", { cancelable: true })))
+                dialog.close();
+        }
+        else if (!byId("menu").hidden) {
+            closeMenu();
+        }
+        else if (currentPage() !== "game") {
+            byId("back-btn").click();
+        }
+        else {
+            app.exitApp();
+        }
+    });
 }
 export function setupPages() {
     byId("keyboard-help").hidden = !keyboardLikely();
@@ -124,6 +157,7 @@ export function setupPages() {
         if (e.key === "Escape")
             closeMenu();
     });
+    setupAndroidBack();
     setupSettings();
     showPage();
 }

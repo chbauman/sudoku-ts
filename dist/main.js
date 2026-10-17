@@ -17,7 +17,7 @@ export function init() {
     }
     document.addEventListener("click", (e) => {
         const target = e.target;
-        if (!target.closest("dialog, [data-open], #auto-fill-button, #own_sud, .bar")) {
+        if (!target.closest("dialog, [data-open], #auto-fill-button, #own_sud, .bar button, #menu, #digits")) {
             elsewhere();
         }
     });
