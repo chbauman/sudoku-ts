@@ -117,5 +117,6 @@ $ npx cap sync android
 $ cd android && ./gradlew assembleDebug   # android/app/build/outputs/apk/debug/
 ```
 
-A Play Store release additionally needs a release signing key
-(`./gradlew bundleRelease`); this is not set up yet.
+A signed release bundle for the Play Store is built by the workflow
+`.github/workflows/android-release.yml`; the setup and the store listing material
+are described in [`docs/play-store/`](docs/play-store/README.md).
