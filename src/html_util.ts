@@ -7,6 +7,7 @@ import {
   Tsol,
   Tinit,
   permuteSuds,
+  parseSudokuLine,
   copyTo2d,
   allowed,
   checkSolved,
@@ -1041,16 +1042,9 @@ function setSudFromStr(retSud: string, index: number) {
   closeDialog("newGrid");
   openDialog("waiting");
 
-  const sudAndSolStr = retSud.substr(13, 324);
-  const sStr = sudAndSolStr.substr(0, 162);
-  const sSolStr = sudAndSolStr.substr(162, 162);
-  for (let i = 0; i < 9; i++) {
-    for (let j = 0; j < 9; j++) {
-      const totIndT2 = 2 * (i * 9 + j);
-      T[i][j] = parseInt(sStr.substr(totIndT2, 2));
-      Tsol[i][j] = parseInt(sSolStr.substr(totIndT2, 2));
-    }
-  }
+  const { sud, sol } = parseSudokuLine(retSud);
+  copyTo2d(sud, T);
+  copyTo2d(sol, Tsol);
 
   // Shuffle
   permuteSuds(T, Tsol);

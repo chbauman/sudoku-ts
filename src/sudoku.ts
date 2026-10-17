@@ -85,6 +85,22 @@ function readSudokuFromFile(
     });
 }
 
+// Parses a line of a level file: "<description>;<puzzle>;<solution>" where
+// puzzle and solution are the 81 space separated cell values (0 = empty),
+// row by row (the format of the generator in sudoku-cpp).
+function parseSudokuLine(line: string): { sud: number[][]; sol: number[][] } {
+  const parts = line.trim().split(";");
+  if (parts.length !== 3) throw new Error("Invalid sudoku line: " + line);
+  const toGrid = (str: string) => {
+    const vals = str.trim().split(/\s+/).map(Number);
+    if (vals.length !== 81 || vals.some((v) => !(v >= 0 && v <= 9))) {
+      throw new Error("Invalid sudoku line: " + line);
+    }
+    return range(9).map((i) => vals.slice(9 * i, 9 * i + 9));
+  };
+  return { sud: toGrid(parts[1]), sol: toGrid(parts[2]) };
+}
+
 // Finds all numbers that can be set in cell (x, y)
 function allowed(A: number[][], y: number, x: number, ignoreSet = false) {
   const res: number[] = [];
@@ -195,6 +211,7 @@ export {
   shuffle,
   deepCopy2D,
   readSudokuFromFile,
+  parseSudokuLine,
   permuteSuds,
   copyTo2d,
   allowed,

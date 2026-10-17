@@ -5,6 +5,7 @@ import {
   shuffle,
   deepCopy2D,
   permuteSuds,
+  parseSudokuLine,
   copyTo2d,
   allowed,
   checkSolved,
@@ -111,4 +112,37 @@ test("test allowed", () => {
   const sud = generateSampleSud();
   const allNums = allowed(sud, 2, 0);
   expect(allNums.length).toBe(3);
+});
+
+const sampleLine =
+  "1,25,4,4,3,3,3,2,2,2,2;" +
+  "0 0 0 0 0 9 5 7 4 7 0 0 0 3 0 0 0 0 5 0 9 0 0 4 0 0 0 0 0 0 0 2 1 7 0 0 0 1 0 0 6 0 0 3 0 8 3 0 7 9 0 6 0 0 0 5 0 0 0 2 0 0 0 0 0 0 6 0 0 8 0 0 9 0 0 0 0 0 0 0 0;" +
+  "1 6 3 2 8 9 5 7 4 7 4 2 5 3 6 1 8 9 5 8 9 1 7 4 3 2 6 6 9 5 3 2 1 7 4 8 2 1 7 4 6 8 9 3 5 8 3 4 7 9 5 6 1 2 3 5 8 9 1 2 4 6 7 4 2 1 6 5 7 8 9 3 9 7 6 8 4 3 2 5 1";
+
+test("test parse sudoku line", () => {
+  const { sud, sol } = parseSudokuLine(sampleLine);
+  expect(sud.length).toBe(9);
+  expect(sud[0].slice(5)).toEqual([9, 5, 7, 4]);
+  expect(sol[1]).toEqual([7, 4, 2, 5, 3, 6, 1, 8, 9]);
+  expect(() => parseSudokuLine("1,2;0 0;0 0")).toThrow();
+  expect(() => parseSudokuLine("garbage")).toThrow();
+});
+
+test("test permute keeps sudoku consistent with solution", () => {
+  for (let k = 0; k < 20; ++k) {
+    const { sud, sol } = parseSudokuLine(sampleLine);
+    permuteSuds(sud, sol);
+    let nSet = 0;
+    for (let i = 0; i < 9; ++i) {
+      expect(new Set(sol[i]).size).toBe(9);
+      expect(new Set(sol.map((r) => r[i])).size).toBe(9);
+      for (let j = 0; j < 9; ++j) {
+        if (sud[i][j] !== 0) {
+          nSet++;
+          expect(sud[i][j]).toBe(sol[i][j]);
+        }
+      }
+    }
+    expect(nSet).toBe(25);
+  }
 });
