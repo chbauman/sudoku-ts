@@ -12,7 +12,7 @@ export interface Settings {
 
 const SETTINGS_KEY = "sudoku-ts:settings:v1";
 
-export const settings: Settings = { level: 4, theme: "auto" };
+export const settings: Settings = { level: 2, theme: "auto" };
 
 // theme-color of the browser / app UI, matching the page background
 const THEME_COLORS = { light: "#ffffff", dark: "#16181d" };
