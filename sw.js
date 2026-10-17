@@ -1,8 +1,8 @@
 // Service worker: makes the app installable and playable offline.
 // Only used in the deployed layout (see .github/workflows/deploy.yml), where
-// index.html, dist/ and assets/ are siblings of this file. 958a39c5a8 is
+// index.html, dist/ and assets/ are siblings of this file. 8a6e393119 is
 // replaced with the commit hash on deploy, so every release gets a new cache.
-const CACHE = "sudoku-958a39c5a8";
+const CACHE = "sudoku-8a6e393119";
 
 const PRECACHE = [
   "./",
