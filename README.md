@@ -48,8 +48,9 @@ $ node scripts/make-levels.mjs path/to/generated_dat.txt [more.txt ...]
 which removes duplicates and puts all levels above the top level into the top
 level (`TOP_LEVEL` in the script, to be kept in sync with `MAX_LEVEL` in
 `src/sudoku.ts`, the level lists in `src/index.html` and `src/sw.js`; the tests
-check the files). Each loaded puzzle is shuffled (digits, rows/columns within
-their bands, bands).
+check the files). Each loaded puzzle is shuffled (digits, rows within their
+bands, columns within their stacks, bands, stacks, transposition), which keeps
+its level.
 
 ## Menu, pages and settings
 

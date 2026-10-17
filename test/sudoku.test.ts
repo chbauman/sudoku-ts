@@ -196,3 +196,51 @@ test("test grid to string", () => {
   expect(str.slice(0, 18)).toBe("000009574" + "700030000");
   expect(sampleLine.split(";")[1].replace(/ /g, "")).toBe(str);
 });
+
+// Number of givens in every row (or column), sorted
+const lineCounts = (g: number[][], cols: boolean) =>
+  range(9)
+    .map((i) => g.filter((r, k) => (cols ? r[i] : g[i][k]) !== 0).length)
+    .sort()
+    .join();
+
+test("test permute transposes sometimes", () => {
+  const original = parseSudokuLine(sampleLine).sud;
+  const rowCounts = lineCounts(original, false);
+  const colCounts = lineCounts(original, true);
+  expect(rowCounts).not.toBe(colCounts); // the sample can tell the two apart
+  let transposed = 0;
+  const n = 200;
+  for (let k = 0; k < n; ++k) {
+    const { sud, sol } = parseSudokuLine(sampleLine);
+    permuteSuds(sud, sol);
+    const counts = lineCounts(sud, false);
+    expect([rowCounts, colCounts]).toContain(counts);
+    if (counts === colCounts) ++transposed;
+  }
+  expect(transposed).toBeGreaterThan(n / 4);
+  expect(transposed).toBeLessThan((3 * n) / 4);
+});
+
+test("test permute without randomness", () => {
+  const random = jest.spyOn(Math, "random");
+  try {
+    // 0.99 never swaps in the shuffles: all permutations are the identity
+    random.mockReturnValue(0.99);
+    let { sud, sol } = parseSudokuLine(sampleLine);
+    const orig = parseSudokuLine(sampleLine);
+    permuteSuds(sud, sol);
+    expect(sud).toEqual(orig.sud);
+    expect(sol).toEqual(orig.sol);
+
+    // The first random number decides about the transposition
+    random.mockReset();
+    random.mockReturnValueOnce(0.1).mockReturnValue(0.99);
+    ({ sud, sol } = parseSudokuLine(sampleLine));
+    permuteSuds(sud, sol);
+    expect(sud).toEqual(range(9).map((i) => orig.sud.map((r) => r[i])));
+    expect(sol).toEqual(range(9).map((i) => orig.sol.map((r) => r[i])));
+  } finally {
+    random.mockRestore();
+  }
+});
