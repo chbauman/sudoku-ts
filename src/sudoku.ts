@@ -1,5 +1,9 @@
 const DEBUG = false;
 
+// Highest level of the sudokus (levels are 0 to MAX_LEVEL, the files
+// assets/data/ext_lvl_<level>.txt, see scripts/make-levels.mjs)
+const MAX_LEVEL = 5;
+
 // Arrays to store the current sudoku
 // T stores the currently set numbers
 const T: number[][] = Array.from(new Array(9), () => new Array(9).fill(0));
@@ -71,7 +75,7 @@ function checkSolved(sud: number[][]) {
 // Reads a random sudoku from the file and loads it.
 function readSudokuFromFile(
   callback: (s: string, index: number) => void,
-  lvl = 7
+  lvl = MAX_LEVEL
 ) {
   console.log("Loading file");
   const fileName = "../assets/data/ext_lvl_" + lvl.toString() + ".txt";
@@ -202,6 +206,7 @@ function permuteSuds(s: number[][], sudokuSol: number[][], n = 5) {
 
 // Export
 export {
+  MAX_LEVEL,
   T,
   Tsol,
   Tinit,

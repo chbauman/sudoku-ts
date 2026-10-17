@@ -1,5 +1,6 @@
 // Import sudoku module
 import {
+  MAX_LEVEL,
   T,
   DEBUG,
   Marked,
@@ -624,10 +625,10 @@ function checkSolvedSud() {
   } else if (sudLvl == 0) {
     vidSrc = "../assets/gifs/yoda_fear.mp4";
     title = "Do not fear the harder ones.";
-  } else if (sudLvl < 5) {
+  } else if (sudLvl < MAX_LEVEL) {
     vidSrc = "../assets/gifs/good.mp4";
     title = "Now try another one.";
-  } else if (sudLvl == 8) {
+  } else if (sudLvl >= MAX_LEVEL) {
     vidSrc = "../assets/gifs/unlim_power.mp4";
     title = "Nothing you can't solve.";
   }
@@ -1122,7 +1123,7 @@ function inputCustomSudoku() {
 }
 
 // Reads a random sudoku from the file and loads it.
-function loadRandomSud(lvl = 7) {
+function loadRandomSud(lvl = MAX_LEVEL) {
   if (inputtingOwnSud) {
     inputCustomSudoku();
   }

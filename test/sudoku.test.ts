@@ -1,3 +1,5 @@
+import * as fs from "fs";
+import * as path from "path";
 // This also runs the module
 import {
   T,
@@ -6,6 +8,7 @@ import {
   deepCopy2D,
   permuteSuds,
   parseSudokuLine,
+  MAX_LEVEL,
   copyTo2d,
   allowed,
   checkSolved,
@@ -144,5 +147,43 @@ test("test permute keeps sudoku consistent with solution", () => {
       }
     }
     expect(nSet).toBe(25);
+  }
+});
+
+test("level files are consistent", () => {
+  const dir = path.join(__dirname, "..", "assets", "data");
+  const files = fs.readdirSync(dir).filter((f) => /^ext_lvl_\d+\.txt$/.test(f));
+  expect(files.sort()).toEqual(
+    range(MAX_LEVEL + 1).map((l) => `ext_lvl_${l}.txt`)
+  );
+  const swFile = fs.readFileSync(path.join(__dirname, "..", "src", "sw.js"), "utf8");
+  expect(swFile).toContain(`length: ${MAX_LEVEL + 1}`);
+
+  const seen = new Set<string>();
+  for (let level = 0; level <= MAX_LEVEL; ++level) {
+    const lines = fs
+      .readFileSync(path.join(dir, `ext_lvl_${level}.txt`), "utf8")
+      .split("\n");
+    expect(lines.pop()).toBe(""); // file ends with a newline
+    expect(lines.length).toBeGreaterThan(100);
+    for (const line of lines) {
+      expect(Number(line.split(",")[0])).toBe(level);
+      const { sud, sol } = parseSudokuLine(line);
+      const key = sud.join();
+      expect(seen.has(key)).toBe(false);
+      seen.add(key);
+      for (let i = 0; i < 9; ++i) {
+        const bi = 3 * Math.floor(i / 3);
+        const box = [0, 1, 2, 3, 4, 5, 6, 7, 8].map(
+          (j) => sol[bi + Math.floor(j / 3)][3 * (i % 3) + (j % 3)]
+        );
+        for (const group of [sol[i], sol.map((r) => r[i]), box]) {
+          expect([...group].sort().join("")).toBe("123456789");
+        }
+        for (let j = 0; j < 9; ++j) {
+          if (sud[i][j] !== 0) expect(sud[i][j]).toBe(sol[i][j]);
+        }
+      }
+    }
   }
 });

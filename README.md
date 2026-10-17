@@ -26,11 +26,30 @@ The icons are open source (Ionicons, MIT) and taken from https://ionicons.com/; 
 
 ## Level files
 
-The sudokus are in `assets/data/ext_lvl_<level>.txt`, one per line in the
-format of the generator in [sudoku-cpp](https://github.com/chbauman/sudoku-cpp):
+The sudokus are in `assets/data/ext_lvl_<level>.txt` (levels 0 to 5), one per
+line in the format of the generator in [sudoku-cpp](https://github.com/chbauman/sudoku-cpp):
 `<description>;<puzzle>;<solution>`, where puzzle and solution are the 81
 space separated cell values (0 = empty) and the description is
 `<level>,<number of givens>,<digit frequencies>`.
+
+The level is the number of nested guesses needed (the depth of the search tree
+when always guessing in a cell with the fewest candidates, see the difficulty
+level section of the sudoku-cpp README): level 0 can be solved without any
+guess, level 5 is the hardest. All sudokus have a unique solution and no given
+can be removed. Everything that needs 5 or more nested guesses (Arto Inkala's
+"hardest sudoku" for example) is in level 5.
+
+The files are built from collections of the sudoku-cpp generator with
+
+```
+$ node scripts/make-levels.mjs path/to/generated_dat.txt [more.txt ...]
+```
+
+which removes duplicates and puts all levels above the top level into the top
+level (`TOP_LEVEL` in the script, to be kept in sync with `MAX_LEVEL` in
+`src/sudoku.ts`, the level lists in `src/index.html` and `src/sw.js`; the tests
+check the files). Each loaded puzzle is shuffled (digits, rows/columns within
+their bands, bands).
 
 ## Menu, pages and settings
 
