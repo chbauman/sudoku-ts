@@ -61,6 +61,19 @@ function readSudokuFromFile(callback, lvl = 7) {
         callback(items[sInd], sInd);
     });
 }
+function parseSudokuLine(line) {
+    const parts = line.trim().split(";");
+    if (parts.length !== 3)
+        throw new Error("Invalid sudoku line: " + line);
+    const toGrid = (str) => {
+        const vals = str.trim().split(/\s+/).map(Number);
+        if (vals.length !== 81 || vals.some((v) => !(v >= 0 && v <= 9))) {
+            throw new Error("Invalid sudoku line: " + line);
+        }
+        return range(9).map((i) => vals.slice(9 * i, 9 * i + 9));
+    };
+    return { sud: toGrid(parts[1]), sol: toGrid(parts[2]) };
+}
 function allowed(A, y, x, ignoreSet = false) {
     const res = [];
     const arr = new Array(10).fill(true);
@@ -142,5 +155,5 @@ function permuteSuds(s, sudokuSol, n = 5) {
         }
     }
 }
-export { T, Tsol, Tinit, DEBUG, Marked, range, shuffle, deepCopy2D, readSudokuFromFile, permuteSuds, copyTo2d, allowed, checkSolved, deepCopy3D, };
+export { T, Tsol, Tinit, DEBUG, Marked, range, shuffle, deepCopy2D, readSudokuFromFile, parseSudokuLine, permuteSuds, copyTo2d, allowed, checkSolved, deepCopy3D, };
 //# sourceMappingURL=sudoku.js.map
