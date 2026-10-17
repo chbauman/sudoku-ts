@@ -26,11 +26,31 @@ The icons are open source (Ionicons, MIT) and taken from https://ionicons.com/; 
 
 ## Level files
 
-The sudokus are in `assets/data/ext_lvl_<level>.txt`, one per line in the
-format of the generator in [sudoku-cpp](https://github.com/chbauman/sudoku-cpp):
+The sudokus are in `assets/data/ext_lvl_<level>.txt` (levels 0 to 5), one per
+line in the format of the generator in [sudoku-cpp](https://github.com/chbauman/sudoku-cpp):
 `<description>;<puzzle>;<solution>`, where puzzle and solution are the 81
 space separated cell values (0 = empty) and the description is
 `<level>,<number of givens>,<digit frequencies>`.
+
+The level is the number of nested guesses needed (the depth of the search tree
+when always guessing in a cell with the fewest candidates, see the difficulty
+level section of the sudoku-cpp README): level 0 can be solved without any
+guess, level 5 is the hardest. All sudokus have a unique solution and no given
+can be removed. Everything that needs 5 or more nested guesses (Arto Inkala's
+"hardest sudoku" for example) is in level 5.
+
+The files are built from collections of the sudoku-cpp generator with
+
+```
+$ node scripts/make-levels.mjs path/to/generated_dat.txt [more.txt ...]
+```
+
+which removes duplicates and puts all levels above the top level into the top
+level (`TOP_LEVEL` in the script, to be kept in sync with `MAX_LEVEL` in
+`src/sudoku.ts`, the level lists in `src/index.html` and `src/sw.js`; the tests
+check the files). Each loaded puzzle is shuffled (digits, rows within their
+bands, columns within their stacks, bands, stacks, transposition), which keeps
+its level.
 
 ## Menu, pages and settings
 
@@ -43,9 +63,11 @@ loaded when there is no saved game, and the appearance (system / light / dark).
 ## History (personal leaderboard)
 
 The time to solve a sudoku (only the time the game page is visible, restarting
-the sudoku restarts the clock) and the puzzle ID (`<level>-<line in the level
-file>`) are stored when you finish a sudoku without the solver; custom sudokus
-are not recorded. The History page shows the best and average time per level
+the sudoku restarts the clock), the level, the puzzle ID (`<level>-<line in the
+level file>`) and the sudoku itself as it is in the level file (81 digits, 0 =
+empty, before it is shuffled; not in entries of older versions, so that the
+solves can be rated again if the levels change) are stored when you finish a
+sudoku without the solver; custom sudokus are not recorded. The History page shows the best and average time per level
 and the 20 most recent solves, the win dialog shows the time and whether it is a
 new best. The data stays on the device (same storage as the saved game, see
 below), there is no server; the last 500 solves are kept.

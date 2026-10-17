@@ -6,6 +6,12 @@ export interface HistoryEntry {
   /** "<level>-<line number in the level file>" */
   id: string;
   level: number;
+  /**
+   * The sudoku as in the level file (before it is shuffled): its 81 digits row
+   * by row, 0 = empty. Allows to rate the sudoku again if the levels change.
+   * Missing in older entries.
+   */
+  puzzle?: string;
   seconds: number;
   /** ISO date of the solve */
   date: string;
@@ -19,6 +25,7 @@ let loading: Promise<HistoryEntry[]> | null = null;
 const isEntry = (e: any): e is HistoryEntry =>
   typeof e?.id === "string" &&
   Number.isInteger(e.level) &&
+  (e.puzzle === undefined || typeof e.puzzle === "string") &&
   typeof e.seconds === "number" &&
   typeof e.date === "string";
 

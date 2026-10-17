@@ -1,5 +1,9 @@
 const DEBUG = false;
 
+// Highest level of the sudokus (levels are 0 to MAX_LEVEL, the files
+// assets/data/ext_lvl_<level>.txt, see scripts/make-levels.mjs)
+const MAX_LEVEL = 5;
+
 // Arrays to store the current sudoku
 // T stores the currently set numbers
 const T: number[][] = Array.from(new Array(9), () => new Array(9).fill(0));
@@ -71,7 +75,7 @@ function checkSolved(sud: number[][]) {
 // Reads a random sudoku from the file and loads it.
 function readSudokuFromFile(
   callback: (s: string, index: number) => void,
-  lvl = 7
+  lvl = MAX_LEVEL
 ) {
   console.log("Loading file");
   const fileName = "../assets/data/ext_lvl_" + lvl.toString() + ".txt";
@@ -83,6 +87,11 @@ function readSudokuFromFile(
       const sInd = Math.floor(Math.random() * nItems);
       callback(items[sInd], sInd);
     });
+}
+
+// The grid as a string of its 81 digits, row by row (0 = empty)
+function gridToString(g: number[][]): string {
+  return g.map((r) => r.join("")).join("");
 }
 
 // Parses a line of a level file: "<description>;<puzzle>;<solution>" where
@@ -114,87 +123,34 @@ function allowed(A: number[][], y: number, x: number, ignoreSet = false) {
   return res;
 }
 
-// Permute sudoku
-function permuteSuds(s: number[][], sudokuSol: number[][], n = 5) {
-  const numPer = range(9);
-  shuffle(numPer);
-  for (let i = 0; i < 9; ++i) {
-    for (let k = 0; k < 9; ++k) {
-      const val = sudokuSol[i][k];
-      const valNew = numPer[val - 1] + 1;
-      sudokuSol[i][k] = valNew;
-      if (s[i][k] != 0) {
-        s[i][k] = valNew;
-      }
-    }
-  }
+// Random order of the 9 rows (or columns) that keeps the bands (stacks):
+// the 3 bands are shuffled, and the 3 lines within each band.
+function randomLineOrder(): number[] {
+  return shuffle(range(3)).flatMap((band) =>
+    shuffle(range(3)).map((i) => 3 * band + i)
+  );
+}
 
-  // Make copy
-  let solutionCopy: any[][];
-  let sudokuCopy: any[][];
+// Shuffles the sudoku s and its solution sudokuSol (in place) with the same
+// random transformation, which keeps the solution valid and the sudoku as hard
+// as it was: the digits are relabeled, the rows are shuffled within their
+// bands and the bands among each other, the same for the columns and stacks,
+// and the grid is transposed with probability 1/2. These are all symmetries
+// of the sudoku rules.
+function permuteSuds(s: number[][], sudokuSol: number[][]) {
+  const transpose = Math.random() < 0.5;
+  const digits = shuffle(range(9));
+  const rows = randomLineOrder();
+  const cols = randomLineOrder();
 
-  // New Permutation
-  const per3 = range(3);
-
-  for (let nShuff = 0; nShuff < n; ++nShuff) {
-    // Copy again
-    solutionCopy = deepCopy2D(sudokuSol);
-    sudokuCopy = deepCopy2D(s);
-
-    // Permute rows
-    for (let k = 0; k < 3; ++k) {
-      shuffle(per3);
-      let offs = k * 3;
-      for (let i = 0; i < 3; ++i) {
-        sudokuSol[offs + i] = solutionCopy[offs + per3[i]].slice();
-        s[offs + i] = sudokuCopy[offs + per3[i]].slice();
-      }
-    }
-    // Copy again
-    solutionCopy = deepCopy2D(sudokuSol);
-    sudokuCopy = deepCopy2D(s);
-
-    // Permute cols
-    for (let k = 0; k < 3; ++k) {
-      shuffle(per3);
-      let offs = k * 3;
-      for (let i = 0; i < 3; ++i) {
-        for (let j = 0; j < 9; ++j) {
-          sudokuSol[j][offs + i] = solutionCopy[j][offs + per3[i]];
-          s[j][offs + i] = sudokuCopy[j][offs + per3[i]];
-        }
-      }
-    }
-
-    // Copy again
-    solutionCopy = deepCopy2D(sudokuSol);
-    sudokuCopy = deepCopy2D(s);
-
-    // Permute rows of squares
-    shuffle(per3);
-    for (let k = 0; k < 3; ++k) {
-      const offs = per3[k] * 3;
-      const offsK = k * 3;
-      for (let i = 0; i < 3; ++i) {
-        sudokuSol[offsK + i] = solutionCopy[offs + i].slice();
-        s[offsK + i] = sudokuCopy[offs + i].slice();
-      }
-    }
-
-    // Copy again
-    solutionCopy = deepCopy2D(sudokuSol);
-    sudokuCopy = deepCopy2D(s);
-
-    // Permute cols of squares
-    shuffle(per3);
-    for (let k = 0; k < 3; ++k) {
-      const offs = per3[k] * 3;
-      const offsK = k * 3;
-      for (let i = 0; i < 3; ++i) {
-        for (let j = 0; j < 9; ++j) {
-          sudokuSol[j][offsK + i] = solutionCopy[j][offs + i];
-          s[j][offsK + i] = sudokuCopy[j][offs + i];
-        }
+  for (const grid of [s, sudokuSol]) {
+    const old = deepCopy2D(grid);
+    for (let i = 0; i < 9; ++i) {
+      for (let j = 0; j < 9; ++j) {
+        const val = old[rows[i]][cols[j]];
+        const valNew = val == 0 ? 0 : digits[val - 1] + 1; // 0 = empty
+        if (transpose) grid[j][i] = valNew;
+        else grid[i][j] = valNew;
       }
     }
   }
@@ -202,6 +158,7 @@ function permuteSuds(s: number[][], sudokuSol: number[][], n = 5) {
 
 // Export
 export {
+  MAX_LEVEL,
   T,
   Tsol,
   Tinit,
@@ -212,6 +169,7 @@ export {
   deepCopy2D,
   readSudokuFromFile,
   parseSudokuLine,
+  gridToString,
   permuteSuds,
   copyTo2d,
   allowed,

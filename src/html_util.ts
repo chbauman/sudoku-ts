@@ -1,5 +1,6 @@
 // Import sudoku module
 import {
+  MAX_LEVEL,
   T,
   DEBUG,
   Marked,
@@ -8,6 +9,7 @@ import {
   Tinit,
   permuteSuds,
   parseSudokuLine,
+  gridToString,
   copyTo2d,
   allowed,
   checkSolved,
@@ -39,6 +41,8 @@ let sudLvl: number;
 
 // Solve time: measured while the game page is visible
 let puzzleId: string | null = null; // null for custom sudokus
+// The sudoku as in the level file (before shuffling), see gridToString()
+let puzzleStr: string | null = null;
 let timing = false;
 let elapsedMs = 0;
 let lastTick = Date.now();
@@ -573,6 +577,7 @@ function showSolveTime() {
   const entry: HistoryEntry = {
     id: puzzleId,
     level: sudLvl,
+    ...(puzzleStr ? { puzzle: puzzleStr } : {}),
     seconds,
     date: new Date().toISOString(),
   };
@@ -624,10 +629,10 @@ function checkSolvedSud() {
   } else if (sudLvl == 0) {
     vidSrc = "../assets/gifs/yoda_fear.mp4";
     title = "Do not fear the harder ones.";
-  } else if (sudLvl < 5) {
+  } else if (sudLvl < MAX_LEVEL) {
     vidSrc = "../assets/gifs/good.mp4";
     title = "Now try another one.";
-  } else if (sudLvl == 8) {
+  } else if (sudLvl >= MAX_LEVEL) {
     vidSrc = "../assets/gifs/unlim_power.mp4";
     title = "Nothing you can't solve.";
   }
@@ -735,6 +740,7 @@ interface SavedGame extends Snapshot {
   sudLvl: number;
   solAvailable: boolean;
   puzzleId: string | null;
+  puzzle?: string | null;
   elapsed: number;
 }
 
@@ -749,6 +755,7 @@ function saveGame() {
       sudLvl,
       solAvailable,
       puzzleId,
+      puzzle: puzzleStr,
       elapsed: elapsedMs,
     };
     storageSet(SAVE_KEY, JSON.stringify(game));
@@ -789,6 +796,7 @@ async function loadGame(): Promise<boolean> {
     sudLvl = g.sudLvl;
     solAvailable = g.solAvailable;
     puzzleId = typeof g.puzzleId === "string" ? g.puzzleId : null;
+    puzzleStr = typeof g.puzzle === "string" ? g.puzzle : null;
     elapsedMs = typeof g.elapsed === "number" ? g.elapsed : 0;
     timing = puzzleId !== null && sudLvl >= 0;
     updateTimer();
@@ -1045,6 +1053,7 @@ function setSudFromStr(retSud: string, index: number) {
   const { sud, sol } = parseSudokuLine(retSud);
   copyTo2d(sud, T);
   copyTo2d(sol, Tsol);
+  puzzleStr = gridToString(sud);
 
   // Shuffle
   permuteSuds(T, Tsol);
@@ -1081,6 +1090,7 @@ function inputCustomSudoku() {
   if (!inputtingOwnSud) {
     log("Own Input");
     puzzleId = null;
+    puzzleStr = null;
     timing = false;
     updateTimer();
     elsewhere();
@@ -1122,7 +1132,7 @@ function inputCustomSudoku() {
 }
 
 // Reads a random sudoku from the file and loads it.
-function loadRandomSud(lvl = 7) {
+function loadRandomSud(lvl = MAX_LEVEL) {
   if (inputtingOwnSud) {
     inputCustomSudoku();
   }

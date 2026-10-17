@@ -23,7 +23,7 @@ const PRECACHE = [
   "assets/favicon/apple-touch-icon.png",
   "assets/favicon/android-chrome-192x192.png",
   "assets/favicon/android-chrome-512x512.png",
-  ...Array.from({ length: 9 }, (_, i) => `assets/data/ext_lvl_${i}.txt`),
+  ...Array.from({ length: 6 }, (_, i) => `assets/data/ext_lvl_${i}.txt`),
 ];
 
 self.addEventListener("install", (event) => {

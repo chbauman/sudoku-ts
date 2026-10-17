@@ -1,5 +1,6 @@
 // User settings, stored with the saved game (see storage.ts)
 import { storageGet, storageSet } from "./storage.js";
+import { MAX_LEVEL } from "./sudoku.js";
 
 export type Theme = "auto" | "light" | "dark";
 
@@ -11,7 +12,7 @@ export interface Settings {
 
 const SETTINGS_KEY = "sudoku-ts:settings:v1";
 
-export const settings: Settings = { level: 4, theme: "auto" };
+export const settings: Settings = { level: 2, theme: "auto" };
 
 // theme-color of the browser / app UI, matching the page background
 const THEME_COLORS = { light: "#ffffff", dark: "#16181d" };
@@ -47,7 +48,7 @@ async function readSettings() {
     const raw = await storageGet(SETTINGS_KEY);
     if (raw) {
       const s = JSON.parse(raw);
-      if (Number.isInteger(s.level) && s.level >= 0 && s.level <= 8) {
+      if (Number.isInteger(s.level) && s.level >= 0 && s.level <= MAX_LEVEL) {
         settings.level = s.level;
       }
       if (["auto", "light", "dark"].includes(s.theme)) settings.theme = s.theme;
