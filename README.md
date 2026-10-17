@@ -62,9 +62,11 @@ loaded when there is no saved game, and the appearance (system / light / dark).
 ## History (personal leaderboard)
 
 The time to solve a sudoku (only the time the game page is visible, restarting
-the sudoku restarts the clock) and the puzzle ID (`<level>-<line in the level
-file>`) are stored when you finish a sudoku without the solver; custom sudokus
-are not recorded. The History page shows the best and average time per level
+the sudoku restarts the clock), the level, the puzzle ID (`<level>-<line in the
+level file>`) and the sudoku itself as it is in the level file (81 digits, 0 =
+empty, before it is shuffled; not in entries of older versions, so that the
+solves can be rated again if the levels change) are stored when you finish a
+sudoku without the solver; custom sudokus are not recorded. The History page shows the best and average time per level
 and the 20 most recent solves, the win dialog shows the time and whether it is a
 new best. The data stays on the device (same storage as the saved game, see
 below), there is no server; the last 500 solves are kept.

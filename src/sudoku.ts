@@ -89,6 +89,11 @@ function readSudokuFromFile(
     });
 }
 
+// The grid as a string of its 81 digits, row by row (0 = empty)
+function gridToString(g: number[][]): string {
+  return g.map((r) => r.join("")).join("");
+}
+
 // Parses a line of a level file: "<description>;<puzzle>;<solution>" where
 // puzzle and solution are the 81 space separated cell values (0 = empty),
 // row by row (the format of the generator in sudoku-cpp).
@@ -217,6 +222,7 @@ export {
   deepCopy2D,
   readSudokuFromFile,
   parseSudokuLine,
+  gridToString,
   permuteSuds,
   copyTo2d,
   allowed,

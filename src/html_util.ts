@@ -9,6 +9,7 @@ import {
   Tinit,
   permuteSuds,
   parseSudokuLine,
+  gridToString,
   copyTo2d,
   allowed,
   checkSolved,
@@ -40,6 +41,8 @@ let sudLvl: number;
 
 // Solve time: measured while the game page is visible
 let puzzleId: string | null = null; // null for custom sudokus
+// The sudoku as in the level file (before shuffling), see gridToString()
+let puzzleStr: string | null = null;
 let timing = false;
 let elapsedMs = 0;
 let lastTick = Date.now();
@@ -574,6 +577,7 @@ function showSolveTime() {
   const entry: HistoryEntry = {
     id: puzzleId,
     level: sudLvl,
+    ...(puzzleStr ? { puzzle: puzzleStr } : {}),
     seconds,
     date: new Date().toISOString(),
   };
@@ -736,6 +740,7 @@ interface SavedGame extends Snapshot {
   sudLvl: number;
   solAvailable: boolean;
   puzzleId: string | null;
+  puzzle?: string | null;
   elapsed: number;
 }
 
@@ -750,6 +755,7 @@ function saveGame() {
       sudLvl,
       solAvailable,
       puzzleId,
+      puzzle: puzzleStr,
       elapsed: elapsedMs,
     };
     storageSet(SAVE_KEY, JSON.stringify(game));
@@ -790,6 +796,7 @@ async function loadGame(): Promise<boolean> {
     sudLvl = g.sudLvl;
     solAvailable = g.solAvailable;
     puzzleId = typeof g.puzzleId === "string" ? g.puzzleId : null;
+    puzzleStr = typeof g.puzzle === "string" ? g.puzzle : null;
     elapsedMs = typeof g.elapsed === "number" ? g.elapsed : 0;
     timing = puzzleId !== null && sudLvl >= 0;
     updateTimer();
@@ -1046,6 +1053,7 @@ function setSudFromStr(retSud: string, index: number) {
   const { sud, sol } = parseSudokuLine(retSud);
   copyTo2d(sud, T);
   copyTo2d(sol, Tsol);
+  puzzleStr = gridToString(sud);
 
   // Shuffle
   permuteSuds(T, Tsol);
@@ -1082,6 +1090,7 @@ function inputCustomSudoku() {
   if (!inputtingOwnSud) {
     log("Own Input");
     puzzleId = null;
+    puzzleStr = null;
     timing = false;
     updateTimer();
     elsewhere();

@@ -8,6 +8,7 @@ import {
   deepCopy2D,
   permuteSuds,
   parseSudokuLine,
+  gridToString,
   MAX_LEVEL,
   copyTo2d,
   allowed,
@@ -186,4 +187,12 @@ test("level files are consistent", () => {
       }
     }
   }
+});
+
+test("test grid to string", () => {
+  const { sud } = parseSudokuLine(sampleLine);
+  const str = gridToString(sud);
+  expect(str.length).toBe(81);
+  expect(str.slice(0, 18)).toBe("000009574" + "700030000");
+  expect(sampleLine.split(";")[1].replace(/ /g, "")).toBe(str);
 });
