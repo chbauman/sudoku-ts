@@ -1,4 +1,4 @@
-import { T, DEBUG, Marked, readSudokuFromFile, Tsol, Tinit, permuteSuds, parseSudokuLine, copyTo2d, allowed, checkSolved, deepCopy2D, deepCopy3D, } from "./sudoku.js";
+import { MAX_LEVEL, T, DEBUG, Marked, readSudokuFromFile, Tsol, Tinit, permuteSuds, parseSudokuLine, gridToString, copyTo2d, allowed, checkSolved, deepCopy2D, deepCopy3D, } from "./sudoku.js";
 import { storageGet, storageSet, storageRemove } from "./storage.js";
 import { settings, loadSettings } from "./settings.js";
 import { currentPage } from "./pages.js";
@@ -18,6 +18,7 @@ let solAvailable = false;
 let inputtingOwnSud = false;
 let sudLvl;
 let puzzleId = null;
+let puzzleStr = null;
 let timing = false;
 let elapsedMs = 0;
 let lastTick = Date.now();
@@ -439,6 +440,7 @@ function showSolveTime() {
     const entry = {
         id: puzzleId,
         level: sudLvl,
+        ...(puzzleStr ? { puzzle: puzzleStr } : {}),
         seconds,
         date: new Date().toISOString(),
     };
@@ -487,11 +489,11 @@ function checkSolvedSud() {
         vidSrc = "./assets/gifs/yoda_fear.mp4";
         title = "Do not fear the harder ones.";
     }
-    else if (sudLvl < 5) {
+    else if (sudLvl < MAX_LEVEL) {
         vidSrc = "./assets/gifs/good.mp4";
         title = "Now try another one.";
     }
-    else if (sudLvl == 8) {
+    else if (sudLvl >= MAX_LEVEL) {
         vidSrc = "./assets/gifs/unlim_power.mp4";
         title = "Nothing you can't solve.";
     }
@@ -585,6 +587,7 @@ function saveGame() {
             sudLvl,
             solAvailable,
             puzzleId,
+            puzzle: puzzleStr,
             elapsed: elapsedMs,
         };
         storageSet(SAVE_KEY, JSON.stringify(game));
@@ -622,6 +625,7 @@ async function loadGame() {
         sudLvl = g.sudLvl;
         solAvailable = g.solAvailable;
         puzzleId = typeof g.puzzleId === "string" ? g.puzzleId : null;
+        puzzleStr = typeof g.puzzle === "string" ? g.puzzle : null;
         elapsedMs = typeof g.elapsed === "number" ? g.elapsed : 0;
         timing = puzzleId !== null && sudLvl >= 0;
         updateTimer();
@@ -865,6 +869,7 @@ function setSudFromStr(retSud, index) {
     const { sud, sol } = parseSudokuLine(retSud);
     copyTo2d(sud, T);
     copyTo2d(sol, Tsol);
+    puzzleStr = gridToString(sud);
     permuteSuds(T, Tsol);
     copyTo2d(T, Tinit);
     puzzleId = `${sudLvl}-${index}`;
@@ -895,6 +900,7 @@ function inputCustomSudoku() {
     if (!inputtingOwnSud) {
         log("Own Input");
         puzzleId = null;
+        puzzleStr = null;
         timing = false;
         updateTimer();
         elsewhere();
@@ -927,7 +933,7 @@ function inputCustomSudoku() {
         saveGame();
     }
 }
-function loadRandomSud(lvl = 7) {
+function loadRandomSud(lvl = MAX_LEVEL) {
     if (inputtingOwnSud) {
         inputCustomSudoku();
     }

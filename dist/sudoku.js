@@ -1,4 +1,5 @@
 const DEBUG = false;
+const MAX_LEVEL = 5;
 const T = Array.from(new Array(9), () => new Array(9).fill(0));
 const Tsol = Array.from(new Array(9), () => new Array(9).fill(0));
 const Tinit = Array.from(new Array(9), () => new Array(9).fill(0));
@@ -49,7 +50,7 @@ function checkSolved(sud) {
     }
     return true;
 }
-function readSudokuFromFile(callback, lvl = 7) {
+function readSudokuFromFile(callback, lvl = MAX_LEVEL) {
     console.log("Loading file");
     const fileName = "./assets/data/ext_lvl_" + lvl.toString() + ".txt";
     fetch(fileName)
@@ -60,6 +61,9 @@ function readSudokuFromFile(callback, lvl = 7) {
         const sInd = Math.floor(Math.random() * nItems);
         callback(items[sInd], sInd);
     });
+}
+function gridToString(g) {
+    return g.map((r) => r.join("")).join("");
 }
 function parseSudokuLine(line) {
     const parts = line.trim().split(";");
@@ -90,70 +94,27 @@ function allowed(A, y, x, ignoreSet = false) {
             res.push(i);
     return res;
 }
-function permuteSuds(s, sudokuSol, n = 5) {
-    const numPer = range(9);
-    shuffle(numPer);
-    for (let i = 0; i < 9; ++i) {
-        for (let k = 0; k < 9; ++k) {
-            const val = sudokuSol[i][k];
-            const valNew = numPer[val - 1] + 1;
-            sudokuSol[i][k] = valNew;
-            if (s[i][k] != 0) {
-                s[i][k] = valNew;
-            }
-        }
-    }
-    let solutionCopy;
-    let sudokuCopy;
-    const per3 = range(3);
-    for (let nShuff = 0; nShuff < n; ++nShuff) {
-        solutionCopy = deepCopy2D(sudokuSol);
-        sudokuCopy = deepCopy2D(s);
-        for (let k = 0; k < 3; ++k) {
-            shuffle(per3);
-            let offs = k * 3;
-            for (let i = 0; i < 3; ++i) {
-                sudokuSol[offs + i] = solutionCopy[offs + per3[i]].slice();
-                s[offs + i] = sudokuCopy[offs + per3[i]].slice();
-            }
-        }
-        solutionCopy = deepCopy2D(sudokuSol);
-        sudokuCopy = deepCopy2D(s);
-        for (let k = 0; k < 3; ++k) {
-            shuffle(per3);
-            let offs = k * 3;
-            for (let i = 0; i < 3; ++i) {
-                for (let j = 0; j < 9; ++j) {
-                    sudokuSol[j][offs + i] = solutionCopy[j][offs + per3[i]];
-                    s[j][offs + i] = sudokuCopy[j][offs + per3[i]];
-                }
-            }
-        }
-        solutionCopy = deepCopy2D(sudokuSol);
-        sudokuCopy = deepCopy2D(s);
-        shuffle(per3);
-        for (let k = 0; k < 3; ++k) {
-            const offs = per3[k] * 3;
-            const offsK = k * 3;
-            for (let i = 0; i < 3; ++i) {
-                sudokuSol[offsK + i] = solutionCopy[offs + i].slice();
-                s[offsK + i] = sudokuCopy[offs + i].slice();
-            }
-        }
-        solutionCopy = deepCopy2D(sudokuSol);
-        sudokuCopy = deepCopy2D(s);
-        shuffle(per3);
-        for (let k = 0; k < 3; ++k) {
-            const offs = per3[k] * 3;
-            const offsK = k * 3;
-            for (let i = 0; i < 3; ++i) {
-                for (let j = 0; j < 9; ++j) {
-                    sudokuSol[j][offsK + i] = solutionCopy[j][offs + i];
-                    s[j][offsK + i] = sudokuCopy[j][offs + i];
-                }
+function randomLineOrder() {
+    return shuffle(range(3)).flatMap((band) => shuffle(range(3)).map((i) => 3 * band + i));
+}
+function permuteSuds(s, sudokuSol) {
+    const transpose = Math.random() < 0.5;
+    const digits = shuffle(range(9));
+    const rows = randomLineOrder();
+    const cols = randomLineOrder();
+    for (const grid of [s, sudokuSol]) {
+        const old = deepCopy2D(grid);
+        for (let i = 0; i < 9; ++i) {
+            for (let j = 0; j < 9; ++j) {
+                const val = old[rows[i]][cols[j]];
+                const valNew = val == 0 ? 0 : digits[val - 1] + 1;
+                if (transpose)
+                    grid[j][i] = valNew;
+                else
+                    grid[i][j] = valNew;
             }
         }
     }
 }
-export { T, Tsol, Tinit, DEBUG, Marked, range, shuffle, deepCopy2D, readSudokuFromFile, parseSudokuLine, permuteSuds, copyTo2d, allowed, checkSolved, deepCopy3D, };
+export { MAX_LEVEL, T, Tsol, Tinit, DEBUG, Marked, range, shuffle, deepCopy2D, readSudokuFromFile, parseSudokuLine, gridToString, permuteSuds, copyTo2d, allowed, checkSolved, deepCopy3D, };
 //# sourceMappingURL=sudoku.js.map

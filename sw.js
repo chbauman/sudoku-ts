@@ -1,8 +1,8 @@
 // Service worker: makes the app installable and playable offline.
 // Only used in the deployed layout (see .github/workflows/deploy.yml), where
-// index.html, dist/ and assets/ are siblings of this file. 2a1f264c7f is
+// index.html, dist/ and assets/ are siblings of this file. 7e28cb9b17 is
 // replaced with the commit hash on deploy, so every release gets a new cache.
-const CACHE = "sudoku-2a1f264c7f";
+const CACHE = "sudoku-7e28cb9b17";
 
 const PRECACHE = [
   "./",
@@ -23,7 +23,7 @@ const PRECACHE = [
   "assets/favicon/apple-touch-icon.png",
   "assets/favicon/android-chrome-192x192.png",
   "assets/favicon/android-chrome-512x512.png",
-  ...Array.from({ length: 9 }, (_, i) => `assets/data/ext_lvl_${i}.txt`),
+  ...Array.from({ length: 6 }, (_, i) => `assets/data/ext_lvl_${i}.txt`),
 ];
 
 self.addEventListener("install", (event) => {

@@ -4,6 +4,7 @@ const MAX_ENTRIES = 500;
 let loading = null;
 const isEntry = (e) => typeof e?.id === "string" &&
     Number.isInteger(e.level) &&
+    (e.puzzle === undefined || typeof e.puzzle === "string") &&
     typeof e.seconds === "number" &&
     typeof e.date === "string";
 export function loadHistory() {
