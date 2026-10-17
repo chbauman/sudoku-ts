@@ -215,6 +215,10 @@
           <table class="stats" id="history-levels"></table>
           <p>Recent</p>
           <table class="stats" id="history-recent"></table>
+          <p id="history-note" hidden>
+            <svg class="icon" aria-hidden="true"><use href="#i-color-wand-outline" /></svg>
+            The pencil marks were filled in automatically. Such solves only count for the best and average times if this is turned on in the settings.
+          </p>
         </div>
       </section>
 
@@ -237,6 +241,10 @@
             <option value="light">Light</option>
             <option value="dark">Dark</option>
           </select>
+        </label>
+        <label class="setting">
+          <span>Count solves with auto-filled pencil marks (<svg class="icon" aria-hidden="true"><use href="#i-color-wand-outline" /></svg>) for the best times</span>
+          <input type="checkbox" id="setting-count-autofill" />
         </label>
       </section>
 

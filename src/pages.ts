@@ -2,7 +2,13 @@
 // index.html, selected by the URL hash (#help, #settings). The hamburger menu
 // in the header opens the other pages, the back button (and the Android back
 // button) return to the game.
-import { loadHistory, bestTime, formatTime, HistoryEntry } from "./history.js";
+import {
+  loadHistory,
+  bestTime,
+  averageTime,
+  formatTime,
+  HistoryEntry,
+} from "./history.js";
 import {
   settings,
   loadSettings,
@@ -17,6 +23,14 @@ const TITLES: { [page: string]: string } = {
   settings: "Settings",
   history: "History",
 };
+
+/** Number of recent solves shown on the history page */
+const RECENT_ENTRIES = 10;
+
+/** Marks the solves with auto-filled pencil marks in the history */
+const WAND =
+  ' <svg class="icon" role="img" aria-label="Pencil marks filled in automatically">' +
+  '<use href="#i-color-wand-outline" /></svg>';
 
 const byId = <T extends HTMLElement>(id: string) =>
   document.getElementById(id) as T;
@@ -41,7 +55,8 @@ function showPage() {
 
 // Personal leaderboard: best time per level and the most recent solves
 async function renderHistory() {
-  const entries = await loadHistory();
+  const [entries] = await Promise.all([loadHistory(), loadSettings()]);
+  const count = settings.countAutoFill;
   byId("history-empty").hidden = entries.length > 0;
   byId("history-content").hidden = entries.length === 0;
 
@@ -57,18 +72,19 @@ async function renderHistory() {
     row(["Level", "Solved", "Best", "Average"], "th") +
     levels
       .map((level) => {
-        const times = entries.filter((e) => e.level === level).map((e) => e.seconds);
-        const avg = times.reduce((a, b) => a + b, 0) / times.length;
+        const solved = entries.filter((e) => e.level === level).length;
+        const best = bestTime(entries, level, count);
+        const avg = averageTime(entries, level, count);
         return row([
           `Lvl ${level}`,
-          String(times.length),
-          formatTime(bestTime(entries, level) as number),
-          formatTime(avg),
+          String(solved),
+          best === null ? "-" : formatTime(best),
+          avg === null ? "-" : formatTime(avg),
         ]);
       })
       .join("");
 
-  const recent: HistoryEntry[] = entries.slice(-20).reverse();
+  const recent: HistoryEntry[] = entries.slice(-RECENT_ENTRIES).reverse();
   byId("history-recent").innerHTML =
     row(["Date", "Level", "Time", "ID"], "th") +
     recent
@@ -76,11 +92,12 @@ async function renderHistory() {
         row([
           new Date(e.date).toLocaleDateString(),
           `Lvl ${e.level}`,
-          formatTime(e.seconds),
+          formatTime(e.seconds) + (e.autoFill ? WAND : ""),
           `#${e.id.split("-")[1]}`,
         ])
       )
       .join("");
+  byId("history-note").hidden = !recent.some((e) => e.autoFill);
 }
 
 function closeMenu() {
@@ -97,12 +114,18 @@ function toggleMenu() {
 function setupSettings() {
   const level = byId<HTMLSelectElement>("setting-level");
   const theme = byId<HTMLSelectElement>("setting-theme");
+  const countAutoFill = byId<HTMLInputElement>("setting-count-autofill");
   loadSettings().then(() => {
     level.value = String(settings.level);
     theme.value = settings.theme;
+    countAutoFill.checked = settings.countAutoFill;
   });
   level.addEventListener("change", () => {
     settings.level = Number(level.value);
+    saveSettings();
+  });
+  countAutoFill.addEventListener("change", () => {
+    settings.countAutoFill = countAutoFill.checked;
     saveSettings();
   });
   theme.addEventListener("change", () => {
@@ -120,6 +143,29 @@ function keyboardLikely(): boolean {
     matchMedia("(hover: hover) and (pointer: fine)").matches ||
     navigator.maxTouchPoints === 0
   );
+}
+
+// The Android back button / gesture. Capacitor does not handle it itself, that
+// is done by the App plugin (called through the bridge, as the page has no
+// bundler): without a listener the back gesture closes the app. It closes
+// what is open (dialog, menu), returns from a page to the game and only
+// closes the app from the game.
+function setupAndroidBack() {
+  const app = (window as any).Capacitor?.Plugins?.App;
+  if (!app?.addListener) return;
+  app.addListener("backButton", () => {
+    const dialog = document.querySelector<HTMLDialogElement>("dialog[open]");
+    if (dialog) {
+      // like the Escape key: persistent dialogs stay open
+      if (dialog.dispatchEvent(new Event("cancel", { cancelable: true }))) dialog.close();
+    } else if (!byId("menu").hidden) {
+      closeMenu();
+    } else if (currentPage() !== "game") {
+      byId("back-btn").click();
+    } else {
+      app.exitApp();
+    }
+  });
 }
 
 export function setupPages() {
@@ -159,6 +205,7 @@ export function setupPages() {
     if (e.key === "Escape") closeMenu();
   });
 
+  setupAndroidBack();
   setupSettings();
   showPage();
 }

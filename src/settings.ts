@@ -8,11 +8,17 @@ export interface Settings {
   /** Level of the sudoku that is loaded when the app starts without a saved game */
   level: number;
   theme: Theme;
+  /** Solves with auto-filled pencil marks (the magic wand) count for the best times */
+  countAutoFill: boolean;
 }
 
 const SETTINGS_KEY = "sudoku-ts:settings:v1";
 
-export const settings: Settings = { level: 2, theme: "auto" };
+export const settings: Settings = {
+  level: 2,
+  theme: "auto",
+  countAutoFill: false,
+};
 
 // theme-color of the browser / app UI, matching the page background
 const THEME_COLORS = { light: "#ffffff", dark: "#16181d" };
@@ -52,6 +58,7 @@ async function readSettings() {
         settings.level = s.level;
       }
       if (["auto", "light", "dark"].includes(s.theme)) settings.theme = s.theme;
+      if (typeof s.countAutoFill === "boolean") settings.countAutoFill = s.countAutoFill;
     }
   } catch (e) {
     // keep the defaults
