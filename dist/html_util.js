@@ -581,8 +581,9 @@ function undo() {
     saveGame();
 }
 const SAVE_KEY = "sudoku-ts:game:v1";
+const hasDigits = (g) => g.some((r) => r.some((v) => v !== 0));
 function saveGame() {
-    if (inputtingOwnSud)
+    if (inputtingOwnSud || !hasDigits(Tinit))
         return;
     try {
         const game = {
@@ -616,6 +617,7 @@ async function loadGame() {
         const g = JSON.parse(raw);
         const valid = isGrid(g.T) &&
             isGrid(g.Tinit) &&
+            hasDigits(g.Tinit) &&
             isGrid(g.Tsol) &&
             isGrid(g.marked) &&
             isGrid(g.clickable) &&
