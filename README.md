@@ -153,21 +153,22 @@ maintain; the app works offline because all files are bundled.
 
 The workflow `.github/workflows/android.yml` builds a debug APK on every push
 to `main` and for pull requests that touch the app (Actions run -> Artifacts ->
-`sudoku-debug-apk`). To install it, copy `app-debug.apk` to the phone and open
+`sudoku-debug-apk`). The APK is named after the app and the build, e.g.
+`hard-sudoku-1.0-build57-1a2b3c4-debug.apk`. To install it, copy it to the phone and open
 it (allow installing from unknown sources). To build locally you need Node 22,
 JDK 21 and the Android SDK:
 
 ```
 $ npm run assemble
 $ npx cap sync android
-$ cd android && ./gradlew assembleDebug   # android/app/build/outputs/apk/debug/
+$ cd android && ./gradlew assembleDebug   # android/app/build/outputs/apk/debug/hard-sudoku-1.0-local-debug.apk
 ```
 
 All debug APKs (CI and local) are signed with the same debug key,
 `android/app/debug.keystore` (committed on purpose, it is not a secret), so a
 debug APK can be installed over an older one, which keeps the app data (saved
 game, history, settings): open the new APK on the phone or run
-`adb install -r app-debug.apk`. Apps that were installed from APKs built before
+`adb install -r hard-sudoku-*-debug.apk`. Apps that were installed from APKs built before
 the key was fixed are signed with other keys and have to be uninstalled once
 (which deletes their data); the same holds for switching to a release build.
 
@@ -175,7 +176,7 @@ In CI the version code of the APK is the run number of the workflow and the
 version name shows it with the commit (`1.0 (build 57, 1a2b3c4)`, see the app
 info of the phone), so each CI build is newer than the one before. Local
 builds have the version code 1; installing one over a CI build is a downgrade
-and needs `adb install -r -d app-debug.apk`.
+and needs `adb install -r -d hard-sudoku-*-debug.apk`.
 
 A Play Store release additionally needs a release signing key
 (`./gradlew bundleRelease`); this is not set up yet.
