@@ -70,7 +70,8 @@ include in its core any more; it is called through the bridge in
 `setupAndroidBack` (`src/pages.ts`).
 
 Each digit button shows how many of its digit are set in the grid, and the
-digit is crossed out when all nine are set.
+digit is crossed out when all nine are set. Below the buttons the level of the
+sudoku is shown next to the solving time.
 
 Clicking anywhere deselects the selected cell, except on dialogs and the
 buttons that open them, the header buttons and menu, and the digit pad (the

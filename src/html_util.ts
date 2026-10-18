@@ -2,6 +2,7 @@
 import {
   LEVEL_NAMES,
   MAX_LEVEL,
+  levelName,
   T,
   DEBUG,
   Marked,
@@ -600,10 +601,11 @@ function showSolveTime() {
   );
 }
 
-// Shows the running time below the buttons, nothing when no clock is running
+// Shows the level of the sudoku and the running time below the buttons,
+// nothing when no clock is running
 function updateTimer() {
   getAssertedButton("timer").textContent = timing
-    ? formatTime(elapsedMs / 1000)
+    ? `${levelName(sudLvl)} · ${formatTime(elapsedMs / 1000)}`
     : "";
 }
 
