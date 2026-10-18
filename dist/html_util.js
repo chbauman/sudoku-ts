@@ -1,4 +1,4 @@
-import { LEVEL_NAMES, MAX_LEVEL, T, DEBUG, Marked, readSudokuFromFile, Tsol, Tinit, permuteSuds, parseSudokuLine, gridToString, copyTo2d, allowed, checkSolved, deepCopy2D, deepCopy3D, } from "./sudoku.js";
+import { LEVEL_NAMES, MAX_LEVEL, levelName, T, DEBUG, Marked, readSudokuFromFile, Tsol, Tinit, permuteSuds, parseSudokuLine, gridToString, copyTo2d, allowed, checkSolved, deepCopy2D, deepCopy3D, } from "./sudoku.js";
 import { storageGet, storageSet, storageRemove } from "./storage.js";
 import { settings, loadSettings } from "./settings.js";
 import { currentPage } from "./pages.js";
@@ -459,7 +459,7 @@ function showSolveTime() {
 }
 function updateTimer() {
     getAssertedButton("timer").textContent = timing
-        ? formatTime(elapsedMs / 1000)
+        ? `${levelName(sudLvl)} · ${formatTime(elapsedMs / 1000)}`
         : "";
 }
 function tick() {
