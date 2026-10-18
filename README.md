@@ -163,5 +163,13 @@ $ npx cap sync android
 $ cd android && ./gradlew assembleDebug   # android/app/build/outputs/apk/debug/
 ```
 
+All debug APKs (CI and local) are signed with the same debug key,
+`android/app/debug.keystore` (committed on purpose, it is not a secret), so a
+debug APK can be installed over an older one, which keeps the app data (saved
+game, history, settings): open the new APK on the phone or run
+`adb install -r app-debug.apk`. Apps that were installed from APKs built before
+the key was fixed are signed with other keys and have to be uninstalled once
+(which deletes their data); the same holds for switching to a release build.
+
 A Play Store release additionally needs a release signing key
 (`./gradlew bundleRelease`); this is not set up yet.
