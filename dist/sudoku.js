@@ -1,5 +1,16 @@
 const DEBUG = false;
-const MAX_LEVEL = 5;
+const LEVEL_NAMES = [
+    "Medium",
+    "Hard",
+    "Very hard",
+    "Expert",
+    "Master",
+    "Grandmaster",
+];
+const MAX_LEVEL = LEVEL_NAMES.length - 1;
+function levelName(level) {
+    return LEVEL_NAMES[level] ?? `Level ${level}`;
+}
 const T = Array.from(new Array(9), () => new Array(9).fill(0));
 const Tsol = Array.from(new Array(9), () => new Array(9).fill(0));
 const Tinit = Array.from(new Array(9), () => new Array(9).fill(0));
@@ -116,5 +127,5 @@ function permuteSuds(s, sudokuSol) {
         }
     }
 }
-export { MAX_LEVEL, T, Tsol, Tinit, DEBUG, Marked, range, shuffle, deepCopy2D, readSudokuFromFile, parseSudokuLine, gridToString, permuteSuds, copyTo2d, allowed, checkSolved, deepCopy3D, };
+export { LEVEL_NAMES, MAX_LEVEL, levelName, T, Tsol, Tinit, DEBUG, Marked, range, shuffle, deepCopy2D, readSudokuFromFile, parseSudokuLine, gridToString, permuteSuds, copyTo2d, allowed, checkSolved, deepCopy3D, };
 //# sourceMappingURL=sudoku.js.map

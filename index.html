@@ -77,21 +77,21 @@
               <td id="digit-0" class="digit" title="Clear cell" aria-label="Clear cell">
                 <svg class="icon" aria-hidden="true"><use href="#i-backspace-outline" /></svg>
               </td>
-              <td id="digit-1" class="digit">1</td>
-              <td id="digit-2" class="digit">2</td>
-              <td id="digit-3" class="digit">3</td>
-              <td id="digit-4" class="digit">4</td>
+              <td id="digit-1" class="digit"><span class="num">1</span><span class="count"></span></td>
+              <td id="digit-2" class="digit"><span class="num">2</span><span class="count"></span></td>
+              <td id="digit-3" class="digit"><span class="num">3</span><span class="count"></span></td>
+              <td id="digit-4" class="digit"><span class="num">4</span><span class="count"></span></td>
               <td id="mode-but" class="digit" title="Pencil marks" aria-label="Pencil marks">
                 <svg class="icon" aria-hidden="true"><use href="#i-pencil-outline" /></svg>
               </td>
             </tr>
 
             <tr>
-              <td id="digit-5" class="digit">5</td>
-              <td id="digit-6" class="digit">6</td>
-              <td id="digit-7" class="digit">7</td>
-              <td id="digit-8" class="digit">8</td>
-              <td id="digit-9" class="digit">9</td>
+              <td id="digit-5" class="digit"><span class="num">5</span><span class="count"></span></td>
+              <td id="digit-6" class="digit"><span class="num">6</span><span class="count"></span></td>
+              <td id="digit-7" class="digit"><span class="num">7</span><span class="count"></span></td>
+              <td id="digit-8" class="digit"><span class="num">8</span><span class="count"></span></td>
+              <td id="digit-9" class="digit"><span class="num">9</span><span class="count"></span></td>
               <td id="undo-but" class="digit" title="Undo (Ctrl+Z)" aria-label="Undo">
                 <svg class="icon" aria-hidden="true"><use href="#i-arrow-undo-outline" /></svg>
               </td>
@@ -150,7 +150,7 @@
           <li><svg class="icon" aria-hidden="true"><use href="#i-refresh-outline" /></svg></li>
           <li class="help">Restart this sudoku. All progress, including all hypotheses, is lost.</li>
           <li><svg class="icon" aria-hidden="true"><use href="#i-add-circle-outline" /></svg></li>
-          <li class="help">Start a new sudoku and choose its level (0 is the easiest, 5 the hardest). The level that is used at startup can be set in the settings.</li>
+          <li class="help">Start a new sudoku and choose its level, from the easiest to the hardest. The level that is used at startup can be set in the settings.</li>
           <li><svg class="icon" aria-hidden="true"><use href="#i-color-wand-outline" /></svg></li>
           <li class="help">Fill in the pencil marks: every empty cell gets all digits that are still possible.</li>
           <li><svg class="icon" aria-hidden="true"><use href="#i-git-branch-outline" /></svg></li>
@@ -216,7 +216,7 @@
           <p>Recent</p>
           <table class="stats" id="history-recent"></table>
           <p id="history-note" hidden>
-            <svg class="icon" aria-hidden="true"><use href="#i-color-wand-outline" /></svg>
+            <svg class="icon inline-icon" aria-hidden="true"><use href="#i-color-wand-outline" /></svg>
             The pencil marks were filled in automatically. Such solves only count for the best and average times if this is turned on in the settings.
           </p>
         </div>
@@ -225,14 +225,7 @@
       <section id="settings" data-page="settings" hidden>
         <label class="setting">
           <span>Default level</span>
-          <select id="setting-level">
-            <option value="0">Lvl 0</option>
-            <option value="1">Lvl 1</option>
-            <option value="2">Lvl 2</option>
-            <option value="3">Lvl 3</option>
-            <option value="4">Lvl 4</option>
-            <option value="5">Lvl 5</option>
-          </select>
+          <select id="setting-level"></select>
         </label>
         <label class="setting">
           <span>Appearance</span>
@@ -243,7 +236,7 @@
           </select>
         </label>
         <label class="setting">
-          <span>Count solves with auto-filled pencil marks (<svg class="icon" aria-hidden="true"><use href="#i-color-wand-outline" /></svg>) for the best times</span>
+          <span>Count solves with auto-filled pencil marks (<svg class="icon inline-icon" aria-hidden="true"><use href="#i-color-wand-outline" /></svg>) for the best times</span>
           <input type="checkbox" id="setting-count-autofill" />
         </label>
       </section>
@@ -254,14 +247,7 @@
 
       <dialog id="newGrid">
         <h2>Select level:</h2>
-        <ul id="lvl_list">
-          <li>Lvl 0</li>
-          <li>Lvl 1</li>
-          <li>Lvl 2</li>
-          <li>Lvl 3</li>
-          <li>Lvl 4</li>
-          <li>Lvl 5</li>
-        </ul>
+        <ul id="lvl_list"></ul>
       </dialog>
 
       <dialog id="restart">

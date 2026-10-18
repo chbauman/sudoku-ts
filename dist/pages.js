@@ -1,4 +1,5 @@
 import { loadHistory, bestTime, averageTime, formatTime, } from "./history.js";
+import { LEVEL_NAMES, levelName } from "./sudoku.js";
 import { settings, loadSettings, saveSettings, applyTheme, } from "./settings.js";
 const TITLES = {
     game: "Hard Sudoku",
@@ -7,7 +8,7 @@ const TITLES = {
     history: "History",
 };
 const RECENT_ENTRIES = 10;
-const WAND = ' <svg class="icon" role="img" aria-label="Pencil marks filled in automatically">' +
+const WAND = ' <svg class="icon inline-icon" role="img" aria-label="Pencil marks filled in automatically">' +
     '<use href="#i-color-wand-outline" /></svg>';
 const byId = (id) => document.getElementById(id);
 export function currentPage() {
@@ -45,7 +46,7 @@ async function renderHistory() {
                 const best = bestTime(entries, level, count);
                 const avg = averageTime(entries, level, count);
                 return row([
-                    `Lvl ${level}`,
+                    levelName(level),
                     String(solved),
                     best === null ? "-" : formatTime(best),
                     avg === null ? "-" : formatTime(avg),
@@ -58,7 +59,7 @@ async function renderHistory() {
             recent
                 .map((e) => row([
                 new Date(e.date).toLocaleDateString(),
-                `Lvl ${e.level}`,
+                levelName(e.level),
                 formatTime(e.seconds) + (e.autoFill ? WAND : ""),
                 `#${e.id.split("-")[1]}`,
             ]))
@@ -76,6 +77,7 @@ function toggleMenu() {
 }
 function setupSettings() {
     const level = byId("setting-level");
+    LEVEL_NAMES.forEach((name, i) => level.add(new Option(name, String(i))));
     const theme = byId("setting-theme");
     const countAutoFill = byId("setting-count-autofill");
     loadSettings().then(() => {

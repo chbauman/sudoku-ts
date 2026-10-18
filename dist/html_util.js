@@ -1,4 +1,4 @@
-import { MAX_LEVEL, T, DEBUG, Marked, readSudokuFromFile, Tsol, Tinit, permuteSuds, parseSudokuLine, gridToString, copyTo2d, allowed, checkSolved, deepCopy2D, deepCopy3D, } from "./sudoku.js";
+import { LEVEL_NAMES, MAX_LEVEL, T, DEBUG, Marked, readSudokuFromFile, Tsol, Tinit, permuteSuds, parseSudokuLine, gridToString, copyTo2d, allowed, checkSolved, deepCopy2D, deepCopy3D, } from "./sudoku.js";
 import { storageGet, storageSet, storageRemove } from "./storage.js";
 import { settings, loadSettings } from "./settings.js";
 import { currentPage } from "./pages.js";
@@ -158,16 +158,12 @@ function initGrid(tbl) {
 }
 function setLevelFun() {
     const ulEl = getAssertedButton("lvl_list");
-    const kids = ulEl.childNodes;
-    let ct = 0;
-    for (let k = 0; k < kids.length; ++k) {
-        const innHtml = kids[k].innerHTML;
-        if (innHtml) {
-            const n = parseInt(innHtml.split(" ")[1]);
-            kids[k].addEventListener("click", () => loadRandomSud(n));
-            ++ct;
-        }
-    }
+    LEVEL_NAMES.forEach((name, level) => {
+        const li = document.createElement("li");
+        li.textContent = name;
+        li.addEventListener("click", () => loadRandomSud(level));
+        ulEl.appendChild(li);
+    });
 }
 function startHyp(e) {
     hypothesis1();
@@ -529,6 +525,7 @@ function captureState() {
 function withUndo(action) {
     const before = captureState();
     action();
+    updateDigitCounts();
     const key = (s) => JSON.stringify([s.T, s.mini, s.marked, s.clickable, s.color, s.hyps.length]);
     if (key(before) !== key(captureState())) {
         undoStack.push(before);
@@ -570,6 +567,7 @@ function applySnapshot(s) {
         enableHypRejection();
     else
         disableHypRejection();
+    updateDigitCounts();
 }
 function undo() {
     const s = undoStack.pop();
@@ -843,6 +841,20 @@ function unhighlightAll() {
         }
     }
 }
+function updateDigitCounts() {
+    const counts = new Array(10).fill(0);
+    for (const row of T)
+        for (const v of row)
+            counts[v]++;
+    for (let d = 1; d <= 9; d++) {
+        const btn = digits[d];
+        if (!btn)
+            continue;
+        btn.querySelector(".count").textContent = String(counts[d]);
+        btn.classList.toggle("done", counts[d] >= 9);
+        btn.title = `${counts[d]} of 9 set`;
+    }
+}
 function updateGrid(removeMarks = true) {
     log("Updating grid...");
     for (let i = 0; i < 9; i++) {
@@ -859,6 +871,7 @@ function updateGrid(removeMarks = true) {
             }
         }
     }
+    updateDigitCounts();
 }
 function setClickableTrefT() {
     for (let i = 0; i < 9; i++) {
@@ -929,6 +942,7 @@ function inputCustomSudoku() {
                 Tref[i][j].setAttribute("clickable", "1");
             }
         }
+        updateDigitCounts();
         disableSmallDigs();
     }
     else {
@@ -979,6 +993,7 @@ function solve() {
     }
     clearHyps();
     setHypButtons();
+    updateDigitCounts();
     saveGame();
 }
 function clearHyps() {
@@ -1014,6 +1029,7 @@ function restart() {
     }
     clearHyps();
     setHypButtons();
+    updateDigitCounts();
     saveGame();
 }
 function fillSmallDigits() {
