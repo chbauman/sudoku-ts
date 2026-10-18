@@ -1,5 +1,13 @@
 apply plugin: 'com.android.application'
 
+// In GitHub Actions the run number is the version code, so every CI build is
+// newer than the previous one (a debug APK can be installed over an older
+// one) and the version name shows which build is installed. Local builds keep
+// the version code 1: installing one over a CI build is a downgrade, which
+// needs `adb install -r -d`.
+def ciRun = System.getenv("GITHUB_RUN_NUMBER")
+def ciCommit = (System.getenv("GITHUB_SHA") ?: "").take(7)
+
 android {
     namespace = "ch.chrisbaumann.sudoku"
     compileSdk = rootProject.ext.compileSdkVersion
@@ -7,8 +15,8 @@ android {
         applicationId "ch.chrisbaumann.sudoku"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode(ciRun ? ciRun.toInteger() : 1)
+        versionName(ciRun ? "1.0 (build ${ciRun}, ${ciCommit})" : "1.0")
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.

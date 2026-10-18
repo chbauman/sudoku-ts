@@ -171,5 +171,11 @@ game, history, settings): open the new APK on the phone or run
 the key was fixed are signed with other keys and have to be uninstalled once
 (which deletes their data); the same holds for switching to a release build.
 
+In CI the version code of the APK is the run number of the workflow and the
+version name shows it with the commit (`1.0 (build 57, 1a2b3c4)`, see the app
+info of the phone), so each CI build is newer than the one before. Local
+builds have the version code 1; installing one over a CI build is a downgrade
+and needs `adb install -r -d app-debug.apk`.
+
 A Play Store release additionally needs a release signing key
 (`./gradlew bundleRelease`); this is not set up yet.
