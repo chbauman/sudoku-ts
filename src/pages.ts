@@ -9,6 +9,7 @@ import {
   formatTime,
   HistoryEntry,
 } from "./history.js";
+import { LEVEL_NAMES, levelName } from "./sudoku.js";
 import {
   settings,
   loadSettings,
@@ -29,7 +30,7 @@ const RECENT_ENTRIES = 10;
 
 /** Marks the solves with auto-filled pencil marks in the history */
 const WAND =
-  ' <svg class="icon" role="img" aria-label="Pencil marks filled in automatically">' +
+  ' <svg class="icon inline-icon" role="img" aria-label="Pencil marks filled in automatically">' +
   '<use href="#i-color-wand-outline" /></svg>';
 
 const byId = <T extends HTMLElement>(id: string) =>
@@ -76,7 +77,7 @@ async function renderHistory() {
         const best = bestTime(entries, level, count);
         const avg = averageTime(entries, level, count);
         return row([
-          `Lvl ${level}`,
+          levelName(level),
           String(solved),
           best === null ? "-" : formatTime(best),
           avg === null ? "-" : formatTime(avg),
@@ -91,7 +92,7 @@ async function renderHistory() {
       .map((e) =>
         row([
           new Date(e.date).toLocaleDateString(),
-          `Lvl ${e.level}`,
+          levelName(e.level),
           formatTime(e.seconds) + (e.autoFill ? WAND : ""),
           `#${e.id.split("-")[1]}`,
         ])
@@ -113,6 +114,7 @@ function toggleMenu() {
 
 function setupSettings() {
   const level = byId<HTMLSelectElement>("setting-level");
+  LEVEL_NAMES.forEach((name, i) => level.add(new Option(name, String(i))));
   const theme = byId<HTMLSelectElement>("setting-theme");
   const countAutoFill = byId<HTMLInputElement>("setting-count-autofill");
   loadSettings().then(() => {
