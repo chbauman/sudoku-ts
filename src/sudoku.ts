@@ -3,7 +3,14 @@ const DEBUG = false;
 // Names of the levels, from the easiest (level 0) to the hardest. The levels
 // are the numbers of the files assets/data/ext_lvl_<level>.txt (see
 // scripts/make-levels.mjs), so a new name needs a new file.
-const LEVEL_NAMES = ["Beginner", "Easy", "Medium", "Hard", "Expert", "Master"];
+const LEVEL_NAMES = [
+  "Medium",
+  "Hard",
+  "Very hard",
+  "Expert",
+  "Master",
+  "Grandmaster",
+];
 
 // Highest level of the sudokus (levels are 0 to MAX_LEVEL)
 const MAX_LEVEL = LEVEL_NAMES.length - 1;

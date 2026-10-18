@@ -26,7 +26,7 @@ The icons are open source (Ionicons, MIT) and taken from https://ionicons.com/; 
 
 ## Level files
 
-The sudokus are in `assets/data/ext_lvl_<level>.txt` (levels 0 to 5: Beginner, Easy, Medium, Hard, Expert and Master, see
+The sudokus are in `assets/data/ext_lvl_<level>.txt` (levels 0 to 5: Medium, Hard, Very hard, Expert, Master and Grandmaster, see
 `LEVEL_NAMES` in `src/sudoku.ts`), one per
 line in the format of the generator in [sudoku-cpp](https://github.com/chbauman/sudoku-cpp):
 `<description>;<puzzle>;<solution>`, where puzzle and solution are the 81
@@ -36,7 +36,7 @@ space separated cell values (0 = empty) and the description is
 The level is the number of nested guesses needed (the depth of the search tree
 when always guessing in a cell with the fewest candidates, see the difficulty
 level section of the sudoku-cpp README): level 0 can be solved without any
-guess (Beginner), level 5 (Master) is the hardest. All sudokus have a unique solution and no given
+guess (Medium), level 5 (Grandmaster) is the hardest. All sudokus have a unique solution and no given
 can be removed. Everything that needs 5 or more nested guesses (Arto Inkala's
 "hardest sudoku" for example) is in level 5.
 
