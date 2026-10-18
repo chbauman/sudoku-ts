@@ -757,9 +757,13 @@ interface SavedGame extends Snapshot {
   elapsed: number;
 }
 
+// Whether a grid has any digit (a sudoku that is loaded has givens)
+const hasDigits = (g: number[][]) => g.some((r) => r.some((v) => v !== 0));
+
 function saveGame() {
-  // Grids that are being typed in are not saved
-  if (inputtingOwnSud) return;
+  // Grids that are being typed in are not saved, nor is the state before the
+  // first sudoku is loaded (the page can be hidden or closed by then)
+  if (inputtingOwnSud || !hasDigits(Tinit)) return;
   try {
     const game: SavedGame = {
       ...captureState(),
@@ -796,6 +800,7 @@ async function loadGame(): Promise<boolean> {
     const valid =
       isGrid(g.T) &&
       isGrid(g.Tinit) &&
+      hasDigits(g.Tinit) &&
       isGrid(g.Tsol) &&
       isGrid(g.marked) &&
       isGrid(g.clickable) &&
