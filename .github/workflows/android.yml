@@ -44,4 +44,5 @@ jobs:
       - uses: actions/upload-artifact@v7
         with:
           name: sudoku-debug-apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          path: android/app/build/outputs/apk/debug/hard-sudoku-*.apk
+          if-no-files-found: error

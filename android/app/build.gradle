@@ -8,6 +8,13 @@ apply plugin: 'com.android.application'
 def ciRun = System.getenv("GITHUB_RUN_NUMBER")
 def ciCommit = (System.getenv("GITHUB_SHA") ?: "").take(7)
 
+// The APK is named after the app and the version, e.g.
+// hard-sudoku-1.0-build57-1a2b3c4-debug.apk (hard-sudoku-1.0-local-debug.apk
+// for a local build)
+base {
+    archivesName = "hard-sudoku-" + (ciRun ? "1.0-build${ciRun}-${ciCommit}" : "1.0-local")
+}
+
 android {
     namespace = "ch.chrisbaumann.sudoku"
     compileSdk = rootProject.ext.compileSdkVersion
