@@ -26,7 +26,8 @@ The icons are open source (Ionicons, MIT) and taken from https://ionicons.com/; 
 
 ## Level files
 
-The sudokus are in `assets/data/ext_lvl_<level>.txt` (levels 0 to 5), one per
+The sudokus are in `assets/data/ext_lvl_<level>.txt` (levels 0 to 5: Beginner, Easy, Medium, Hard, Expert and Master, see
+`LEVEL_NAMES` in `src/sudoku.ts`), one per
 line in the format of the generator in [sudoku-cpp](https://github.com/chbauman/sudoku-cpp):
 `<description>;<puzzle>;<solution>`, where puzzle and solution are the 81
 space separated cell values (0 = empty) and the description is
@@ -35,7 +36,7 @@ space separated cell values (0 = empty) and the description is
 The level is the number of nested guesses needed (the depth of the search tree
 when always guessing in a cell with the fewest candidates, see the difficulty
 level section of the sudoku-cpp README): level 0 can be solved without any
-guess, level 5 is the hardest. All sudokus have a unique solution and no given
+guess (Beginner), level 5 (Master) is the hardest. All sudokus have a unique solution and no given
 can be removed. Everything that needs 5 or more nested guesses (Arto Inkala's
 "hardest sudoku" for example) is in level 5.
 
@@ -47,8 +48,8 @@ $ node scripts/make-levels.mjs path/to/generated_dat.txt [more.txt ...]
 
 which removes duplicates and puts all levels above the top level into the top
 level (`TOP_LEVEL` in the script, to be kept in sync with `MAX_LEVEL` in
-`src/sudoku.ts`, the level lists in `src/index.html` and `src/sw.js`; the tests
-check the files). Each loaded puzzle is shuffled (digits, rows within their
+`src/sudoku.ts` and the number of files in `src/sw.js`; the tests check the
+files). Each loaded puzzle is shuffled (digits, rows within their
 bands, columns within their stacks, bands, stacks, transposition), which keeps
 its level.
 
@@ -67,6 +68,9 @@ returns from a page to the game and only closes the app from the game. This
 needs the Capacitor App plugin (`@capacitor/app`), which Capacitor does not
 include in its core any more; it is called through the bridge in
 `setupAndroidBack` (`src/pages.ts`).
+
+Each digit button shows how many of its digit are set in the grid, and the
+digit is crossed out when all nine are set.
 
 Clicking anywhere deselects the selected cell, except on dialogs and the
 buttons that open them, the header buttons and menu, and the digit pad (the

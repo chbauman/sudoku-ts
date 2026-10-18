@@ -1,8 +1,18 @@
 const DEBUG = false;
 
-// Highest level of the sudokus (levels are 0 to MAX_LEVEL, the files
-// assets/data/ext_lvl_<level>.txt, see scripts/make-levels.mjs)
-const MAX_LEVEL = 5;
+// Names of the levels, from the easiest (level 0) to the hardest. The levels
+// are the numbers of the files assets/data/ext_lvl_<level>.txt (see
+// scripts/make-levels.mjs), so a new name needs a new file.
+const LEVEL_NAMES = ["Beginner", "Easy", "Medium", "Hard", "Expert", "Master"];
+
+// Highest level of the sudokus (levels are 0 to MAX_LEVEL)
+const MAX_LEVEL = LEVEL_NAMES.length - 1;
+
+// Name of a level (levels that do not exist (any more), e.g. in an old
+// history, are shown as "Level <n>")
+function levelName(level: number): string {
+  return LEVEL_NAMES[level] ?? `Level ${level}`;
+}
 
 // Arrays to store the current sudoku
 // T stores the currently set numbers
@@ -158,7 +168,9 @@ function permuteSuds(s: number[][], sudokuSol: number[][]) {
 
 // Export
 export {
+  LEVEL_NAMES,
   MAX_LEVEL,
+  levelName,
   T,
   Tsol,
   Tinit,

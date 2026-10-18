@@ -1,5 +1,6 @@
 // Import sudoku module
 import {
+  LEVEL_NAMES,
   MAX_LEVEL,
   T,
   DEBUG,
@@ -215,19 +216,16 @@ function initGrid(tbl: HTMLTableElement) {
   }, 250);
 }
 
-// Set the onclick method for choosing new level
+// Fills the list of the levels (new sudoku dialog), clicking a level loads a
+// sudoku of it
 function setLevelFun() {
   const ulEl = getAssertedButton("lvl_list");
-  const kids = ulEl.childNodes;
-  let ct = 0;
-  for (let k = 0; k < kids.length; ++k) {
-    const innHtml = (kids[k] as HTMLElement).innerHTML;
-    if (innHtml) {
-      const n = parseInt(innHtml.split(" ")[1]);
-      kids[k].addEventListener("click", () => loadRandomSud(n));
-      ++ct;
-    }
-  }
+  LEVEL_NAMES.forEach((name, level) => {
+    const li = document.createElement("li");
+    li.textContent = name;
+    li.addEventListener("click", () => loadRandomSud(level));
+    ulEl.appendChild(li);
+  });
 }
 
 function startHyp(e: Event) {
@@ -687,6 +685,7 @@ function captureState(): Snapshot {
 function withUndo(action: () => void) {
   const before = captureState();
   action();
+  updateDigitCounts();
   const key = (s: Snapshot) =>
     JSON.stringify([s.T, s.mini, s.marked, s.clickable, s.color, s.hyps.length]);
   if (key(before) !== key(captureState())) {
@@ -728,6 +727,7 @@ function applySnapshot(s: Snapshot) {
   }
   if (s.rejectionEnabled) enableHypRejection();
   else disableHypRejection();
+  updateDigitCounts();
 }
 
 function undo() {
@@ -1025,6 +1025,20 @@ function unhighlightAll() {
   }
 }
 
+// Shows on each digit button how many of the digit are set in the grid, and
+// crosses out the digits that are all set (nine times)
+function updateDigitCounts() {
+  const counts = new Array(10).fill(0);
+  for (const row of T) for (const v of row) counts[v]++;
+  for (let d = 1; d <= 9; d++) {
+    const btn = digits[d];
+    if (!btn) continue;
+    btn.querySelector(".count")!.textContent = String(counts[d]);
+    btn.classList.toggle("done", counts[d] >= 9);
+    btn.title = `${counts[d]} of 9 set`;
+  }
+}
+
 // Sets layout according to T
 // Removes marks where T is not set (= 0)
 function updateGrid(removeMarks = true) {
@@ -1043,6 +1057,7 @@ function updateGrid(removeMarks = true) {
       }
     }
   }
+  updateDigitCounts();
 }
 
 // Makes the cells clickable
@@ -1127,6 +1142,7 @@ function inputCustomSudoku() {
         Tref[i][j].setAttribute("clickable", "1");
       }
     }
+    updateDigitCounts();
     disableSmallDigs();
   } else {
     log("Done inputting own sudoku!");
@@ -1184,6 +1200,7 @@ function solve() {
   }
   clearHyps();
   setHypButtons();
+  updateDigitCounts();
   saveGame();
 }
 
@@ -1222,6 +1239,7 @@ function restart() {
   }
   clearHyps();
   setHypButtons();
+  updateDigitCounts();
   saveGame();
 }
 
