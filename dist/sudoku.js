@@ -1,5 +1,6 @@
 const DEBUG = false;
 const LEVEL_NAMES = [
+    "Easy",
     "Medium",
     "Hard",
     "Very hard",
