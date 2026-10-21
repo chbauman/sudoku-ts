@@ -33,8 +33,8 @@ line in the format of the generator in [sudoku-cpp](https://github.com/chbauman/
 space separated cell values (0 = empty) and the description is
 `<level>,<number of givens>,<digit frequencies>`.
 
-The level is the level of the generator plus one (see the difficulty level
-section of the sudoku-cpp README): level 0 (Easy) can be solved with the basic
+The level is the level of the generator (see the difficulty level section of
+the sudoku-cpp README): level 0 (Easy) can be solved with the basic
 rules only (a cell with one candidate left, a number that fits in only one cell
 of a row, column or square). Level 1 (Medium) can be solved without any guess,
 the others need nested guesses (the depth of the search tree when always
@@ -43,8 +43,6 @@ hardest. All sudokus have a unique solution and no given can be removed.
 Everything that needs 5 or more nested guesses (Arto Inkala's "hardest sudoku"
 for example) is in level 6.
 
-When the Easy level was added, all level numbers moved up by one. The stored
-settings, history and saved game are converted once (`src/migrate.ts`).
 
 The files are built from collections of the sudoku-cpp generator with
 

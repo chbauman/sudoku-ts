@@ -1,5 +1,4 @@
 // User settings, stored with the saved game (see storage.ts)
-import { migrateLevels } from "./migrate.js";
 import { storageGet, storageSet } from "./storage.js";
 import { MAX_LEVEL } from "./sudoku.js";
 
@@ -52,7 +51,6 @@ export function loadSettings(): Promise<void> {
 
 async function readSettings() {
   try {
-    await migrateLevels();
     const raw = await storageGet(SETTINGS_KEY);
     if (raw) {
       const s = JSON.parse(raw);

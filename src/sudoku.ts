@@ -1,6 +1,6 @@
 const DEBUG = false;
 
-// Names of the levels, from the easiest (level 0, which is level -1 of sudoku-cpp) to the hardest. The levels
+// Names of the levels, from the easiest (level 0) to the hardest. The levels
 // are the numbers of the files assets/data/ext_lvl_<level>.txt (see
 // scripts/make-levels.mjs), so a new name needs a new file.
 const LEVEL_NAMES = [
