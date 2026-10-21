@@ -1,4 +1,4 @@
-package ch.chrisbaumann.serioussudoku;
+package ch.chrisbaumann.sudoku;
 
 import com.getcapacitor.BridgeActivity;
 
