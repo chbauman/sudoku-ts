@@ -22,6 +22,27 @@ function levelName(level: number): string {
   return LEVEL_NAMES[level] ?? `Level ${level}`;
 }
 
+// Message of the win dialog. level: the level of the sudoku that was solved,
+// -1 for a custom sudoku, -2 if the solver was used.
+function congratulation(level: number): { title: string; text: string } {
+  if (level === -2) {
+    return { title: "Solved with the solver", text: "Try the next one without it." };
+  }
+  if (level === -1) {
+    return { title: "Your sudoku is solved", text: "Well done." };
+  }
+  if (level >= MAX_LEVEL) {
+    return {
+      title: "Solved!",
+      text: `${levelName(level)} is the hardest level. There is nothing left to beat.`,
+    };
+  }
+  return {
+    title: "Solved!",
+    text: `${levelName(level)} done. Ready for ${levelName(level + 1)}?`,
+  };
+}
+
 // Arrays to store the current sudoku
 // T stores the currently set numbers
 const T: number[][] = Array.from(new Array(9), () => new Array(9).fill(0));
@@ -179,6 +200,7 @@ export {
   LEVEL_NAMES,
   MAX_LEVEL,
   levelName,
+  congratulation,
   T,
   Tsol,
   Tinit,

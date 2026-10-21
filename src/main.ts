@@ -66,7 +66,7 @@ export function init() {
     "check",
     "timer",
     "log-txt",
-    "fin-vid",
+    "solved-text",
     "solved-h",
   ];
   for (const bId of butIds) {
