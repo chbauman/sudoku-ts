@@ -16,8 +16,7 @@ const LEVEL_NAMES = [
 // Highest level of the sudokus (levels are 0 to MAX_LEVEL)
 const MAX_LEVEL = LEVEL_NAMES.length - 1;
 
-// Name of a level (levels that do not exist (any more), e.g. in an old
-// history, are shown as "Level <n>")
+// Name of a level (levels that do not exist are shown as "Level <n>")
 function levelName(level: number): string {
   return LEVEL_NAMES[level] ?? `Level ${level}`;
 }

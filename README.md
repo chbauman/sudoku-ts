@@ -69,8 +69,8 @@ best times (off by default).
 
 In the Android app the back button / gesture closes the open dialog or menu,
 returns from a page to the game and only closes the app from the game. This
-needs the Capacitor App plugin (`@capacitor/app`), which Capacitor does not
-include in its core any more; it is called through the bridge in
+needs the Capacitor App plugin (`@capacitor/app`), which is not part of the
+Capacitor core; it is called through the bridge in
 `setupAndroidBack` (`src/pages.ts`).
 
 Each digit button shows how many of its digit are set in the grid, and the
@@ -86,8 +86,8 @@ digit buttons also react between them).
 The time to solve a sudoku (only the time the game page is visible, restarting
 the sudoku restarts the clock), the level, the puzzle ID (`<level>-<line in the
 level file>`), the sudoku itself as it is in the level file (81 digits, 0 =
-empty, before it is shuffled; not in entries of older versions, so that the
-solves can be rated again if the levels change) and whether the pencil marks
+empty, before it is shuffled, so that the solves can be rated again if the
+levels change) and whether the pencil marks
 were filled in automatically (the magic wand) are stored when you finish a
 sudoku without the solver; custom sudokus are not recorded. The History page
 shows the best and average time per level and the 10 most recent solves; solves
@@ -177,13 +177,11 @@ All debug APKs (CI and local) are signed with the same debug key,
 `android/app/debug.keystore` (committed on purpose, it is not a secret), so a
 debug APK can be installed over an older one, which keeps the app data (saved
 game, history, settings): open the new APK on the phone or run
-`adb install -r serious-sudoku-*-debug.apk`. Apps that were installed from APKs built before
-the key was fixed are signed with other keys and have to be uninstalled once
-(which deletes their data); the same holds for switching to a release build.
+`adb install -r serious-sudoku-*-debug.apk`. Switching to a release build (other
+signing key) needs an uninstall once, which deletes the app data.
 
 The data in the browser and in the app is stored under the keys `serious-sudoku:settings:v1`,
-`serious-sudoku:history:v1` and `serious-sudoku:game:v1` (the keys of the app when it was called
-Hard Sudoku, `sudoku-ts:*`, are not read any more). The app id is still `ch.chrisbaumann.sudoku`.
+`serious-sudoku:history:v1` and `serious-sudoku:game:v1`.
 
 In CI the version code of the APK is the run number of the workflow and the
 version name shows it with the commit (`1.0 (build 57, 1a2b3c4)`, see the app

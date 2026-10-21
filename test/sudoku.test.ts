@@ -253,7 +253,7 @@ test("level names", () => {
   expect(new Set(LEVEL_NAMES).size).toBe(LEVEL_NAMES.length);
   expect(levelName(0)).toBe(LEVEL_NAMES[0]);
   expect(levelName(MAX_LEVEL)).toBe(LEVEL_NAMES[MAX_LEVEL]);
-  // levels that do not exist (any more), e.g. in an old history
+  // levels that do not exist
   expect(levelName(7)).toBe("Level 7");
 });
 
