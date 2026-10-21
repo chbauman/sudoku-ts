@@ -1,5 +1,5 @@
 import { storageGet, storageSet } from "./storage.js";
-const HISTORY_KEY = "sudoku-ts:history:v1";
+const HISTORY_KEY = "serious-sudoku:history:v1";
 const MAX_ENTRIES = 500;
 let loading = null;
 const isEntry = (e) => typeof e?.id === "string" &&

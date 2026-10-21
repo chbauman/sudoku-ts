@@ -1,6 +1,6 @@
 import { storageGet, storageSet } from "./storage.js";
 import { MAX_LEVEL } from "./sudoku.js";
-const SETTINGS_KEY = "sudoku-ts:settings:v1";
+const SETTINGS_KEY = "serious-sudoku:settings:v1";
 export const settings = {
     level: 3,
     theme: "auto",

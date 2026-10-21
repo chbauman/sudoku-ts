@@ -2,7 +2,7 @@ import { loadHistory, bestTime, averageTime, formatTime, } from "./history.js";
 import { LEVEL_NAMES, levelName } from "./sudoku.js";
 import { settings, loadSettings, saveSettings, applyTheme, } from "./settings.js";
 const TITLES = {
-    game: "Hard Sudoku",
+    game: "Serious Sudoku",
     help: "Help",
     settings: "Settings",
     history: "History",

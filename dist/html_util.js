@@ -559,7 +559,7 @@ function undo() {
     reselect();
     saveGame();
 }
-const SAVE_KEY = "sudoku-ts:game:v1";
+const SAVE_KEY = "serious-sudoku:game:v1";
 const hasDigits = (g) => g.some((r) => r.some((v) => v !== 0));
 function saveGame() {
     if (inputtingOwnSud || !hasDigits(Tinit))
