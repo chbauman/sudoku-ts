@@ -15,7 +15,7 @@ export interface Settings {
 const SETTINGS_KEY = "sudoku-ts:settings:v1";
 
 export const settings: Settings = {
-  level: 2,
+  level: 3,
   theme: "auto",
   countAutoFill: false,
 };

@@ -5,11 +5,11 @@
 //
 // Puzzles that occur several times are only kept once. All puzzles with a
 // level above TOP_LEVEL are put into the top level (so a puzzle of level 7
-// would be in ext_lvl_5.txt). Keep TOP_LEVEL in sync with LEVEL_NAMES
+// would be in ext_lvl_6.txt). Keep TOP_LEVEL in sync with LEVEL_NAMES
 // (MAX_LEVEL) in src/sudoku.ts and the number of level files in src/sw.js.
 import { readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 
-const TOP_LEVEL = 5;
+const TOP_LEVEL = 6;
 const dir = "assets/data";
 
 const files = process.argv.slice(2);

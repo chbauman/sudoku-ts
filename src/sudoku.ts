@@ -4,6 +4,7 @@ const DEBUG = false;
 // are the numbers of the files assets/data/ext_lvl_<level>.txt (see
 // scripts/make-levels.mjs), so a new name needs a new file.
 const LEVEL_NAMES = [
+  "Easy",
   "Medium",
   "Hard",
   "Very hard",
