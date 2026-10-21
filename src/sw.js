@@ -46,8 +46,8 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-// Cache first; everything else from the same origin (e.g. the win videos) is
-// fetched from the network. Range requests (video streaming) bypass the cache.
+// Cache first; everything else from the same origin is fetched from the
+// network. Range requests bypass the cache.
 self.addEventListener("fetch", (event) => {
   const req = event.request;
   if (req.method !== "GET" || req.headers.has("range")) return;

@@ -536,7 +536,8 @@ li {
 
 #restart li,
 #confirm li,
-#tools li {
+#tools li,
+#win li {
     font-size: 24px;
     width: auto;
 }
@@ -586,11 +587,12 @@ li {
     width: min(460px, 92vw);
 }
 
-video {
+.win-icon {
     display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: 90%;
+    width: 72px;
+    height: 72px;
+    margin: 4px auto 8px;
+    color: var(--accent);
 }
 
 /* Tools dialog */
