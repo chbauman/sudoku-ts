@@ -19,7 +19,7 @@ import {
 } from "./settings.js";
 
 const TITLES: { [page: string]: string } = {
-  game: "Hard Sudoku",
+  game: "Serious Sudoku",
   help: "Help",
   settings: "Settings",
   history: "History",

@@ -9,7 +9,6 @@ export interface HistoryEntry {
   /**
    * The sudoku as in the level file (before it is shuffled): its 81 digits row
    * by row, 0 = empty. Allows to rate the sudoku again if the levels change.
-   * Missing in older entries.
    */
   puzzle?: string;
   /** The pencil marks were filled in automatically (the magic wand) */
@@ -19,7 +18,7 @@ export interface HistoryEntry {
   date: string;
 }
 
-const HISTORY_KEY = "sudoku-ts:history:v1";
+const HISTORY_KEY = "serious-sudoku:history:v1";
 const MAX_ENTRIES = 500;
 
 let loading: Promise<HistoryEntry[]> | null = null;

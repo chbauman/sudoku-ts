@@ -1,7 +1,7 @@
 {
   "id": ".",
-  "name": "Hard Sudoku",
-  "short_name": "Hard Sudoku",
+  "name": "Serious Sudoku",
+  "short_name": "Serious Sudoku",
   "description": "Solve sudokus by hand with nested guessing (depth-first search).",
   "start_url": ".",
   "scope": ".",
