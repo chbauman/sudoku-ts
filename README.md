@@ -189,5 +189,6 @@ info of the phone), so each CI build is newer than the one before. Local
 builds have the version code 1; installing one over a CI build is a downgrade
 and needs `adb install -r -d serious-sudoku-*-debug.apk`.
 
-A Play Store release additionally needs a release signing key
-(`./gradlew bundleRelease`); this is not set up yet.
+A signed release bundle for the Play Store is built by the workflow
+`.github/workflows/android-release.yml`; the setup and the store listing material
+are described in [`docs/play-store/`](docs/play-store/README.md).
