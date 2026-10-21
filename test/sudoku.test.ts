@@ -11,6 +11,7 @@ import {
   gridToString,
   LEVEL_NAMES,
   MAX_LEVEL,
+  congratulation,
   levelName,
   copyTo2d,
   allowed,
@@ -254,4 +255,19 @@ test("level names", () => {
   expect(levelName(MAX_LEVEL)).toBe(LEVEL_NAMES[MAX_LEVEL]);
   // levels that do not exist (any more), e.g. in an old history
   expect(levelName(7)).toBe("Level 7");
+});
+
+test("win dialog messages", () => {
+  expect(congratulation(0).text).toBe(
+    `${LEVEL_NAMES[0]} done. Ready for ${LEVEL_NAMES[1]}?`
+  );
+  expect(congratulation(MAX_LEVEL - 1).text).toContain(LEVEL_NAMES[MAX_LEVEL]);
+  expect(congratulation(MAX_LEVEL).text).toContain("hardest");
+  expect(congratulation(-1).title).toBe("Your sudoku is solved");
+  expect(congratulation(-2).title).toBe("Solved with the solver");
+  for (let level = -2; level <= MAX_LEVEL; ++level) {
+    const { title, text } = congratulation(level);
+    expect(title.length).toBeGreaterThan(0);
+    expect(text).not.toContain("undefined");
+  }
 });

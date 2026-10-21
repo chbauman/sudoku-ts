@@ -92,8 +92,8 @@ were filled in automatically (the magic wand) are stored when you finish a
 sudoku without the solver; custom sudokus are not recorded. The History page
 shows the best and average time per level and the 10 most recent solves; solves
 with the magic wand are marked there and only count for the best and average
-times if the setting says so (they are always stored). The win dialog shows
-the time and whether it is a new best. The data stays on the device (same
+times if the setting says so (they are always stored). The win dialog congratulates
+(a short message, the next level to try) and shows the time and whether it is a new best. The data stays on the device (same
 storage as the saved game, see below), there is no server; the last 500 solves
 are kept.
 
