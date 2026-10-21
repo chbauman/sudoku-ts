@@ -12,6 +12,24 @@ const MAX_LEVEL = LEVEL_NAMES.length - 1;
 function levelName(level) {
     return LEVEL_NAMES[level] ?? `Level ${level}`;
 }
+function congratulation(level) {
+    if (level === -2) {
+        return { title: "Solved with the solver", text: "Try the next one without it." };
+    }
+    if (level === -1) {
+        return { title: "Your sudoku is solved", text: "Well done." };
+    }
+    if (level >= MAX_LEVEL) {
+        return {
+            title: "Solved!",
+            text: `${levelName(level)} is the hardest level. There is nothing left to beat.`,
+        };
+    }
+    return {
+        title: "Solved!",
+        text: `${levelName(level)} done. Ready for ${levelName(level + 1)}?`,
+    };
+}
 const T = Array.from(new Array(9), () => new Array(9).fill(0));
 const Tsol = Array.from(new Array(9), () => new Array(9).fill(0));
 const Tinit = Array.from(new Array(9), () => new Array(9).fill(0));
@@ -128,5 +146,5 @@ function permuteSuds(s, sudokuSol) {
         }
     }
 }
-export { LEVEL_NAMES, MAX_LEVEL, levelName, T, Tsol, Tinit, DEBUG, Marked, range, shuffle, deepCopy2D, readSudokuFromFile, parseSudokuLine, gridToString, permuteSuds, copyTo2d, allowed, checkSolved, deepCopy3D, };
+export { LEVEL_NAMES, MAX_LEVEL, levelName, congratulation, T, Tsol, Tinit, DEBUG, Marked, range, shuffle, deepCopy2D, readSudokuFromFile, parseSudokuLine, gridToString, permuteSuds, copyTo2d, allowed, checkSolved, deepCopy3D, };
 //# sourceMappingURL=sudoku.js.map

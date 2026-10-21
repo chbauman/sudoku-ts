@@ -1,4 +1,4 @@
-import { LEVEL_NAMES, MAX_LEVEL, levelName, T, DEBUG, Marked, readSudokuFromFile, Tsol, Tinit, permuteSuds, parseSudokuLine, gridToString, copyTo2d, allowed, checkSolved, deepCopy2D, deepCopy3D, } from "./sudoku.js";
+import { LEVEL_NAMES, MAX_LEVEL, levelName, congratulation, T, DEBUG, Marked, readSudokuFromFile, Tsol, Tinit, permuteSuds, parseSudokuLine, gridToString, copyTo2d, allowed, checkSolved, deepCopy2D, deepCopy3D, } from "./sudoku.js";
 import { storageGet, storageSet, storageRemove } from "./storage.js";
 import { settings, loadSettings } from "./settings.js";
 import { currentPage } from "./pages.js";
@@ -478,30 +478,9 @@ function checkSolvedSud() {
     }
     clearSavedGame();
     showSolveTime();
-    let vidSrc = "./assets/gifs/gj.mp4";
-    let title = "You solved it!! :)";
-    if (sudLvl == -2) {
-        vidSrc = "./assets/gifs/uncivilized.mp4";
-        title = "You used the solver :(";
-    }
-    else if (sudLvl == -1) {
-        vidSrc = "./assets/gifs/thumbs_up.mp4";
-        title = "You solved your own sudoku.";
-    }
-    else if (sudLvl == 0) {
-        vidSrc = "./assets/gifs/yoda_fear.mp4";
-        title = "Do not fear the harder ones.";
-    }
-    else if (sudLvl < MAX_LEVEL) {
-        vidSrc = "./assets/gifs/good.mp4";
-        title = "Now try another one.";
-    }
-    else if (sudLvl >= MAX_LEVEL) {
-        vidSrc = "./assets/gifs/unlim_power.mp4";
-        title = "Nothing you can't solve.";
-    }
-    htmlButtonDict.get("fin-vid").src = vidSrc;
+    const { title, text } = congratulation(sudLvl);
     getAssertedButton("solved-h").textContent = title;
+    getAssertedButton("solved-text").textContent = text;
     openDialog("win");
 }
 function reselect() {

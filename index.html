@@ -280,12 +280,13 @@
       </dialog>
 
       <dialog id="win">
-        <h2 id="solved-h">You Solved it!!</h2>
-        <video autoplay loop muted playsinline id="fin-vid">
-          <source src="./assets/gifs/nice.mp4" type="video/mp4" />
-          Your browser does not support HTML5 videos.
-        </video>
+        <svg class="win-icon" viewBox="0 0 512 512" aria-hidden="true"><circle cx="256" cy="256" r="192" fill="none" stroke="currentColor" stroke-width="32"/><polyline points="176 262 232 318 340 200" fill="none" stroke="currentColor" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <h2 id="solved-h">Solved!</h2>
+        <p id="solved-text"></p>
         <p id="log-txt"></p>
+        <ul>
+          <li data-close>close</li>
+        </ul>
       </dialog>
 
 

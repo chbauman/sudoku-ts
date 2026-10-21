@@ -1,8 +1,8 @@
 // Service worker: makes the app installable and playable offline.
 // Only used in the deployed layout (see .github/workflows/deploy.yml), where
-// index.html, dist/ and assets/ are siblings of this file. 8db35d02ac is
+// index.html, dist/ and assets/ are siblings of this file. 8878bed1e2 is
 // replaced with the commit hash on deploy, so every release gets a new cache.
-const CACHE = "sudoku-8db35d02ac";
+const CACHE = "sudoku-8878bed1e2";
 
 const PRECACHE = [
   "./",
@@ -46,8 +46,8 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-// Cache first; everything else from the same origin (e.g. the win videos) is
-// fetched from the network. Range requests (video streaming) bypass the cache.
+// Cache first; everything else from the same origin is fetched from the
+// network. Range requests bypass the cache.
 self.addEventListener("fetch", (event) => {
   const req = event.request;
   if (req.method !== "GET" || req.headers.has("range")) return;
