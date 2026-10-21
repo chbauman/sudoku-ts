@@ -24,7 +24,7 @@
     <script>
       // Apply the chosen theme before the first paint (see src/settings.ts)
       try {
-        var t = JSON.parse(localStorage.getItem("sudoku-ts:settings:v1")).theme;
+        var t = JSON.parse(localStorage.getItem("serious-sudoku:settings:v1")).theme;
         if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
       } catch (e) {}
     </script>

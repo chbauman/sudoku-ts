@@ -12,7 +12,7 @@ export interface Settings {
   countAutoFill: boolean;
 }
 
-const SETTINGS_KEY = "sudoku-ts:settings:v1";
+const SETTINGS_KEY = "serious-sudoku:settings:v1";
 
 export const settings: Settings = {
   level: 3,

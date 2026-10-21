@@ -16,10 +16,10 @@ base {
 }
 
 android {
-    namespace = "ch.chrisbaumann.sudoku"
+    namespace = "ch.chrisbaumann.serioussudoku"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "ch.chrisbaumann.sudoku"
+        applicationId "ch.chrisbaumann.serioussudoku"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode(ciRun ? ciRun.toInteger() : 1)

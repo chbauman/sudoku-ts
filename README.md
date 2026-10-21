@@ -181,6 +181,13 @@ game, history, settings): open the new APK on the phone or run
 the key was fixed are signed with other keys and have to be uninstalled once
 (which deletes their data); the same holds for switching to a release build.
 
+The app id is `ch.chrisbaumann.serioussudoku` (it was `ch.chrisbaumann.sudoku` when the app
+was called Hard Sudoku). The app with the old id is a different app: it stays installed next
+to the new one and keeps its own data, uninstall it if you do not need it. The data in the
+browser and in the app is stored under the keys `serious-sudoku:settings:v1`,
+`serious-sudoku:history:v1` and `serious-sudoku:game:v1`; the old keys of
+`sudoku-ts:` are not read any more.
+
 In CI the version code of the APK is the run number of the workflow and the
 version name shows it with the commit (`1.0 (build 57, 1a2b3c4)`, see the app
 info of the phone), so each CI build is newer than the one before. Local

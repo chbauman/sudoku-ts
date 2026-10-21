@@ -728,7 +728,7 @@ function undo() {
 }
 
 // Persistence: the game survives page reloads (important on mobile)
-const SAVE_KEY = "sudoku-ts:game:v1";
+const SAVE_KEY = "serious-sudoku:game:v1";
 
 interface SavedGame extends Snapshot {
   Tinit: number[][];

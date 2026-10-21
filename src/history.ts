@@ -19,7 +19,7 @@ export interface HistoryEntry {
   date: string;
 }
 
-const HISTORY_KEY = "sudoku-ts:history:v1";
+const HISTORY_KEY = "serious-sudoku:history:v1";
 const MAX_ENTRIES = 500;
 
 let loading: Promise<HistoryEntry[]> | null = null;
