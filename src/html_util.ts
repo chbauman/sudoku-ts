@@ -19,6 +19,7 @@ import {
   deepCopy3D,
 } from "./sudoku.js";
 import { storageGet, storageSet, storageRemove } from "./storage.js";
+import { migrateLevels } from "./migrate.js";
 import { settings, loadSettings } from "./settings.js";
 import { currentPage } from "./pages.js";
 import { HistoryEntry, recordSolve, formatTime } from "./history.js";
@@ -794,6 +795,7 @@ const isGrid = (a: any, depth = 2): boolean =>
 // Restores the saved game, returns false if there is none (or it is invalid)
 async function loadGame(): Promise<boolean> {
   try {
+    await migrateLevels();
     const raw = await storageGet(SAVE_KEY);
     if (!raw) return false;
     const g = JSON.parse(raw) as SavedGame;

@@ -1,5 +1,6 @@
 // Personal leaderboard: the solve times of finished sudokus, stored locally
 // (same storage as the saved game, see storage.ts).
+import { migrateLevels } from "./migrate.js";
 import { storageGet, storageSet } from "./storage.js";
 
 export interface HistoryEntry {
@@ -36,6 +37,7 @@ const isEntry = (e: any): e is HistoryEntry =>
 export function loadHistory(): Promise<HistoryEntry[]> {
   return (loading ??= (async () => {
     try {
+      await migrateLevels();
       const raw = await storageGet(HISTORY_KEY);
       const parsed = raw ? JSON.parse(raw) : [];
       return Array.isArray(parsed) ? parsed.filter(isEntry) : [];

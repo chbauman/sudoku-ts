@@ -26,19 +26,25 @@ The icons are open source (Ionicons, MIT) and taken from https://ionicons.com/; 
 
 ## Level files
 
-The sudokus are in `assets/data/ext_lvl_<level>.txt` (levels 0 to 5: Medium, Hard, Very hard, Expert, Master and Grandmaster, see
+The sudokus are in `assets/data/ext_lvl_<level>.txt` (levels 0 to 6: Easy, Medium, Hard, Very hard, Expert, Master and Grandmaster, see
 `LEVEL_NAMES` in `src/sudoku.ts`), one per
 line in the format of the generator in [sudoku-cpp](https://github.com/chbauman/sudoku-cpp):
 `<description>;<puzzle>;<solution>`, where puzzle and solution are the 81
 space separated cell values (0 = empty) and the description is
 `<level>,<number of givens>,<digit frequencies>`.
 
-The level is the number of nested guesses needed (the depth of the search tree
-when always guessing in a cell with the fewest candidates, see the difficulty
-level section of the sudoku-cpp README): level 0 can be solved without any
-guess (Medium), level 5 (Grandmaster) is the hardest. All sudokus have a unique solution and no given
-can be removed. Everything that needs 5 or more nested guesses (Arto Inkala's
-"hardest sudoku" for example) is in level 5.
+The level is the level of the generator plus one (see the difficulty level
+section of the sudoku-cpp README): level 0 (Easy) can be solved with the basic
+rules only (a cell with one candidate left, a number that fits in only one cell
+of a row, column or square). Level 1 (Medium) can be solved without any guess,
+the others need nested guesses (the depth of the search tree when always
+guessing in a cell with the fewest candidates), level 6 (Grandmaster) is the
+hardest. All sudokus have a unique solution and no given can be removed.
+Everything that needs 5 or more nested guesses (Arto Inkala's "hardest sudoku"
+for example) is in level 6.
+
+When the Easy level was added, all level numbers moved up by one. The stored
+settings, history and saved game are converted once (`src/migrate.ts`).
 
 The files are built from collections of the sudoku-cpp generator with
 

@@ -1,4 +1,5 @@
 // User settings, stored with the saved game (see storage.ts)
+import { migrateLevels } from "./migrate.js";
 import { storageGet, storageSet } from "./storage.js";
 import { MAX_LEVEL } from "./sudoku.js";
 
@@ -15,7 +16,7 @@ export interface Settings {
 const SETTINGS_KEY = "sudoku-ts:settings:v1";
 
 export const settings: Settings = {
-  level: 2,
+  level: 3,
   theme: "auto",
   countAutoFill: false,
 };
@@ -51,6 +52,7 @@ export function loadSettings(): Promise<void> {
 
 async function readSettings() {
   try {
+    await migrateLevels();
     const raw = await storageGet(SETTINGS_KEY);
     if (raw) {
       const s = JSON.parse(raw);
