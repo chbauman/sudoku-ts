@@ -6,6 +6,7 @@ const TITLES = {
     help: "Help",
     settings: "Settings",
     history: "History",
+    about: "About",
 };
 const RECENT_ENTRIES = 10;
 const WAND = ' <svg class="icon inline-icon" role="img" aria-label="Pencil marks filled in automatically">' +
