@@ -1,9 +1,9 @@
 const DEBUG = false;
 const LEVEL_NAMES = [
+    "Beginner",
     "Easy",
     "Medium",
     "Hard",
-    "Very hard",
     "Expert",
     "Master",
     "Grandmaster",
