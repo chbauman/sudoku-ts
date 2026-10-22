@@ -67,6 +67,8 @@ loaded when there is no saved game, the appearance (system / light / dark) and
 whether solves with auto-filled pencil marks (the magic wand) count for the
 best times (off by default).
 
+The app works in portrait and landscape and on large screens (tablets, foldables, resizable windows): on short landscape screens the grid is on the left and the digits and buttons on the right (`src/style.css`). The Android app draws behind the system bars (edge-to-edge, `MainActivity`), the Capacitor SystemBars plugin pads the web view by the insets.
+
 In the Android app the back button / gesture closes the open dialog or menu,
 returns from a page to the game and only closes the app from the game. This
 needs the Capacitor App plugin (`@capacitor/app`), which is not part of the

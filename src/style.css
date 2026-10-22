@@ -189,6 +189,29 @@ h1 {
     padding-right: var(--side);
 }
 
+/* Short landscape screens (phones turned sideways, small windows): the grid on
+   the left (as high as the screen allows), the digits and buttons on the right,
+   so that nothing has to be scrolled. */
+@media (orientation: landscape) and (max-height: 520px) {
+    :root {
+        --cell: min(calc((100vh - 104px) / 9), 44px);
+    }
+
+    [data-page="game"] {
+        max-width: 800px;
+        padding-bottom: 0;
+        display: grid;
+        grid-template-columns: auto auto;
+        column-gap: 12px;
+        justify-content: center;
+        align-content: center;
+    }
+
+    [data-page="game"] > .table:first-child {
+        grid-row: 1 / span 3;
+    }
+}
+
 /* Page header: back button | title | menu button */
 .bar {
     position: relative;
