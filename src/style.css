@@ -190,25 +190,58 @@ h1 {
 }
 
 /* Short landscape screens (phones turned sideways, small windows): the grid on
-   the left (as high as the screen allows), the digits and buttons on the right,
-   so that nothing has to be scrolled. */
+   the left takes the whole height, the title with the menu, the digits and the
+   buttons are on the right. The other pages keep the usual header on top. */
 @media (orientation: landscape) and (max-height: 520px) {
     :root {
-        --cell: min(calc((100vh - 104px) / 9), 44px);
+        --cell: min(calc((100vh - 24px) / 9), 44px);
     }
 
-    [data-page="game"] {
-        max-width: 800px;
-        padding-bottom: 0;
+    #home:has(main[data-page="game"]:not([hidden])) {
         display: grid;
         grid-template-columns: auto auto;
+        grid-template-rows: auto auto auto auto;
         column-gap: 12px;
         justify-content: center;
         align-content: center;
+        min-height: 100vh;
     }
 
-    [data-page="game"] > .table:first-child {
-        grid-row: 1 / span 3;
+    #home:has(main[data-page="game"]:not([hidden])) > main[data-page="game"] {
+        display: contents;
+    }
+
+    #home:has(main[data-page="game"]:not([hidden])) .bar {
+        grid-column: 2;
+        grid-row: 1;
+        width: 100%;
+    }
+
+    #home:has(main[data-page="game"]:not([hidden])) .bar h1 {
+        font-size: 24px;
+        padding: 0.4em 0;
+    }
+
+    main[data-page="game"] > .table:first-child {
+        grid-column: 1;
+        grid-row: 1 / span 4;
+        align-self: center;
+    }
+
+    main[data-page="game"] > .table.panel {
+        grid-column: 2;
+        grid-row: 2;
+    }
+
+    main[data-page="game"] > div:not(.table) {
+        grid-column: 2;
+        grid-row: 3;
+    }
+
+    main[data-page="game"] > .timer {
+        grid-column: 2;
+        grid-row: 4;
+        margin-top: 8px;
     }
 }
 
