@@ -19,7 +19,7 @@ solving, and return to the point of guessing when the guess turns out to be wron
 Guesses can be nested, so you can do a depth-first search by hand.
 
 Features
-- Seven levels from Easy to Grandmaster, with thousands of sudokus
+- Seven levels from Beginner to Grandmaster, with thousands of sudokus
 - Pencil marks, filled in automatically on request and removed when they become impossible
 - Hypotheses: guess a digit, continue, and reject the guess with one tap
 - Undo

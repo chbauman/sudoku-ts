@@ -15,7 +15,7 @@ export interface Settings {
 const SETTINGS_KEY = "serious-sudoku:settings:v1";
 
 export const settings: Settings = {
-  level: 3,
+  level: 2,
   theme: "auto",
   countAutoFill: false,
 };
