@@ -1,5 +1,5 @@
-// Page navigation: the game, help and settings are "pages" of the single
-// index.html, selected by the URL hash (#help, #settings). The hamburger menu
+// Page navigation: the game, help, settings, history and about are "pages" of
+// the single index.html, selected by the URL hash (#help, #settings, ...). The hamburger menu
 // in the header opens the other pages, the back button (and the Android back
 // button) return to the game.
 import {
@@ -23,6 +23,7 @@ const TITLES: { [page: string]: string } = {
   help: "Help",
   settings: "Settings",
   history: "History",
+  about: "About",
 };
 
 /** Number of recent solves shown on the history page */

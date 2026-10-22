@@ -59,8 +59,8 @@ its level.
 
 ## Menu, pages and settings
 
-The hamburger menu in the header opens the Help, Settings and History pages. The pages are sections of the single
-`index.html`, selected by the URL hash (`#help`, `#settings`), so the browser and
+The hamburger menu in the header opens the Help, Settings, History and About pages (the About page has the links to the sources, the author and the privacy policy). The pages are sections of the single
+`index.html`, selected by the URL hash (`#help`, `#settings`, ...), so the browser and
 Android back buttons work and the game state is kept while a page is open.
 Settings (stored like the saved game, see `src/settings.ts`): the level that is
 loaded when there is no saved game, the appearance (system / light / dark) and
